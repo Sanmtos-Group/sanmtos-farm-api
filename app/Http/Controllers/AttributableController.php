@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Country;
-use App\Http\Requests\StoreCountryRequest;
-use App\Http\Requests\UpdateCountryRequest;
+use App\Models\Attributable;
+use App\Http\Requests\StoreAttributableRequest;
+use App\Http\Requests\UpdateAttributableRequest;
 
-class CountryController extends Controller
+class AttributableController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,7 +27,7 @@ class CountryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCountryRequest $request)
+    public function store(StoreAttributableRequest $request)
     {
         //
     }
@@ -35,7 +35,7 @@ class CountryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Country $country)
+    public function show(Attributable $attributable)
     {
         //
     }
@@ -43,7 +43,7 @@ class CountryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Country $country)
+    public function edit(Attributable $attributable)
     {
         //
     }
@@ -51,7 +51,7 @@ class CountryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCountryRequest $request, Country $country)
+    public function update(UpdateAttributableRequest $request, Attributable $attributable)
     {
         //
     }
@@ -59,7 +59,7 @@ class CountryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Country $country)
+    public function destroy(Attributable $attributable)
     {
         //
     }

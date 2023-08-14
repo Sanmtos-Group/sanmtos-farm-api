@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Country;
-use App\Http\Requests\StoreCountryRequest;
-use App\Http\Requests\UpdateCountryRequest;
+use App\Models\Address;
+use App\Http\Requests\StoreAddressRequest;
+use App\Http\Requests\UpdateAddressRequest;
 
-class CountryController extends Controller
+class AddressController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,7 +27,7 @@ class CountryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCountryRequest $request)
+    public function store(StoreAddressRequest $request)
     {
         //
     }
@@ -35,7 +35,7 @@ class CountryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Country $country)
+    public function show(Address $address)
     {
         //
     }
@@ -43,7 +43,7 @@ class CountryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Country $country)
+    public function edit(Address $address)
     {
         //
     }
@@ -51,7 +51,7 @@ class CountryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCountryRequest $request, Country $country)
+    public function update(UpdateAddressRequest $request, Address $address)
     {
         //
     }
@@ -59,7 +59,7 @@ class CountryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Country $country)
+    public function destroy(Address $address)
     {
         //
     }
