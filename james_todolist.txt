@@ -1,0 +1,7 @@
+<---Category ---->
+1. update controller
+2. add api routes
+3. create api resource 
+4. add products relationship
+
+<---- Attributes ----->
