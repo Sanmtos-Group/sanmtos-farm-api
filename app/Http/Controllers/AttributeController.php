@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Attribute;
 use App\Http\Requests\StoreAttributeRequest;
 use App\Http\Requests\UpdateAttributeRequest;
+use App\Resources\AttributeResource;
 
 class AttributeController extends Controller
 {
@@ -13,7 +14,8 @@ class AttributeController extends Controller
      */
     public function index()
     {
-        //
+        $attributes = Attribute::all();
+        return AttributeResource::collection($attributes);
     }
 
     /**
@@ -29,7 +31,11 @@ class AttributeController extends Controller
      */
     public function store(StoreAttributeRequest $request)
     {
-        //
+        $attribute = Attribute::create($request->validated());
+        $attribute_resource = new AttributeResource($attribute);
+        $attribute_resource->with['message'] = 'Attribute created successfully';
+
+        return $attribute_resource;
     }
 
     /**
@@ -37,7 +43,10 @@ class AttributeController extends Controller
      */
     public function show(Attribute $attribute)
     {
-        //
+        $attribute_resource = new AttributeResource($attribute);
+        $attribute_resource->with['message'] = 'Attribute retrieved successfully';
+
+        return $attribute_resource;
     }
 
     /**
@@ -53,7 +62,11 @@ class AttributeController extends Controller
      */
     public function update(UpdateAttributeRequest $request, Attribute $attribute)
     {
-        //
+        $attribute->update($request->validated());
+        $attribute_resource = new AttributeResource($attribute);
+        $attribute_resource->with['message'] = 'Attribute updated successfully';
+
+        return $attribute_resource;
     }
 
     /**
@@ -61,6 +74,10 @@ class AttributeController extends Controller
      */
     public function destroy(Attribute $attribute)
     {
-        //
+        $attribute->delete();
+        $attribute_resource = new AttributeResource(null);
+        $attribute_resource->with['message'] = 'Attribute deleted successfully';
+        
+        return $attribute_resource;
     }
 }

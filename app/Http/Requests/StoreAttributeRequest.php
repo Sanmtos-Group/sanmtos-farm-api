@@ -11,7 +11,7 @@ class StoreAttributeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class StoreAttributeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
-        ];
+            'name' => 'required|string|max:191|unique:attributes,name',
+            'slug' => 'required|string|max:191|unique:attributes,slug',
+      ];
     }
 }
