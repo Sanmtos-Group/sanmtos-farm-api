@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('attributables', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('value');
+            $table->integer('attributable_id');
+            $table->string('attributable_type');
             $table->timestamps();
         });
     }

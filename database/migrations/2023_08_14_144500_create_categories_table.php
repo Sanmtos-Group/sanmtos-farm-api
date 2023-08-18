@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('slug');
-            $table->integer('parent_category_id');
-            $table->string('description')->nullable();
+            $table->string('name')->unique();
+            $table->text('description')->nullable();
+            $table->string('slug')->unique();
+            $table->string('parent_category_id')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
