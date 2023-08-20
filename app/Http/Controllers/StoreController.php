@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Store;
 use App\Http\Requests\StoreStoreRequest;
 use App\Http\Requests\UpdateStoreRequest;
+use App\Resources\StoreResource;
 
 class StoreController extends Controller
 {
@@ -13,7 +14,8 @@ class StoreController extends Controller
      */
     public function index()
     {
-        //
+        $stores = Store::all();
+        return StoreResource::collection($stores);
     }
 
     /**
@@ -29,7 +31,11 @@ class StoreController extends Controller
      */
     public function store(StoreStoreRequest $request)
     {
-        //
+        $store = store::create($request->validated());
+        $store_resource = new StoreResource($store);
+        $store_resource->with['message'] = 'Store created successfully';
+
+        return $store_resource;
     }
 
     /**
@@ -37,7 +43,10 @@ class StoreController extends Controller
      */
     public function show(Store $store)
     {
-        //
+        $store_resource = new StoreResource($store);
+        $store_resource->with['message'] = 'Store retrieved successfully';
+
+        return $store_resource;
     }
 
     /**
@@ -53,7 +62,11 @@ class StoreController extends Controller
      */
     public function update(UpdateStoreRequest $request, Store $store)
     {
-        //
+        $store->update($request->validated());
+        $store_resource = new StoreResource($store);
+        $store_resource->with['message'] = 'Store updated successfully';
+
+        return $store_resource;
     }
 
     /**
@@ -61,6 +74,10 @@ class StoreController extends Controller
      */
     public function destroy(Store $store)
     {
-        //
+        $store->delete();
+        $store_resource = new StoreResource(null);
+        $store_resource->with['message'] = 'Store deleted successfully';
+        
+        return $store_resource;
     }
 }
