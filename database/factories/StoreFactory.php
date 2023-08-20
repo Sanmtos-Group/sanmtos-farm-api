@@ -20,6 +20,7 @@ class StoreFactory extends Factory
         return [
             'name' => fake()->unique()->word(), 
             'description' => fake()->realText(),
+            'user_id' => User::factory()->create(), 
         ];
     }
 }
