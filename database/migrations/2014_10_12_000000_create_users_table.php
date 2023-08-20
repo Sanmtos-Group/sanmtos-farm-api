@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('phone_number')->nullable();
             $table->timestamp('phone_number_verified_at')->nullable();
             $table->timestamp('email_verified_at')->nullable();
-            $table->dateTime('verified_at')->nullable();
+            $table->timestamp('verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
