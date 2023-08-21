@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateStoreRequest extends FormRequest
 {
@@ -22,8 +23,8 @@ class UpdateStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:191|unique:stores,name',
-            'description' => 'null|string|max:1000',
+            'name' => 'nullable|string|min:3|max:191|'.Rule::unique('attributes')->ignore($this->id),
+            'description' => 'nullable|string|max:1000',
         ];
     }
 }
