@@ -33,4 +33,12 @@ class Store extends Model
         return $this->belongsTo(User::class);
     }
 
+     /**
+     * Get the products for the store.
+     */
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class);
+    }
+
 }
