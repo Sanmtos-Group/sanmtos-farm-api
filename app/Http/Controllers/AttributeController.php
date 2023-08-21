@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\AttributeResource;
 use App\Models\Attribute;
 use App\Http\Requests\StoreAttributeRequest;
 use App\Http\Requests\UpdateAttributeRequest;
-use App\Resources\AttributeResource;
-
 class AttributeController extends Controller
 {
     /**
@@ -77,7 +76,7 @@ class AttributeController extends Controller
         $attribute->delete();
         $attribute_resource = new AttributeResource(null);
         $attribute_resource->with['message'] = 'Attribute deleted successfully';
-        
+
         return $attribute_resource;
     }
 }
