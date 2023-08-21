@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Resources\ProductResource;
 
 class ProductController extends Controller
 {
@@ -13,7 +14,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        $products = Product::all();
+        return ProductResource::collection($products);
     }
 
     /**
@@ -29,7 +31,11 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        //
+        $product = Product::create($request->validated());
+        $product_resource = new ProductResource($product);
+        $product_resource->with['message'] = 'Product created successfully';
+
+        return $product_resource;
     }
 
     /**
@@ -37,7 +43,10 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        //
+        $product_resource = new ProductResource($product);
+        $product_resource->with['message'] = 'Product retrieved successfully';
+
+        return $product_resource;
     }
 
     /**
@@ -53,7 +62,11 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
-        //
+        $product->update($request->validated());
+        $product_resource = new ProductResource($product);
+        $product_resource->with['message'] = 'Product updated successfully';
+
+        return $product_resource;
     }
 
     /**
@@ -61,6 +74,10 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+        $product->delete();
+        $product_resource = new ProductResource(null);
+        $product_resource->with['message'] = 'Product deleted successfully';
+        
+        return $product_resource;
     }
 }
