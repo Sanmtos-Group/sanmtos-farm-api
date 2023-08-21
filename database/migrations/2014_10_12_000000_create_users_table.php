@@ -20,10 +20,9 @@ return new class extends Migration
             $table->enum('gender', ['M','F'])->nullable();
             $table->string('dialing_code')->nullable();
             $table->string('phone_number')->nullable();
-            $table->dateTime('phone_number_verified_at')->nullable();
             $table->timestamp('phone_number_verified_at')->nullable();
             $table->timestamp('email_verified_at')->nullable();
-            $table->dateTime('verified_at')->nullable();
+            $table->timestamp('verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
