@@ -53,4 +53,12 @@ class User extends Authenticatable
     {
         return $this->hasOne(Store::class);
     }
+
+     /**
+     * Get the products verified by the user.
+     */
+    public function verifiedProducts(): HasMany
+    {
+        return $this->hasMany(Product::class, 'verifier_id');
+    }
 }
