@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
-use App\Resources\ProductResource;
+use App\Http\Resources\ProductResource;
 
 class ProductController extends Controller
 {
@@ -15,7 +15,8 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::all();
-        return ProductResource::collection($products);
+        $product_resource = new ProductResource($products);
+        return $product_resource;
     }
 
     /**
@@ -61,7 +62,7 @@ class ProductController extends Controller
      * Update the specified resource in storage.
      */
     public function update(UpdateProductRequest $request, Product $product)
-    {
+    { 
         $product->update($request->validated());
         $product_resource = new ProductResource($product);
         $product_resource->with['message'] = 'Product updated successfully';
