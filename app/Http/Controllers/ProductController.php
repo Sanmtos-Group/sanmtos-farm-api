@@ -80,4 +80,34 @@ class ProductController extends Controller
         
         return $product_resource;
     }
+
+    /**
+     * Verify the specified resource.
+     */
+    public function verify(Product $product)
+    {
+        $product->verified_at = now();
+        $product->verifier_id = auth()->user()->id;
+        $product->save();
+
+        $product_resource = new ProductResource($product);
+        $product_resource->with['message'] = 'Product verified successfully';
+        
+        return $product_resource;
+    }
+
+     /**
+     * Revoke verification of the specified resource.
+     */
+    public function revokeVerification(Product $product)
+    {
+        $product->verified_at = null;
+        $product->verifier_id = null;
+        $product->save();
+
+        $product_resource = new ProductResource($product);
+        $product_resource->with['message'] = 'Product verification revoked successfully';
+        
+        return $product_resource;
+    }
 }
