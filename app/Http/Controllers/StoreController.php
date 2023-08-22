@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\StoreResource;
 use App\Models\Store;
 use App\Http\Requests\StoreStoreRequest;
 use App\Http\Requests\UpdateStoreRequest;
-use App\Resources\StoreResource;
 
 class StoreController extends Controller
 {
@@ -77,7 +77,7 @@ class StoreController extends Controller
         $store->delete();
         $store_resource = new StoreResource(null);
         $store_resource->with['message'] = 'Store deleted successfully';
-        
+
         return $store_resource;
     }
 }

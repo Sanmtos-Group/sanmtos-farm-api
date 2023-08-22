@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\TaskResource;
 use App\Models\Category;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
+use App\Http\Resources\CategoryResource;
+use App\Models\Task;
+use Cviebrock\EloquentSluggable\Services\SlugService;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class CategoryController extends Controller
 {
@@ -13,7 +18,14 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $categories = QueryBuilder::for(Category::class)
+            ->allowedFilters('name')
+            ->defaultSort('name')
+            ->allowedSorts(['name', 'created_at'])
+            ->paginate(10);
+        return CategoryResource::collection($categories);
+
+
     }
 
     /**
@@ -29,7 +41,22 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        //
+        $request->validated();
+
+        $insert = [
+            "name" => $request->name,
+            "description" => $request->description,
+            'slug' => SlugService::createSlug(Category::class, 'slug', $request->name),
+            "parent_category_id" => $request->parent_category_id
+
+        ];
+
+        $category = Category::create($insert);
+
+        $category_resource = new CategoryResource($category);
+        $category_resource->with['message'] = "Category Created Successfully...";
+
+        return $category_resource;
     }
 
     /**
@@ -37,7 +64,8 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        //
+        return new CategoryResource($category);
+
     }
 
     /**
@@ -53,7 +81,11 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, Category $category)
     {
-        //
+        $category->update($request->validated());
+        $category_resource = new CategoryResource($category);
+        $category_resource->with['message'] = 'Category Updated Successfully...';
+
+        return $category_resource;
     }
 
     /**
@@ -61,6 +93,11 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        $category->delete();
+
+        $category_resource = new CategoryResource(null);
+        $category_resource->with['message'] = 'Category deleted successfully...';
+
+        return $category_resource;
     }
 }

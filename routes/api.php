@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AttributeController;
+use App\Http\Controllers\CategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,3 +21,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::apiResource('attributes', AttributeController::class);
+
+Route::apiResource('/category', CategoryController::class )->only([
+    'index', 'show', 'store', 'edit', 'update', 'destroy',
+]);
