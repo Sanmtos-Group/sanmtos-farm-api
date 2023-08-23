@@ -11,6 +11,8 @@ class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
+     * 
+     * @return App\Http\Resources\ProductResource $product_resource
      */
     public function index()
     {
@@ -29,6 +31,9 @@ class ProductController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     * 
+     * @param App\Http\Requests\StoreProductRequest $request
+     * @return App\Http\Resources\ProductResource $product_resource
      */
     public function store(StoreProductRequest $request)
     {
@@ -41,13 +46,16 @@ class ProductController extends Controller
 
     /**
      * Display the specified resource.
+     * 
+     * @param App\Models\Product $product
+     * @return App\Http\Resources\ProductResource $product_resource
      */
     public function show(Product $product)
     {
         $product_resource = new ProductResource($product);
         $product_resource->with['message'] = 'Product retrieved successfully';
 
-        return $product_resource;
+        return  $product_resource;
     }
 
     /**
@@ -60,6 +68,9 @@ class ProductController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * 
+     * @param App\Models\Product $product
+     * @return App\Http\Resources\ProductResource $product_resource
      */
     public function update(UpdateProductRequest $request, Product $product)
     { 
@@ -72,6 +83,9 @@ class ProductController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     * 
+     * @param App\Models\Product $product
+     * @return App\Http\Resources\ProductResource $product_resource
      */
     public function destroy(Product $product)
     {
@@ -84,6 +98,9 @@ class ProductController extends Controller
 
     /**
      * Verify the specified resource.
+     * 
+     * @param App\Models\Product $product
+     * @return App\Http\Resources\ProductResource $product_resource
      */
     public function verify(Product $product)
     {
@@ -91,14 +108,17 @@ class ProductController extends Controller
         $product->verifier_id = auth()->user()->id;
         $product->save();
 
-        $product_resource = new ProductResource($product);
+        $product_resource = new ProductResource($product->only(['id', 'name','store_id','verified_at', 'verifier_id']));
         $product_resource->with['message'] = 'Product verified successfully';
         
         return $product_resource;
     }
 
-     /**
+    /**
      * Revoke verification of the specified resource.
+     * 
+     * @param App\Models\Product $product
+     * @return App\Http\Resources\ProductResource $product_resource
      */
     public function revokeVerification(Product $product)
     {
@@ -106,7 +126,7 @@ class ProductController extends Controller
         $product->verifier_id = null;
         $product->save();
 
-        $product_resource = new ProductResource($product);
+        $product_resource = new ProductResource($product->only(['id', 'name','store_id','verified_at', 'verifier_id']));
         $product_resource->with['message'] = 'Product verification revoked successfully';
         
         return $product_resource;
