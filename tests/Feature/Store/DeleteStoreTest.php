@@ -29,12 +29,12 @@ class DeleteStoreTest extends TestCase
         $user = $this->store->user;
         $this->actingAs($user);
 
-        $response = $this->patch(route('api.stores.destroy', $this->store));
+        $response = $this->delete(route('api.stores.destroy', $this->store));
         $this->store->refresh();
-
         $response->assertValid();
         $response->assertOk();
         $response->assertSessionHasNoErrors();
+        $this->assertSoftDeleted($this->store);
         $this->assertDatabaseHas($this->store::class, $this->store->only($this->store->getFillable()));
         $response->assertJson(fn (AssertableJson $json) =>$json->etc());
     }
