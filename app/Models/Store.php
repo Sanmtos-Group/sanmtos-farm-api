@@ -14,6 +14,17 @@ class Store extends Model
     use HasFactory;
     use SoftDeletes;
 
+    /**
+     * The event map for the model.
+     *
+     * @var array
+     */
+    protected $dispatchesEvents = [
+        'created' => \App\Events\Store\StoreCreated::class,
+        'updated' => \App\Events\Store\StoreUpdated::class,
+    ];
+
+
      /**
      * The attributes that are mass assignable.
      *
@@ -24,6 +35,7 @@ class Store extends Model
         'description',
         'user_id',
     ];
+
 
     /**
      * Get the user that owns the store.

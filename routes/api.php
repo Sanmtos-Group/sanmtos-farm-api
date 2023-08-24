@@ -32,7 +32,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
  */
 Route::middleware('auth:sanctum')->group(function () {
 
-    Route::apiResource('products', ProductController::class)->only(['create', 'update']);
+    Route::apiResource('products', ProductController::class)->only(['store', 'update', 'destroy']);
     Route::prefix('products')->group(function () {
         Route::name('products.')->group(function () {
             Route::match(['put', 'patch'], '{product}/revoke-verification', [ProductController::class, 'revokeVerification'])->name('revoke_verification');

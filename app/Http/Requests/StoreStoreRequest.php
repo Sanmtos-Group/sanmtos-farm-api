@@ -23,8 +23,8 @@ class StoreStoreRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:191|unique:stores,name',
-            'description' => 'null|string|max:1000',
-            'user_id' => 'required|integer|exists:stores,id'
+            'description' => 'nullable|string|max:1000',
+            'user_id' => 'required|integer|unique:stores,user_id|exists:users,id'
         ];
     }
 }

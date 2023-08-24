@@ -26,7 +26,7 @@ class StoreResource extends JsonResource
     public function with($request)
     {
         return [
-            'status' => $this->with['status']?? 200,
+            'status' => $this->with['status']?? "OK",
             'message' => $this->with['message']?? ' Store(s) retrieved successfully',
         ];
     }

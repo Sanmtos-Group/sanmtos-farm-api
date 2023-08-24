@@ -15,7 +15,8 @@ class StoreController extends Controller
     public function index()
     {
         $stores = Store::all();
-        return StoreResource::collection($stores);
+        $store_resource = new StoreResource($stores);
+        return $store_resource;
     }
 
     /**
@@ -75,6 +76,7 @@ class StoreController extends Controller
     public function destroy(Store $store)
     {
         $store->delete();
+
         $store_resource = new StoreResource(null);
         $store_resource->with['message'] = 'Store deleted successfully';
 
