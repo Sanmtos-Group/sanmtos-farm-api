@@ -15,7 +15,8 @@ class StoreController extends Controller
     public function index()
     {
         $stores = Store::all();
-        return StoreResource::collection($stores);
+        $store_resource = new StoreResource($stores);
+        return $store_resource;
     }
 
     /**
