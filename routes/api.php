@@ -26,9 +26,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 /**
  *  <----- The Auth Routes ----->
- *  These are routes that requires an authenticated authorize users 
- *  they include most routes for creating and updating a resource 
- *  POST, PUT, PATCH 
+ *  These are routes that requires an authenticated authorize users
+ *  they include most routes for creating and updating a resource
+ *  POST, PUT, PATCH
  */
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -40,19 +40,17 @@ Route::middleware('auth:sanctum')->group(function () {
         });
     });
 
+    Route::apiResource('category', CategoryController::class );
+
 });
 
 /**
  *  <----- The Public Routes ----->
- *  These are public routes that does not requires authentication 
+ *  These are public routes that does not require authentication
  *  or authorization. This includes most GET
  */
 
 Route::apiResource('attributes', AttributeController::class);
-
-Route::apiResource('category', CategoryController::class )->only([
-    'index', 'show', 'store', 'edit', 'update', 'destroy',
-]);
 
 Route::apiResource('products', ProductController::class)->only(['index', 'show']);
 Route::apiResource('stores', StoreController::class)->only(['index', 'show']);
