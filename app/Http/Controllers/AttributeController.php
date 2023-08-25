@@ -14,7 +14,9 @@ class AttributeController extends Controller
     public function index()
     {
         $attributes = Attribute::all();
-        return AttributeResource::collection($attributes);
+        $attribute_resource = new AttributeResource($attributes);
+        
+        return $attribute_resource;
     }
 
     /**

@@ -3,12 +3,15 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+Use App\Traits\Testing\FastRefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Jetstream\Http\Livewire\TeamMemberManager;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class RemoveTeamMemberTest extends TestCase
 {
-    use RefreshDatabase;
+    use FastRefreshDatabase;
 
     public function test_team_members_can_be_removed_from_teams(): void
     {
@@ -18,7 +21,9 @@ class RemoveTeamMemberTest extends TestCase
             $otherUser = User::factory()->create(), ['role' => 'admin']
         );
 
-        $response = $this->delete('/teams/'.$user->currentTeam->id.'/members/'.$otherUser->id);
+        $component = Livewire::test(TeamMemberManager::class, ['team' => $user->currentTeam])
+            ->set('teamMemberIdBeingRemoved', $otherUser->id)
+            ->call('removeTeamMember');
 
         $this->assertCount(0, $user->currentTeam->fresh()->users);
     }
@@ -33,8 +38,9 @@ class RemoveTeamMemberTest extends TestCase
 
         $this->actingAs($otherUser);
 
-        $response = $this->delete('/teams/'.$user->currentTeam->id.'/members/'.$user->id);
-
-        $response->assertStatus(403);
+        $component = Livewire::test(TeamMemberManager::class, ['team' => $user->currentTeam])
+            ->set('teamMemberIdBeingRemoved', $user->id)
+            ->call('removeTeamMember')
+            ->assertStatus(403);
     }
 }

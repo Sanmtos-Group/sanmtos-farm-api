@@ -41,6 +41,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::apiResource('category', CategoryController::class );
+    Route::apiResource('stores', StoreController::class)->only(['store', 'update', 'destroy']);
 
 });
 

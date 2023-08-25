@@ -3,20 +3,23 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+Use App\Traits\Testing\FastRefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Jetstream\Http\Livewire\UpdateTeamNameForm;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class UpdateTeamNameTest extends TestCase
 {
-    use RefreshDatabase;
+    use FastRefreshDatabase;
 
     public function test_team_names_can_be_updated(): void
     {
         $this->actingAs($user = User::factory()->withPersonalTeam()->create());
 
-        $response = $this->put('/teams/'.$user->currentTeam->id, [
-            'name' => 'Test Team',
-        ]);
+        Livewire::test(UpdateTeamNameForm::class, ['team' => $user->currentTeam])
+            ->set(['state' => ['name' => 'Test Team']])
+            ->call('updateTeamName');
 
         $this->assertCount(1, $user->fresh()->ownedTeams);
         $this->assertEquals('Test Team', $user->currentTeam->fresh()->name);
