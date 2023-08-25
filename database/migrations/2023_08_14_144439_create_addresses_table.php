@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Country;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,12 +16,12 @@ return new class extends Migration
             $table->id();
             $table->string('address');
             $table->string('zip_code')->nullable();
-            $table->foreignId('country_id');
+            $table->foreignIdFor(Country::class)->cascadeOnUpdate()->cascadeOnDelete();            
             $table->string('state')->nullable();
             $table->string('lga')->nullable();
-            $table->foreignId('addressable_id');
+            $table->integer('addressable_id');
             $table->string('addressable_type');
-            $table->boolean('is_preferred');
+            $table->boolean('is_preferred')->default(false);
             $table->timestamps();
         });
     }
