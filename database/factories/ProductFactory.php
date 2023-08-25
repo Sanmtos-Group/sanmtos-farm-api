@@ -23,7 +23,7 @@ class ProductFactory extends Factory
             'name' =>  fake()->word().fake()->bothify('???'), // ensure word is more than 3 by attached random 3 letters
             'description' => fake()->realText(),
             'short_description' => fake()->sentence(),
-            'price' => fake()->numberBetween(100),
+            'price' => fake()->randomFloat(2, 1), // random floats of 2 decimal place of min 1.00
             'discount' => fake()->numberBetween(0, 100),
             'category_id' => Category::inRandomOrder()->first()?? Category::factory()->create(),
             'store_id' => Store::inRandomOrder()->first()?? Store::factory()->create(),           

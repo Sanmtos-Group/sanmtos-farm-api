@@ -17,7 +17,9 @@ class ImageFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'url' => fake()->imageUrl(640, 480),
+            'imageable_id' => fake()->randomNumber(),
+            'imageable_type' => 'Fake/Image'
         ];
     }
 }
