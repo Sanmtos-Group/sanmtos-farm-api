@@ -81,4 +81,36 @@ class AttributeController extends Controller
 
         return $attribute_resource;
     }
+
+    /**
+     * Restore the specified resource from storage.
+     * 
+     * @param App\Models\Attribute $attribute
+     * @return App\Http\Resources\AttributeResource $attribute_resource
+     */
+    public function restore($attribute)
+    {
+        $attribute = Attribute::withTrashed()->findOrFail($attribute);
+        $attribute->restore();
+        $attribute_resource = new AttributeResource($attribute);
+        $attribute_resource->with['message'] = 'Attribute restored successfully';
+        
+        return $attribute_resource;
+    }
+
+
+    /**
+     * Permanently remove the specified resource from storage.
+     * 
+     * @param App\Models\Attribute $attribute
+     * @return App\Http\Resources\AttributeResource $attribute_resource
+     */
+    public function forceDestroy(Attribute $attribute)
+    {
+        $attribute->forceDelete();
+        $attribute_resource = new AttributeResource(null);
+        $attribute_resource->with['message'] = 'Attribute permanently deleted successfully';
+        
+        return $attribute_resource;
+    }
 }

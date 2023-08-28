@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StoreController;
 use Illuminate\Http\Request;
@@ -32,6 +33,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
  */
 Route::middleware('auth:sanctum')->group(function () {
 
+    Route::apiResource('attributes', AttributeController::class)->only(['store', 'update', 'destroy']);
+    Route::prefix('attributes')->group(function () {
+        Route::name('attributes.')->group(function () {
+            Route::delete('{attribute}/force-delete', [AttributeController::class, 'forceDestroy'])->name('forceDestroy');
+            Route::patch('{attribute}/restore', [AttributeController::class, 'restore'])->name('restore');
+        });
+       
+    });
+
     Route::apiResource('products', ProductController::class)->only(['store', 'update', 'destroy']);
     Route::prefix('products')->group(function () {
         Route::name('products.')->group(function () {
@@ -41,6 +51,16 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::apiResource('category', CategoryController::class );
+
+    Route::apiResource('images', ImageController::class)->only(['store', 'update', 'destroy']);
+    Route::prefix('images')->group(function () {
+        Route::name('images.')->group(function () {
+            Route::delete('{image}/force-delete', [ImageController::class, 'forceDestroy'])->name('forceDestroy');
+            Route::patch('{image}/restore', [ImageController::class, 'restore'])->name('restore');
+        });
+       
+    });
+
     Route::apiResource('stores', StoreController::class)->only(['store', 'update', 'destroy']);
 
 });
@@ -51,7 +71,7 @@ Route::middleware('auth:sanctum')->group(function () {
  *  or authorization. This includes most GET
  */
 
-Route::apiResource('attributes', AttributeController::class);
-
+Route::apiResource('attributes', AttributeController::class)->only(['index', 'show']);
+Route::apiResource('images', ImageController::class)->only(['index', 'show']);
 Route::apiResource('products', ProductController::class)->only(['index', 'show']);
 Route::apiResource('stores', StoreController::class)->only(['index', 'show']);

@@ -11,7 +11,7 @@ class UpdateImageRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class UpdateImageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'url' =>'string|max:191', 
+            'imageable_id' => 'integer',
+            'imageable_type' => 'string|max:191'
         ];
     }
 }

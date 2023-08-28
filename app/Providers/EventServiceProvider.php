@@ -20,26 +20,20 @@ class EventServiceProvider extends ServiceProvider
         ],
 
         /**
-         *  Store Events and listeners;
-         */
-        \App\Events\Store\StoreCreated::class => [
-            \App\Listeners\Store\StoreCreatedListener::class,
-        ],
-
-        \App\Events\Store\StoreUpdated::class => [
-            \App\Listeners\Store\StoreUpdatedListener::class,
-        ],
-
-        \App\Events\Store\StoreTrashed::class => [
-            \App\Listeners\Store\StoreTrashedListener::class,
-        ],
-
-        /**
          *  Attribute Events and listeners;
          */
         \App\Events\Attribute\AttributeCreated::class => [
             \App\Listeners\Attribute\AttributeCreatedListener::class,
         ],
+
+        \App\Events\Attribute\AttributeDeleted::class => [
+            \App\Listeners\Attribute\AttributeDeletedListener::class,
+        ],
+
+        \App\Events\Attribute\AttributeRestored::class => [
+            \App\Listeners\Attribute\AttributeRestoredListener::class,
+        ],
+
 
         \App\Events\Attribute\AttributeUpdated::class => [
             \App\Listeners\Attribute\AttributeUpdatedListener::class,
@@ -47,6 +41,29 @@ class EventServiceProvider extends ServiceProvider
 
         \App\Events\Attribute\AttributeTrashed::class => [
             \App\Listeners\Attribute\AttributeTrashedListener::class,
+        ],
+
+        /**
+         *  Image Events and listeners;
+         */
+        \App\Events\Image\ImageCreated::class => [
+            \App\Listeners\Image\ImageCreatedListener::class,
+        ],
+
+        \App\Events\Image\ImageDeleted::class => [
+            \App\Listeners\Image\ImageDeletedListener::class,
+        ],
+
+        \App\Events\Image\ImageRestored::class => [
+            \App\Listeners\Image\ImageRestoredListener::class,
+        ],
+
+        \App\Events\Image\ImageUpdated::class => [
+            \App\Listeners\Image\ImageUpdatedListener::class,
+        ],
+
+        \App\Events\Image\ImageTrashed::class => [
+            \App\Listeners\Image\ImageTrashedListener::class,
         ],
 
 
@@ -63,6 +80,21 @@ class EventServiceProvider extends ServiceProvider
 
         \App\Events\Product\ProductTrashed::class => [
             \App\Listeners\Product\ProductTrashedListener::class,
+        ],
+
+        /**
+         *  Store Events and listeners;
+         */
+        \App\Events\Store\StoreCreated::class => [
+            \App\Listeners\Store\StoreCreatedListener::class,
+        ],
+
+        \App\Events\Store\StoreUpdated::class => [
+            \App\Listeners\Store\StoreUpdatedListener::class,
+        ],
+
+        \App\Events\Store\StoreTrashed::class => [
+            \App\Listeners\Store\StoreTrashedListener::class,
         ],
     ];
 
