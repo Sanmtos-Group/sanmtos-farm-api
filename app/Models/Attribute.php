@@ -19,6 +19,8 @@ class Attribute extends Model
      */
     protected $dispatchesEvents = [
         'created' => \App\Events\Attribute\AttributeCreated::class,
+        'deleted' => \App\Events\Attribute\AttributeDeleted::class,
+        'restored' => \App\Events\Attribute\AttributeRestored::class,
         'updated' => \App\Events\Attribute\AttributeUpdated::class,
         'trashed' => \App\Events\Attribute\AttributeTrashed::class,
     ];

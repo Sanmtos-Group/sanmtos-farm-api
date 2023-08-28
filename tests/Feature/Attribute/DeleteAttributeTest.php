@@ -41,6 +41,50 @@ class DeleteAttributeTest extends TestCase
         $response->assertJson(fn (AssertableJson $json) =>$json->etc());
     }
 
+    /**
+     * User can update a attribute test
+     *
+     * @return void
+     */
+    public function test_user_can_restore_deleted_attribute() : void
+    {
+        $user = User::first()?? User::factory()->create();
+        $this->actingAs($user);
+
+        Event::fake();
+        $trashed_attribute = $this->attributeTrashed();
+        $response = $this->patch(route('api.attributes.restore', $trashed_attribute));
+        $trashed_attribute->refresh();
+        $response->assertValid();
+        $response->assertOk();
+        $response->assertSessionHasNoErrors();
+        $this->assertNotSoftDeleted($trashed_attribute);
+        $this->assertDatabaseHas($trashed_attribute::class, $trashed_attribute->only($trashed_attribute->getFillable()));
+        Event::assertDispatched(\App\Events\Attribute\AttributeRestored::class);
+        $response->assertJson(fn (AssertableJson $json) =>$json->etc());
+    }
+
+    /**
+     * User can update a attribute test
+     *
+     * @return void
+     */
+    public function test_user_can_force_delete_attribute() : void
+    {
+        $user = User::first()?? User::factory()->create();
+        $this->actingAs($user);
+
+        Event::fake();
+        $response = $this->delete(route('api.attributes.forceDestroy', $this->attribute));
+        $response->assertValid();
+        $response->assertOk();
+        $response->assertSessionHasNoErrors();
+        $this->assertDatabaseMissing($this->attribute::class, $this->attribute->only($this->attribute->getFillable()));
+        $this->assertModelMissing($this->attribute);
+        Event::assertDispatched(\App\Events\Attribute\AttributeDeleted::class);
+        $response->assertJson(fn (AssertableJson $json) =>$json->etc());
+    }
+
 
     /**
      * Setup attribute test environment.
