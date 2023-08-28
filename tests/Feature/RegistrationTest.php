@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Providers\RouteServiceProvider;
+Use App\Traits\Testing\FastRefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Fortify\Features;
 use Laravel\Jetstream\Jetstream;
@@ -10,7 +11,7 @@ use Tests\TestCase;
 
 class RegistrationTest extends TestCase
 {
-    use RefreshDatabase;
+    use FastRefreshDatabase;
 
     public function test_registration_screen_can_be_rendered(): void
     {

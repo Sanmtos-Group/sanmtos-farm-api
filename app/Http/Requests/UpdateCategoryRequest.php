@@ -12,7 +12,7 @@ class UpdateCategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,7 +25,6 @@ class UpdateCategoryRequest extends FormRequest
         return [
             'name' => 'required|string|max:191|'.Rule::unique('categories')->ignore($this->id),
             'description' => 'nullable|string|max:1000',
-            'slug' => 'required|string|max:191|'.Rule::unique('categories')->ignore($this->id),
             'parent_category_id'=> 'nullable|numeric|exists:categories,id',
         ];
     }

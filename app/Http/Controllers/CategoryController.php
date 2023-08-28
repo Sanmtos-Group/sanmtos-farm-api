@@ -81,7 +81,16 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, Category $category)
     {
-        $category->update($request->validated());
+        $request->validated();
+
+        $insert = [
+            "name" => $request->name,
+            "description" => $request->description,
+            'slug' => SlugService::createSlug(Category::class, 'slug', $request->name),
+            "parent_category_id" => $request->parent_category_id
+
+        ];
+        $category->update($insert);
         $category_resource = new CategoryResource($category);
         $category_resource->with['message'] = 'Category Updated Successfully...';
 

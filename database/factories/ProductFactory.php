@@ -20,7 +20,7 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' =>  fake()->word(), 
+            'name' =>  fake()->word().fake()->bothify('???'), // ensure word is more than 3 by attached random 3 letters
             'description' => fake()->realText(),
             'short_description' => fake()->sentence(),
             'price' => fake()->numberBetween(100),

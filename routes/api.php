@@ -1,5 +1,6 @@
 <?php
 
+use App\Actions\Fortify\CreateNewUser;
 use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
@@ -40,7 +41,8 @@ Route::middleware('auth:sanctum')->group(function () {
         });
     });
 
-    Route::apiResource('category', CategoryController::class );
+//    Route::apiResource('categories', CategoryController::class );
+    Route::apiResource('stores', StoreController::class)->only(['store', 'update', 'destroy']);
 
 });
 
@@ -49,8 +51,9 @@ Route::middleware('auth:sanctum')->group(function () {
  *  These are public routes that does not require authentication
  *  or authorization. This includes most GET
  */
-
+Route::post('/register', [CreateNewUser::class, 'create'])->name('register');
 Route::apiResource('attributes', AttributeController::class);
+Route::apiResource('categories', CategoryController::class );
 
 Route::apiResource('products', ProductController::class)->only(['index', 'show']);
 Route::apiResource('stores', StoreController::class)->only(['index', 'show']);

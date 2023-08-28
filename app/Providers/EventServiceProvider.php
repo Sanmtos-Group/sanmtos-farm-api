@@ -19,7 +19,7 @@ class EventServiceProvider extends ServiceProvider
             SendEmailVerificationNotification::class,
         ],
 
-         /**
+        /**
          *  Store Events and listeners;
          */
         \App\Events\Store\StoreCreated::class => [
@@ -28,6 +28,41 @@ class EventServiceProvider extends ServiceProvider
 
         \App\Events\Store\StoreUpdated::class => [
             \App\Listeners\Store\StoreUpdatedListener::class,
+        ],
+
+        \App\Events\Store\StoreTrashed::class => [
+            \App\Listeners\Store\StoreTrashedListener::class,
+        ],
+
+        /**
+         *  Attribute Events and listeners;
+         */
+        \App\Events\Attribute\AttributeCreated::class => [
+            \App\Listeners\Attribute\AttributeCreatedListener::class,
+        ],
+
+        \App\Events\Attribute\AttributeUpdated::class => [
+            \App\Listeners\Attribute\AttributeUpdatedListener::class,
+        ],
+
+        \App\Events\Attribute\AttributeTrashed::class => [
+            \App\Listeners\Attribute\AttributeTrashedListener::class,
+        ],
+
+
+        /**
+         *  Product Events and listeners;
+         */
+        \App\Events\Product\ProductCreated::class => [
+            \App\Listeners\Product\ProductCreatedListener::class,
+        ],
+
+        \App\Events\Product\ProductUpdated::class => [
+            \App\Listeners\Product\ProductUpdatedListener::class,
+        ],
+
+        \App\Events\Product\ProductTrashed::class => [
+            \App\Listeners\Product\ProductTrashedListener::class,
         ],
     ];
 

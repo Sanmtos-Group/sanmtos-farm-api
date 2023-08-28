@@ -3,12 +3,15 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+Use App\Traits\Testing\FastRefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Jetstream\Http\Livewire\TeamMemberManager;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class UpdateTeamMemberRoleTest extends TestCase
 {
-    use RefreshDatabase;
+    use FastRefreshDatabase;
 
     public function test_team_member_roles_can_be_updated(): void
     {
@@ -18,9 +21,10 @@ class UpdateTeamMemberRoleTest extends TestCase
             $otherUser = User::factory()->create(), ['role' => 'admin']
         );
 
-        $response = $this->put('/teams/'.$user->currentTeam->id.'/members/'.$otherUser->id, [
-            'role' => 'editor',
-        ]);
+        $component = Livewire::test(TeamMemberManager::class, ['team' => $user->currentTeam])
+            ->set('managingRoleFor', $otherUser)
+            ->set('currentRole', 'editor')
+            ->call('updateRole');
 
         $this->assertTrue($otherUser->fresh()->hasTeamRole(
             $user->currentTeam->fresh(), 'editor'
@@ -37,9 +41,11 @@ class UpdateTeamMemberRoleTest extends TestCase
 
         $this->actingAs($otherUser);
 
-        $response = $this->put('/teams/'.$user->currentTeam->id.'/members/'.$otherUser->id, [
-            'role' => 'editor',
-        ]);
+        $component = Livewire::test(TeamMemberManager::class, ['team' => $user->currentTeam])
+            ->set('managingRoleFor', $otherUser)
+            ->set('currentRole', 'editor')
+            ->call('updateRole')
+            ->assertStatus(403);
 
         $this->assertTrue($otherUser->fresh()->hasTeamRole(
             $user->currentTeam->fresh(), 'admin'

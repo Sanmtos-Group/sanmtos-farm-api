@@ -28,7 +28,7 @@ class DeleteStoreTest extends TestCase
     {
         $user = $this->store->user;
         $this->actingAs($user);
-
+        Event::fake();
         $response = $this->delete(route('api.stores.destroy', $this->store));
         $this->store->refresh();
         $response->assertValid();
@@ -36,6 +36,7 @@ class DeleteStoreTest extends TestCase
         $response->assertSessionHasNoErrors();
         $this->assertSoftDeleted($this->store);
         $this->assertDatabaseHas($this->store::class, $this->store->only($this->store->getFillable()));
+        Event::assertDispatched(\App\Events\Store\StoreTrashed::class);
         $response->assertJson(fn (AssertableJson $json) =>$json->etc());
     }
 

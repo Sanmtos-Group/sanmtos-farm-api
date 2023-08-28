@@ -4,12 +4,15 @@ namespace Tests\Feature;
 
 use App\Models\Team;
 use App\Models\User;
+Use App\Traits\Testing\FastRefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Jetstream\Http\Livewire\DeleteTeamForm;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class DeleteTeamTest extends TestCase
 {
-    use RefreshDatabase;
+    use FastRefreshDatabase;
 
     public function test_teams_can_be_deleted(): void
     {
@@ -23,7 +26,8 @@ class DeleteTeamTest extends TestCase
             $otherUser = User::factory()->create(), ['role' => 'test-role']
         );
 
-        $response = $this->delete('/teams/'.$team->id);
+        $component = Livewire::test(DeleteTeamForm::class, ['team' => $team->fresh()])
+            ->call('deleteTeam');
 
         $this->assertNull($team->fresh());
         $this->assertCount(0, $otherUser->fresh()->teams);
@@ -33,7 +37,9 @@ class DeleteTeamTest extends TestCase
     {
         $this->actingAs($user = User::factory()->withPersonalTeam()->create());
 
-        $response = $this->delete('/teams/'.$user->currentTeam->id);
+        $component = Livewire::test(DeleteTeamForm::class, ['team' => $user->currentTeam])
+            ->call('deleteTeam')
+            ->assertHasErrors(['team']);
 
         $this->assertNotNull($user->currentTeam->fresh());
     }

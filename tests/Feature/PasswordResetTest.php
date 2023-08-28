@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+Use App\Traits\Testing\FastRefreshDatabase;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
@@ -11,7 +12,7 @@ use Tests\TestCase;
 
 class PasswordResetTest extends TestCase
 {
-    use RefreshDatabase;
+    use FastRefreshDatabase;
 
     public function test_reset_password_link_screen_can_be_rendered(): void
     {

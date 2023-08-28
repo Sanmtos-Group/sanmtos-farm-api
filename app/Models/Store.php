@@ -22,6 +22,7 @@ class Store extends Model
     protected $dispatchesEvents = [
         'created' => \App\Events\Store\StoreCreated::class,
         'updated' => \App\Events\Store\StoreUpdated::class,
+        'trashed' => \App\Events\Store\StoreTrashed::class,
     ];
 
 

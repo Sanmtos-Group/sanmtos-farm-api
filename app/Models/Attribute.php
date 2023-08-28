@@ -11,6 +11,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Attribute extends Model
 {
     use HasFactory, SoftDeletes;
+
+    /**
+     * The event map for the model.
+     *
+     * @var array
+     */
+    protected $dispatchesEvents = [
+        'created' => \App\Events\Attribute\AttributeCreated::class,
+        'updated' => \App\Events\Attribute\AttributeUpdated::class,
+        'trashed' => \App\Events\Attribute\AttributeTrashed::class,
+    ];
     
     /**
      * The attributes that are mass assignable.

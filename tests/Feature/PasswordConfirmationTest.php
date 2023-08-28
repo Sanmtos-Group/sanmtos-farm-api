@@ -3,12 +3,13 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+Use App\Traits\Testing\FastRefreshDatabase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class PasswordConfirmationTest extends TestCase
 {
-    use RefreshDatabase;
+    use FastRefreshDatabase;
 
     public function test_confirm_password_screen_can_be_rendered(): void
     {
