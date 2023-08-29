@@ -27,8 +27,8 @@ class StoreProductRequest extends FormRequest
             'short_description' => 'nullable|string|max:191',
             'price' => 'required|numeric|min:0.01',
             'discount' => 'integer|min:0|max:100',
-            'category_id' => 'required|integer|exists:categories,id',
-            'store_id' => 'required|integer|exists:stores,id',
+            'category_id' => 'required|uuid|exists:categories,id',
+            'store_id' => 'required|uuid|exists:stores,id',
             // 'verifier_at' => 'nullable|date',
             // 'verifier_id' => 'nullable|integer|exists:users,id',
         ];

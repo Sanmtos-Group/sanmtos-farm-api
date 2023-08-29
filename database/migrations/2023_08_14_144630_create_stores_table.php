@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('stores', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('name')->unique();
             $table->text('description')->nullable();
-            $table->foreignIdFor(User::class)->cascadeOnUpdate()->cascadeOnDelete();            
+            $table->foreignUuid('user_id')->contrained('users')->cascadeOnUpdate()->cascadeOnDelete();              
             $table->timestamp('verified_at', $precision = 0)->nullable();
-            $table->foreignId('verifier_id')->nullable()->constrained('users', 'id')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignUuid('verifier_id')->nullable()->contrained('users')->cascadeOnUpdate()->nullOnDelete();             
             $table->timestamps();
             $table->softDeletes();
         });

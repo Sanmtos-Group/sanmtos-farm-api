@@ -24,7 +24,7 @@ class StoreCategoryRequest extends FormRequest
         return [
             'name' => 'required|string|max:225|unique:categories,name',
             'description' => 'nullable|string|max:1000',
-            'parent_category_id'=> 'nullable|numeric|exists:categories,id',
+            'parent_category_id'=> 'nullable|uuid|exists:categories,id',
         ];
     }
 }

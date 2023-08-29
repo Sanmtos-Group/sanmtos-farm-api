@@ -23,7 +23,7 @@ class UpdateImageRequest extends FormRequest
     {
         return [
             'url' =>'string|max:191', 
-            'imageable_id' => 'integer',
+            'imageable_id' => 'uuid',
             'imageable_type' => 'string|max:191'
         ];
     }

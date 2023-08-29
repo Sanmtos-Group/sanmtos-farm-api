@@ -13,13 +13,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('addresses', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('address');
             $table->string('zip_code')->nullable();
-            $table->foreignIdFor(Country::class)->cascadeOnUpdate()->cascadeOnDelete();            
+            $table->foreignUuid('country_id')->contrained('countries')->cascadeOnUpdate()->cascadeOnDelete(); 
             $table->string('state')->nullable();
             $table->string('lga')->nullable();
-            $table->integer('addressable_id');
+            $table->uuid('addressable_id');
             $table->string('addressable_type');
             $table->boolean('is_preferred')->default(false);
             $table->timestamps();

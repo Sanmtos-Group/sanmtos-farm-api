@@ -24,7 +24,7 @@ class StoreStoreRequest extends FormRequest
         return [
             'name' => 'required|string|max:191|unique:stores,name',
             'description' => 'nullable|string|max:1000',
-            'user_id' => 'required|integer|unique:stores,user_id|exists:users,id'
+            'user_id' => 'required|uuid|unique:stores,user_id|exists:users,id'
         ];
     }
 }
