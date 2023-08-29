@@ -2,6 +2,7 @@
 
 use App\Actions\Fortify\CreateNewUser;
 use App\Http\Controllers\AttributeController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ProductController;
@@ -73,6 +74,7 @@ Route::middleware('auth:sanctum')->group(function () {
  */
 
 Route::post('register', [CreateNewUser::class, 'create'])->name('register');
+Route::post('password-less', [AuthController::class, 'create'])->name('password-less');
 
 Route::apiResource('attributes', AttributeController::class)->only(['index', 'show']);
 Route::apiResource('images', ImageController::class)->only(['index', 'show']);
