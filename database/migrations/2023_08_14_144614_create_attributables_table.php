@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('attributables', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('name');
             $table->string('value');
-            $table->integer('attributable_id');
+            $table->foreignUuid('attributable_id');
             $table->string('attributable_type');
             $table->timestamps();
         });

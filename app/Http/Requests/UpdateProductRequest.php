@@ -27,7 +27,7 @@ class UpdateProductRequest extends FormRequest
             'short_description' => 'nullable|string|max:191',
             'price' => 'numeric|min:0.01',
             'discount' => 'integer|min:0|max:100',
-            'category_id' => 'integer|exists:categories,id',
+            'category_id' => 'uuid|exists:categories,id',
             // 'verifier_at' => 'nullable|date',
             // 'verifier_id' => 'nullable|integer|exists:users,id',
         ];

@@ -23,7 +23,7 @@ class StoreImageRequest extends FormRequest
     {
         return [
             'url' =>'required|string|max:191', 
-            'imageable_id' => 'required|integer',
+            'imageable_id' => 'required|uuid',
             'imageable_type' => 'required|string|max:191'
         ];
     }
