@@ -1,6 +1,7 @@
 <?php
 
 use App\Actions\Fortify\CreateNewUser;
+use App\Http\Controllers\Authentication\RegisterNewUserController;
 use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
@@ -53,7 +54,7 @@ Route::middleware('auth:sanctum')->group(function () {
         });
     });
 
-//    Route::apiResource('categories', CategoryController::class );
+    Route::apiResource('categories', CategoryController::class );
 
     Route::apiResource('images', ImageController::class)->only(['store', 'update', 'destroy']);
     Route::prefix('images')->group(function () {
@@ -74,11 +75,10 @@ Route::middleware('auth:sanctum')->group(function () {
  *  or authorization. This includes most GET
  */
 
-Route::post('register', [CreateNewUser::class, 'create'])->name('register');
-Route::apiResource('password-less', VerificationCodeController::class);
+Route::post('password-less', [RegisterNewUserController::class, 'registerWithOnlyEmail'])->name('password-less');
+Route::post('register', [RegisterNewUserController::class, 'register'])->name('register');
+
 Route::apiResource('attributes', AttributeController::class)->only(['index', 'show']);
 Route::apiResource('images', ImageController::class)->only(['index', 'show']);
 Route::apiResource('products', ProductController::class)->only(['index', 'show']);
 Route::apiResource('stores', StoreController::class)->only(['index', 'show']);
-
-Route::apiResource('categories', CategoryController::class );

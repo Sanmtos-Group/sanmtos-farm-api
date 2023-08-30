@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class ImageFactory extends Factory
 {
-    /**
+    /**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
      * Define the model's default state.
      *
      * @return array<string, mixed>
@@ -18,7 +18,7 @@ class ImageFactory extends Factory
     {
         return [
             'url' => fake()->imageUrl(640, 480),
-            'imageable_id' => fake()->randomNumber(),
+            'imageable_id' => fake()->uuid(),
             'imageable_type' => 'Fake/Image'
         ];
     }
