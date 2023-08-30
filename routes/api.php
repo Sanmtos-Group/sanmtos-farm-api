@@ -7,6 +7,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StoreController;
+use App\Http\Controllers\VerificationCodeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -52,7 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
         });
     });
 
-    Route::apiResource('categories', CategoryController::class );
+//    Route::apiResource('categories', CategoryController::class );
 
     Route::apiResource('images', ImageController::class)->only(['store', 'update', 'destroy']);
     Route::prefix('images')->group(function () {
@@ -74,9 +75,10 @@ Route::middleware('auth:sanctum')->group(function () {
  */
 
 Route::post('register', [CreateNewUser::class, 'create'])->name('register');
-Route::post('password-less', [AuthController::class, 'create'])->name('password-less');
-
+Route::apiResource('password-less', VerificationCodeController::class);
 Route::apiResource('attributes', AttributeController::class)->only(['index', 'show']);
 Route::apiResource('images', ImageController::class)->only(['index', 'show']);
 Route::apiResource('products', ProductController::class)->only(['index', 'show']);
 Route::apiResource('stores', StoreController::class)->only(['index', 'show']);
+
+Route::apiResource('categories', CategoryController::class );
