@@ -77,6 +77,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::post('password-less', [RegisterNewUserController::class, 'registerWithOnlyEmail'])->name('password-less');
 Route::post('register', [RegisterNewUserController::class, 'register'])->name('register');
+Route::post('otp', [RegisterNewUserController::class, 'loginWithOtp'])->name('otp');
 
 Route::apiResource('attributes', AttributeController::class)->only(['index', 'show']);
 Route::apiResource('images', ImageController::class)->only(['index', 'show']);

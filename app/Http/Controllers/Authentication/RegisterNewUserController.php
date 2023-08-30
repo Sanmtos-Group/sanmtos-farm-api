@@ -38,23 +38,39 @@ class RegisterNewUserController extends Controller
     }
 
     public function registerWithOnlyEmail(Request $request){
-        # validate data
-        $validate = $request->validate([
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-        ]);
 
-        # Store email in database
-        $auth = User::create($validate);
+        #If user exist
+        $user   = User::where('email', $request->email)->first();
 
-        # Generate An OTP
-        $verificationCode = $this->generateOtp($auth->email);
+        if ($user){
+            # Generate An OTP
+            $verificationCode = $this->generateOtp($user->email);
 
-        $message = "Your OTP To Login is - ".$verificationCode->otp;
+            $message = "Your OTP To Login is - ".$verificationCode->otp;
 
-        # Return With OTP
-        $user_resource = new UserResource($auth);
-        $user_resource->with['message'] = $message;
-        return $user_resource;
+            # Return With OTP
+            $user_resource = new UserResource($user);
+            $user_resource->with['message'] = $message;
+            return $user_resource;
+        }else {
+            # validate data
+            $validate = $request->validate([
+                'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            ]);
+
+            # Store email in database
+            $auth = User::create($validate);
+
+            # Generate An OTP
+            $verificationCode = $this->generateOtp($auth->email);
+
+            $message = "Your OTP To Login is - " . $verificationCode->otp;
+
+            # Return With OTP
+            $user_resource = new UserResource($auth);
+            $user_resource->with['message'] = $message;
+            return $user_resource;
+        }
     }
 
     public function generateOtp($email)
@@ -76,6 +92,43 @@ class RegisterNewUserController extends Controller
             'otp' => rand(123456, 999999),
             'expire_at' => Carbon::now()->addMinutes(20)
         ]);
+    }
+
+    public function loginWithOtp(Request $request)
+    {
+        #Validation
+        $request->validate([
+            'otp' => 'required'
+        ]);
+
+        #Validation Logic
+        $verificationCode   = VerificationCode::where('otp', $request->otp)->first();
+
+        $now = Carbon::now();
+        if (!$verificationCode) {
+            return response()->json([
+                "message" => "Your OTP is not correct",
+            ], 401);
+        }elseif($verificationCode && $now->isAfter($verificationCode->expire_at)){
+            return response()->json([
+                "message" => "Your OTP has been expired",
+            ], 401);
+        }
+
+        $user = User::whereId($verificationCode->user_id)->first();
+
+        if($user){
+            // Expire The OTP
+            $verificationCode->delete();
+
+            Auth::login($user);
+
+            $user_resource = new UserResource($user);
+            $user_resource->with['message'] = "Login successful...";
+            return $user_resource;
+        }
+
+        return redirect()->back()->with('Fail', 'Your Otp is not correct');
     }
 
     /**
