@@ -1,6 +1,7 @@
 <?php
 
 use App\Actions\Fortify\CreateNewUser;
+use App\Http\Controllers\Authentication\RegisterNewUserController;
 use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ImageController;
@@ -72,7 +73,7 @@ Route::middleware('auth:sanctum')->group(function () {
  *  or authorization. This includes most GET
  */
 
-Route::post('register', [CreateNewUser::class, 'create'])->name('register');
+Route::post('register', [RegisterNewUserController::class, 'register'])->name('register');
 
 Route::apiResource('attributes', AttributeController::class)->only(['index', 'show']);
 Route::apiResource('images', ImageController::class)->only(['index', 'show']);
