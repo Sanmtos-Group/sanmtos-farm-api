@@ -1,6 +1,7 @@
 <?php
 
 use App\Actions\Fortify\CreateNewUser;
+use App\Http\Controllers\Authentication\LoginController;
 use App\Http\Controllers\Authentication\RegisterNewUserController;
 use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\AuthController;
@@ -75,9 +76,12 @@ Route::middleware('auth:sanctum')->group(function () {
  *  or authorization. This includes most GET
  */
 
-Route::post('password-less', [RegisterNewUserController::class, 'registerWithOnlyEmail'])->name('password-less');
-Route::post('register', [RegisterNewUserController::class, 'register'])->name('register');
-Route::post('otp', [RegisterNewUserController::class, 'loginWithOtp'])->name('otp');
+Route::controller(RegisterNewUserController::class)->group(function() {
+    Route::post('password-less',  'registerWithOnlyEmail')->name('password-less');
+    Route::post('register',  'register')->name('register');
+    Route::post('otp',  'loginWithOtp')->name('otp');
+});
+Route::post('login', [LoginController::class, 'login'])->name('login');
 
 Route::apiResource('attributes', AttributeController::class)->only(['index', 'show']);
 Route::apiResource('images', ImageController::class)->only(['index', 'show']);

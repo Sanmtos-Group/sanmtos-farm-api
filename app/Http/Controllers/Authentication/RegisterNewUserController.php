@@ -25,7 +25,7 @@ class RegisterNewUserController extends Controller
             "phone_number" => $validation['phone_number'],
             "password" => Hash::make($validation['password'])
         ]);
-        $this->createTeam($user);
+//        $this->createTeam($user->id);
 
         $user_resource = new UserResource($user);
         $user_resource->with['message'] = 'User registered successfully. Please proceed to login';
@@ -36,6 +36,10 @@ class RegisterNewUserController extends Controller
     public function registerWithOnlyPhoneNumber(Request $request){
 
     }
+
+    /**
+     * Passwordless Login
+     */
 
     public function registerWithOnlyEmail(Request $request){
 
@@ -78,7 +82,7 @@ class RegisterNewUserController extends Controller
         $user = User::where('email', $email)->first();
 
         # User Does not Have Any Existing OTP
-        $verificationCode = VerificationCode::where('user_id', $user->id)->latest()->first();
+        $verificationCode = VerificationCode::where('user_id', $user->uuid)->latest()->first();
 
         $now = Carbon::now();
 
@@ -128,7 +132,10 @@ class RegisterNewUserController extends Controller
             return $user_resource;
         }
 
-        return redirect()->back()->with('Fail', 'Your Otp is not correct');
+        return response()->json([
+            "message" => "Your Otp is not correct",
+        ], 401);
+
     }
 
     /**
@@ -137,7 +144,7 @@ class RegisterNewUserController extends Controller
     protected function createTeam(User $user): void
     {
         $user->ownedTeams()->save(Team::forceCreate([
-            'user_id' => $user->id,
+            'user_id' => $user->uuid,
             'name' => explode(' ', $user->name, 2)[0]."'s Team",
             'personal_team' => true,
         ]));

@@ -12,11 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('verification_codes', function (Blueprint $table) {
-            $table->id();
-            $table->string('user_id');
+            $table->uuid('id')->primary();
+            $table->foreignUuid('user_id')->references('id')->on('users');
             $table->string('otp');
             $table->timestamp('expire_at')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
