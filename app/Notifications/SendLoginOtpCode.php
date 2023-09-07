@@ -14,9 +14,11 @@ class SendLoginOtpCode extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    private $otp;
+
+    public function __construct($otp)
     {
-        //
+        $this->otp = $otp;
     }
 
     /**
@@ -35,9 +37,11 @@ class SendLoginOtpCode extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
+            ->subject('OTP')
             ->greeting('Hello!')
-            ->line('SANMTOS FARM OTP.')
-            ->action('Please use the OTP code: 479879 to complete your transaction.', url('/'))
+            ->line('SANMTOS FARM OTP Code.')
+            ->line("Please use the OTP code: {$this->otp} to complete your transaction.")
+            ->action('', url('/'))
             ->line('Thank you for using our application!');
     }
 

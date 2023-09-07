@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\AddressResource;
 use App\Models\Address;
 use App\Http\Requests\StoreAddressRequest;
 use App\Http\Requests\UpdateAddressRequest;
@@ -13,7 +14,7 @@ class AddressController extends Controller
      */
     public function index()
     {
-        //
+
     }
 
     /**
@@ -29,7 +30,12 @@ class AddressController extends Controller
      */
     public function store(StoreAddressRequest $request)
     {
-        //
+        $address = Address::create($request->validated());
+
+        $addressResource = new AddressResource($address);
+        $addressResource->with['message'] = "Address saved successfully";
+
+        return $addressResource;
     }
 
     /**
@@ -37,7 +43,10 @@ class AddressController extends Controller
      */
     public function show(Address $address)
     {
-        //
+        $addressResource =  new AddressResource($address);
+        $addressResource->with['message']= 'Address retrieved successfully';
+
+        return $addressResource;
     }
 
     /**
