@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasAttributes;
+use App\Traits\HasImages;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,6 +15,7 @@ class Product extends Model
 {
     use HasAttributes;
     use HasFactory;
+    use HasImages;
     use HasUuids;
     use SoftDeletes;
 
@@ -44,6 +46,13 @@ class Product extends Model
     ];
 
     /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = ['images'];
+
+    /**
      * Get the store that owns the product.
      */
     public function store(): BelongsTo
@@ -66,4 +75,5 @@ class Product extends Model
     {
         return $this->belongsTo(User::class, 'verifier_id');
     }
+
 }
