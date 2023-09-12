@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('description')->nullable();
             $table->foreignUuid('shop_id')->nullable();
-            $table->foreignUuid('creator_id');
+            $table->foreignUuid('creator_id')->contrained('users')->cascadeOnUpdate()->cascadeOnDelete();            
             $table->timestamps();
         });
     }
