@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('permissions', function (Blueprint $table) {
+        Schema::create('permission_role', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
-            $table->boolean('is_assignable')->default(false);
+            $table->foreignUuid('role_id')->contrained('roles')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignUuid('permission_id')->contrained('permissions')->cascadeOnUpdate()->cascadeOnDelete();             
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('permissions');
+        Schema::dropIfExists('permission_role');
     }
 };
