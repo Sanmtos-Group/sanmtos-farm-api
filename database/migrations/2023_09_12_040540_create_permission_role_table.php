@@ -20,7 +20,7 @@ return new class extends Migration
 
             $table->foreignUuid('permission_id');
             $table->foreign('permission_id')->references('id')->on('permissions')->cascadeOnUpdate()->cascadeOnDelete();
-             
+
             $table->timestamps();
         });
     }

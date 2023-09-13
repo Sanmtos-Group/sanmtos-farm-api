@@ -14,13 +14,13 @@ return new class extends Migration
     {
         Schema::create('role_user', function (Blueprint $table) {
             $table->uuid('id')->primary()->default(DB::raw('UUID()'));
-            
-            $table->foreignUuid('user_id');  
+
+            $table->foreignUuid('user_id');
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnUpdate()->cascadeOnDelete();
 
-            $table->foreignUuid('role_id');  
+            $table->foreignUuid('role_id');
             $table->foreign('role_id')->references('id')->on('roles')->cascadeOnUpdate()->cascadeOnDelete();
-          
+
             $table->timestamps();
         });
     }
