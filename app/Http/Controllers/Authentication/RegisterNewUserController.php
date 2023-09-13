@@ -53,10 +53,11 @@ class RegisterNewUserController extends Controller
 
             $user->notify(new SendLoginOtpCode($verificationCode->otp));
 
-            # Return With OTP
-            $user_resource = new UserResource($user);
-            $user_resource->with['message'] = "Your OTP to login has been sent to your email, it will expire in the next 20 minutes ";
-            return $user_resource;
+            # Return With OTP Message
+            return response()->json([
+                "message" => "Your OTP to login has been sent to your email, it will expire in the next 20 minutes"
+            ], 201);
+
         }else {
             # validate data
             $validate = $request->validate([
@@ -71,10 +72,10 @@ class RegisterNewUserController extends Controller
 
             $user->notify(new SendLoginOtpCode($verificationCode->otp));
 
-            # Return With OTP
-            $user_resource = new UserResource($auth);
-            $user_resource->with['message'] = "Your OTP to login has been sent to your email, it will expire in the next 20 minutes ";
-            return $user_resource;
+            # Return With OTP Message
+            return response()->json([
+                "message" => "Your OTP to login has been sent to your email, it will expire in the next 20 minutes"
+            ], 201);
         }
     }
 
@@ -128,9 +129,13 @@ class RegisterNewUserController extends Controller
 
             Auth::login($user);
 
-            $user_resource = new UserResource($user);
-            $user_resource->with['message'] = "Login successful...";
-            return $user_resource;
+            $request->session()->regenerate();
+            return response()->json([
+                'access_token' => $user->createToken('api_token')->plainTextToken,
+                'token_type' => 'Bearer',
+                "message" => "You have successfully logged in!"
+            ], 200);
+
         }
 
         return response()->json([
