@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Store;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +19,10 @@ class RoleFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+           'name' => fake()->unique()->word().'-'.fake()->unique()->word(),
+           'description' => fake()->realText(),
+           'store_id' => fake()->boolean()? Store::inRandomOrder()->first()?? Store::factory()->create() : null,
+           'creator_id' => fake()->boolean()? User::inRandomOrder()->first()?? User::factory()->create() : null,
         ];
     }
 }

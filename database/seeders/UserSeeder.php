@@ -2,23 +2,23 @@
 
 namespace Database\Seeders;
 
-use App\Models\Role;
-use App\TestData\TestRole;
+use App\Models\User;
+use App\TestData\TestUser;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class RoleSeeder extends Seeder
+class UserSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        if(Role::all()->count() <= 0){
-            TestRole::populateDB();
+        if(User::all()->count() <= 0){
+            TestUser::populateDB();
         }
         else {
-            Role::factory()->count(5)->create();
+            User::factory()->count(10)->create();
         }
     }
 }

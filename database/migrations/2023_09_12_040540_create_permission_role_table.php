@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -12,9 +13,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('permission_role', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('role_id')->contrained('roles')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignUuid('permission_id')->contrained('permissions')->cascadeOnUpdate()->cascadeOnDelete();             
+            $table->uuid('id')->primary()->default(DB::raw('UUID()'));
+
+            $table->foreignUuid('role_id');
+            $table->foreign('role_id')->references('id')->on('roles')->cascadeOnUpdate()->cascadeOnDelete();
+
+            $table->foreignUuid('permission_id');
+            $table->foreign('permission_id')->references('id')->on('permissions')->cascadeOnUpdate()->cascadeOnDelete();
+             
             $table->timestamps();
         });
     }

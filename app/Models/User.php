@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -33,6 +35,7 @@ class User extends Authenticatable
         // 'name',
         'first_name',
         'last_name',
+        'gender',
         'dialing_code',
         'phone_number',
         'email',
@@ -68,6 +71,14 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+     /**
+     * Get the store that the users owns.
+     */
+    public function store(): HasOne
+    {
+        return $this->hasOne(Store::class);
+    }
 
     /**
      * The roles that belong to the user.
