@@ -27,8 +27,8 @@ class CreateAttributeTest extends TestCase
     public function test_user_can_create_attribute() : void
     {
         $user = User::factory()->create();
-        $this->actingAs($user);
-
+        $this->actingAs($user); 
+               
         Event::fake();
         $attribute = $this->makeAttribute();
         $response = $this->post(route('api.attributes.store'), $attribute->toArray());

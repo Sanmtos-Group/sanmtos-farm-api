@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-
+use Illuminate\Support\Str;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -85,7 +85,33 @@ class User extends Authenticatable
      */
     public function roles(): BelongsToMany
     {
-        return $this->belongsToMany(Role::class);
+        return $this->belongsToMany(Role::class)->using(RoleUser::class);
+    }
+
+    /**
+     * check if the user has a role.
+     * 
+     * @param \App\Models\Role||uuid||string $role
+     * @return bool
+     */
+    public function hasRole($role): bool
+    {
+        $role_type = gettype($role);
+
+        switch ($role_type) {
+            case 'string':
+                if(Str::isUuid($role))
+                    return !is_null($this->roles()->where('roles.id', $role)->first());
+                else 
+                    return !is_null($this->roles()->where('roles.id', $role)->orWhere('roles.name', $role)->first());
+                break;
+            case 'object':
+                return get_class($role) == 'App\Models\Role'? !is_null($this->roles()->where('roles.id', $role->id)->first()) :false;
+            default:
+                return false;
+                break;
+        }
+        return false;
     }
 
     /**
