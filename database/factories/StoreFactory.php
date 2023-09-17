@@ -18,7 +18,7 @@ class StoreFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->unique()->word(), 
+            'name' => fake()->unique()->words(fake()->numberBetween(2,5), true), 
             'description' => fake()->realText(),
             'user_id' => User::factory()->create(), 
         ];
