@@ -89,7 +89,7 @@ class User extends Authenticatable
     }
 
     /**
-     * check if the user has a role.
+     * check if the user has a given role.
      * 
      * @param \App\Models\Role||uuid||string $role
      * @return bool
@@ -114,6 +114,36 @@ class User extends Authenticatable
         }
         return false;
     }
+
+    /**
+     * check if the user has any given roles.
+     * 
+     * @param optional \App\Models\Role||uuid||string  $role1, $role2, $role3...
+     * @return bool
+     */
+    public function hasAnyRole(): bool
+    {
+        $args = func_get_args();  // Get all arguments as an array
+
+        foreach ($args as $index => $value) {
+
+            if(is_array($value)){
+                $flatten_values = flattenArray($value);
+                foreach ($flatten_values as $key => $flatten_value) {
+                    if($this->hasRole($flatten_value))
+                        return true;
+                }
+               continue;
+            }
+
+            if($this->hasRole($value))
+                return true;
+        }
+
+        return false;
+    }
+
+  
 
     /**
      * Get all of the deployments for the project.
