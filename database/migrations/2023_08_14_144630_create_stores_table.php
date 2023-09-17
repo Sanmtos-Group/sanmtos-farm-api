@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('stores', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name')->unique();
+            $table->string('slug')->unique();
             $table->text('description')->nullable();
             $table->foreignUuid('user_id')->contrained('users')->cascadeOnUpdate()->cascadeOnDelete();              
             $table->timestamp('verified_at', $precision = 0)->nullable();
