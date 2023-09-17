@@ -107,6 +107,7 @@ class User extends Authenticatable
                 break;
             case 'object':
                 return get_class($role) == 'App\Models\Role'? !is_null($this->roles()->where('roles.id', $role->id)->first()) :false;
+                break;
             default:
                 return false;
                 break;
