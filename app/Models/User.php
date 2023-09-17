@@ -143,13 +143,15 @@ class User extends Authenticatable
         return false;
     }
 
-  
-
     /**
-     * Get all of the deployments for the project.
+     * Get all of the permissions for the user through roles.
      */
-    public function permissions(): HasManyThrough
+    public function permissions()
     {
-        return $this->throughRoles()->hasPermissions();
+        $user = User::with('roles.permissions')->find($this->id);
+        $permissions = $user->roles->flatMap(function ($role) {
+            return $role->permissions;
+        });
+        return $permissions;
     }
 }

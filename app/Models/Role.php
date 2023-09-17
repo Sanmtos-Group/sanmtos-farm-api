@@ -25,7 +25,15 @@ class Role extends Model
     ];
 
     /**
-     * The permissions that belong to the user.
+     * The users with the role.
+     */
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
+    }
+
+    /**
+     * The permissions that belong to the role.
      */
     public function permissions(): BelongsToMany
     {
