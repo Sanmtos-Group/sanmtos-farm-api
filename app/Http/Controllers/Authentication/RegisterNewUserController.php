@@ -22,6 +22,7 @@ class RegisterNewUserController extends Controller
             "first_name" => $validation['first_name'],
             "last_name" => $validation['last_name'],
             "email" => $validation['email'],
+            "gender" => $validation['gender'] ?? null,
             "dialing_code" => $validation['dialing_code'],
             "phone_number" => $validation['phone_number'],
             "password" => Hash::make($validation['password'])

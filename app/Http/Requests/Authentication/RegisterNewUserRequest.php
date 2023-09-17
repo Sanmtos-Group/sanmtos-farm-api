@@ -27,8 +27,9 @@ class RegisterNewUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => '   ',
+            'first_name' => 'required|string|max:191',
             'last_name' => 'required|string|max:191',
+            'gender' => 'nullable|string|in:M,F',
             'dialing_code' => 'required|string|max:4',
             'phone_number' => 'required|string|max:191|'.Rule::unique('users')->ignore($this->phone_number),
             'email' => 'required|string|email|max:191|'.Rule::unique('users')->ignore($this->email),
