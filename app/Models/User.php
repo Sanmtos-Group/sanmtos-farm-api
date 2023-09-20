@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute as CastAttribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -71,6 +72,7 @@ class User extends Authenticatable
      */
     protected $appends = [
         'profile_photo_url',
+        // 'owns_a_store',
     ];
 
      /**
@@ -80,6 +82,17 @@ class User extends Authenticatable
     {
         return $this->hasOne(Store::class);
     }
+
+    /**
+     * Determine if a user owns a store
+     */
+    protected function ownsAstore(): CastAttribute
+    {
+        
+        return CastAttribute::make(
+            get: fn () => ucfirst(empty($this->store)),
+        );
+    } 
 
     /**
      * The roles that belong to the user.
@@ -166,7 +179,7 @@ class User extends Authenticatable
      */
     public function hasPermission($permission): bool
     {
-        $permission_type = gettype($role);
+        $permission_type = gettype($permission);
 
         switch ($permission_type) {
             case 'string':

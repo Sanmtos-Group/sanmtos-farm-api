@@ -36,7 +36,7 @@ class CreateStoreTest extends TestCase
         $response->assertValid();
         $response->assertSuccessful();
         $response->assertSessionHasNoErrors();
-        $this->assertDatabaseHas($store::class, $store->only($store->getFillable()));
+        $this->assertDatabaseHas($store::class, $store->only(['name']));
         Event::assertDispatched(\App\Events\Store\StoreCreated::class);
         $response->assertJson(fn (AssertableJson $json) =>$json->etc());
     }

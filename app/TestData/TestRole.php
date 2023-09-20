@@ -32,7 +32,7 @@ class TestRole {
      */
     public static function populateDB(){
         foreach (TestRole::data() as $key => $value) {
-            $role = Role::where('name', $value)->where('store_id', null)->first()?? Role::create([
+            $role = Role::firstORCreate([
                 'name' => $value,
                 'store_id' => null
             ]);
