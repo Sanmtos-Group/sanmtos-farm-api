@@ -110,7 +110,6 @@ class CreateRoleTest extends TestCase
         Event::fake();
         $role = $this->makeRole();
         $response = $this->post(route('api.roles.store'), $role->toArray());
-
         $response->assertValid();
         $response->assertSuccessful();
         $response->assertSessionHasNoErrors();
@@ -132,6 +131,7 @@ class CreateRoleTest extends TestCase
         Event::fake();
         $role = $this->makeRole();
         $response = $this->post(route('api.roles.store'), $role->toArray());
+        
         $response->assertForbidden();
         $this->assertDatabaseMissing($role::class, $role->only($role->getFillable()));
         Event::assertNotDispatched(\App\Events\Role\RoleCreated::class);

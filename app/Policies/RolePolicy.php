@@ -29,7 +29,7 @@ class RolePolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasAnyRole('super-admin', 'admin', 'store-admin'); ///|| $user->hasPermission('create role');
+        return $user->hasAnyRole('super-admin', 'admin', 'store-admin') || $user->hasPermission('create role');
     }
 
     /**

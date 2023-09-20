@@ -183,10 +183,10 @@ class User extends Authenticatable
 
         switch ($permission_type) {
             case 'string':
-                return $this->permissions->contains($permission);
+                return $this->permissions()->contains($permission);
                 break;
             case 'object':
-                return $this->permissions->contains($permission->id, $permission->name);
+                return $this->permissions()->contains($permission->id, $permission->name);
                 break;
             default:
                 return false;
