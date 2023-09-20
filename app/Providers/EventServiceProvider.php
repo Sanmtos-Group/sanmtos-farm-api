@@ -83,6 +83,21 @@ class EventServiceProvider extends ServiceProvider
         ],
 
         /**
+         *  Role Events and listeners;
+         */
+        \App\Events\Role\RoleCreated::class => [
+            \App\Listeners\Role\RoleCreatedListener::class,
+        ],
+
+        \App\Events\Role\RoleUpdated::class => [
+            \App\Listeners\Role\RoleUpdatedListener::class,
+        ],
+
+        \App\Events\Role\RoleDeleted::class => [
+            \App\Listeners\Role\RoleDeletedListener::class,
+        ],
+
+        /**
          *  Store Events and listeners;
          */
         \App\Events\Store\StoreCreated::class => [

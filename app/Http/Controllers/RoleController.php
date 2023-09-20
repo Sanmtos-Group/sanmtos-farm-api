@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Role;
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
+use App\Http\Resources\RoleResource;
+
 
 class RoleController extends Controller
 {
@@ -13,7 +15,9 @@ class RoleController extends Controller
      */
     public function index()
     {
-        //
+        $roles = Role::all();
+        $role_resource = new RoleResource($roles);
+        return $role_resource;
     }
 
     /**
@@ -29,7 +33,11 @@ class RoleController extends Controller
      */
     public function store(StoreRoleRequest $request)
     {
-        //
+        $role = Role::create($request->validated());
+        $role_resource = new RoleResource($role);
+        $role_resource->with['message'] = 'Role created successfully';
+
+        return $role_resource;
     }
 
     /**
@@ -37,7 +45,10 @@ class RoleController extends Controller
      */
     public function show(Role $role)
     {
-        //
+        $role_resource = new RoleResource($role);
+        $role_resource->with['message'] = 'Role retrieved successfully';
+
+        return  $role_resource;
     }
 
     /**
@@ -53,7 +64,11 @@ class RoleController extends Controller
      */
     public function update(UpdateRoleRequest $request, Role $role)
     {
-        //
+        $role->update($request->validated());
+        $role_resource = new RoleResource($role);
+        $role_resource->with['message'] = 'Role updated successfully';
+
+        return $role_resource;
     }
 
     /**
@@ -61,6 +76,10 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
-        //
+        $role->delete();
+        $role_resource = new RoleResource(null);
+        $role_resource->with['message'] = 'Role deleted successfully';
+        
+        return $role_resource;
     }
 }

@@ -13,6 +13,17 @@ class Role extends Model
     use HasUuids;
 
     
+    /**
+     * The event map for the model.
+     *
+     * @var array
+     */
+    protected $dispatchesEvents = [
+        'created' => \App\Events\Role\RoleCreated::class,
+        'updated' => \App\Events\Role\RoleUpdated::class,
+        'deleted' => \App\Events\Role\RoleDeleted::class,
+    ];
+    
      /**
      * The attributes that are mass assignable.
      *

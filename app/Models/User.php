@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -118,7 +119,7 @@ class User extends Authenticatable
     /**
      * check if the user has any given roles.
      * 
-     * @param optional \App\Models\Role||uuid||string  $role1, $role2, $role3...
+     * @param optional \App\Models\Role||uuid||string||array  $role1, $role2, $role3...
      * @return bool
      */
     public function hasAnyRole(): bool
@@ -145,13 +146,67 @@ class User extends Authenticatable
 
     /**
      * Get all of the permissions for the user through roles.
+     * 
+     * @return Illuminate\Support\Collection
      */
-    public function permissions()
+    public function permissions(): Collection
     {
         $user = User::with('roles.permissions')->find($this->id);
         $permissions = $user->roles->flatMap(function ($role) {
             return $role->permissions;
         });
         return $permissions;
+    }
+
+    /**
+     * check if the user has a permission through it roles.
+     * 
+     * @param optional \App\Models\Permission||uuid||string||array  $permission
+     * @return bool
+     */
+    public function hasPermission($permission): bool
+    {
+        $permission_type = gettype($role);
+
+        switch ($permission_type) {
+            case 'string':
+                return $this->permissions->contains($permission);
+                break;
+            case 'object':
+                return $this->permissions->contains($permission->id, $permission->name);
+                break;
+            default:
+                return false;
+                break;
+        }
+        return false;
+    }
+
+    /**
+     * check if the user has any given permission through it role.
+     * 
+     * @param optional \App\Models\Permission||uuid||string||array  $permission1, $permission2, $permission3...
+     * @return bool
+     */
+    public function hasAnyPermission(): bool
+    {
+        $args = func_get_args();  // Get all arguments as an array
+
+        foreach ($args as $index => $value) {
+
+            if(is_array($value)){
+                $flatten_values = flattenArray($value);
+                foreach ($flatten_values as $key => $flatten_value) {
+                    if($this->hasPermission($flatten_value))
+                        return true;
+                }
+               continue;
+            }
+
+            if($this->hasPermission($value))
+                return true;
+        }
+
+        return false;
     }
 }

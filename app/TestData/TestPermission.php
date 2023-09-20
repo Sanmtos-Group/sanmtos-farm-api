@@ -18,6 +18,12 @@ class TestPermission {
         'read product',
         'update product',
         'delete product',
+
+        'create role',
+        'read role',
+        'update role',
+        'delete role',
+
     ];
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\Slug;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreStoreRequest extends FormRequest
@@ -23,6 +24,7 @@ class StoreStoreRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:191|unique:stores,name',
+            'slug' => ['nullable', 'string','max:191', 'unique:stores,slug', new Slug],
             'description' => 'nullable|string|max:1000',
             'user_id' => 'required|uuid|unique:stores,user_id|exists:users,id'
         ];

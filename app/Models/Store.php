@@ -37,6 +37,7 @@ class Store extends Model
      */
     protected $fillable = [
         'name',
+        'slug',
         'description',
         'user_id',
     ];
@@ -46,16 +47,16 @@ class Store extends Model
      *
      * @var array
      */
-    protected $guarded = ['slug'];
+    // protected $guarded = ['slug'];
 
     /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
      */
-    protected $hidden = [
-        'slug',
-    ];
+    // protected $hidden = [
+    //     'slug',
+    // ];
 
     /**
      * Return the sluggable configuration array for this model.

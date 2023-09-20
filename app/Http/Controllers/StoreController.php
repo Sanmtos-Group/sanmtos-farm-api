@@ -6,6 +6,7 @@ use App\Http\Resources\StoreResource;
 use App\Models\Store;
 use App\Http\Requests\StoreStoreRequest;
 use App\Http\Requests\UpdateStoreRequest;
+use Cviebrock\EloquentSluggable\Services\SlugService;
 
 class StoreController extends Controller
 {
@@ -32,7 +33,9 @@ class StoreController extends Controller
      */
     public function store(StoreStoreRequest $request)
     {
-        $store = store::create($request->validated());
+        $validated = $request->validated();
+        $validated['slug'] = !empty($validated['slug']?? null)? $validated['slug'] : SlugService::createSlug(Store::class, 'slug', $validated['name']);
+        $store = Store::create($validated);
         $store_resource = new StoreResource($store);
         $store_resource->with['message'] = 'Store created successfully';
 
