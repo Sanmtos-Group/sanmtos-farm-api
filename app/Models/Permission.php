@@ -12,7 +12,7 @@ class Permission extends Model
     use HasFactory;
     use HasUuids;
 
-     /**
+    /**
      * The roles that has the permission.
      */
     public function roles(): BelongsToMany

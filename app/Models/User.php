@@ -88,11 +88,18 @@ class User extends Authenticatable
      */
     protected function ownsAstore(): CastAttribute
     {
-        
         return CastAttribute::make(
             get: fn () => ucfirst(empty($this->store)),
         );
     } 
+
+    /**
+     * The stores that the user works for.
+     */
+    public function storesWorkingFor(): BelongsToMany
+    {
+        return $this->belongsToMany(Store::class, StoreUser::class);
+    }
 
     /**
      * The roles that belong to the user.

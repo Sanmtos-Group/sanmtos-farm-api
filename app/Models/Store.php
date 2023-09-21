@@ -81,6 +81,14 @@ class Store extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * The staffs that works for the store.
+     */
+    public function staff(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, StoreUser::class);
+    }
+
      /**
      * Get the products for the store.
      */
