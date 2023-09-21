@@ -4,10 +4,14 @@ namespace App\Policies;
 
 use App\Models\Role;
 use App\Models\User;
+use App\Traits\Policy\AuthorizeAllActionToSuperAdmin;
 use Illuminate\Auth\Access\Response;
 
 class RolePolicy
 {
+
+    use AuthorizeAllActionToSuperAdmin;
+
     /**
      * Determine whether the user can view any models.
      */
@@ -21,7 +25,7 @@ class RolePolicy
      */
     public function view(User $user, Role $role): bool
     {
-        //
+        return $user->hasPermission('read role');
     }
 
     /**
@@ -29,7 +33,7 @@ class RolePolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasAnyRole('super-admin', 'admin', 'store-admin') || $user->hasPermission('create role');
+        return $user->hasPermission('create role');
     }
 
     /**
@@ -37,7 +41,18 @@ class RolePolicy
      */
     public function update(User $user, Role $role): bool
     {
-        //
+        // $user_can_update_role = $user->hasPermission('update role') && $role->name !== 'super-admin';
+
+        // if($user->owns_a_store){
+        //     $user_can_update_role = $user_can_update_role && $user->store->id == $role->store_id;
+        // }
+        // elseif(!is_null($role->store_id)){
+
+        //     $filtered = $user->permissions()->where('name', 'update role');
+
+        // }
+
+        // return $user_can_update_role;
     }
 
     /**
@@ -45,7 +60,7 @@ class RolePolicy
      */
     public function delete(User $user, Role $role): bool
     {
-        //
+        return $user->hasPermission('delete role');
     }
 
     /**
