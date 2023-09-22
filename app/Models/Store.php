@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -55,7 +56,7 @@ class Store extends Model
      * @var array<int, string>
      */
     protected $hidden = [
-        'slug',
+        // 'slug',
     ];
 
     /**
@@ -84,7 +85,7 @@ class Store extends Model
     /**
      * The staffs that works for the store.
      */
-    public function staff(): BelongsToMany
+    public function staffs(): BelongsToMany
     {
         return $this->belongsToMany(User::class, StoreUser::class);
     }
