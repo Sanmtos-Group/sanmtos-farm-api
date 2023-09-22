@@ -96,7 +96,7 @@ class User extends Authenticatable
     /**
      * The stores that the user works for.
      */
-    public function storesWorkingFor(): BelongsToMany
+    public function workingStores(): BelongsToMany
     {
         return $this->belongsToMany(Store::class, StoreUser::class);
     }
