@@ -10,6 +10,15 @@ use App\Http\Resources\RoleResource;
 
 class RoleController extends Controller
 {
+
+    /**
+     * Create the controller instance.
+     */
+    public function __construct()
+    {
+        $this->authorizeResource(Role::class, 'role');
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -73,9 +82,13 @@ class RoleController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     * 
+     * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function destroy(Role $role)
     {
+        //$this->authorize('delete', $role);
+
         $role->delete();
         $role_resource = new RoleResource(null);
         $role_resource->with['message'] = 'Role deleted successfully';

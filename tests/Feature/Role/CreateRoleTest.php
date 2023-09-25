@@ -2,10 +2,10 @@
 
 namespace Tests\Feature\Role;
 
-use App\Models\User;
-use App\Models\Role;
-Use App\Traits\Testing\WithRole;
+use App\Models\Permission;
 Use App\Traits\Testing\FastRefreshDatabase;
+Use App\Traits\Testing\WithRole;
+Use App\Traits\Testing\WithUser;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Event;
@@ -18,11 +18,7 @@ class CreateRoleTest extends TestCase
     use FastRefreshDatabase;
     use WithFaker;
     use WithRole;
-
-        // 'super-admin',
-        // 'admin',
-        // 'sanmtos-salesperson',
-        // 'store-admin',
+    use WithUser;
 
      /**
      * Super admin can create a role test
@@ -30,18 +26,14 @@ class CreateRoleTest extends TestCase
      * @return void
      */
     public function test_super_admin_can_create_role() : void
-    {
-        $user = User::factory()->create();
-        $super_admin_role = Role::firstORCreate([
+    {        
+        $super_admin_role = $this->role([
             'name' => 'super-admin',
             'store_id' => null
         ]);
 
-        if(!$user->hasRole($super_admin_role)){
-            $user->roles()->attach($super_admin_role->id);
-        }
-
-        $this->actingAs($user);
+        $this->user->roles()->syncWithoutDetaching($super_admin_role);
+        $this->actingAs($this->user);
 
         Event::fake();
         $role = $this->makeRole();
@@ -56,57 +48,24 @@ class CreateRoleTest extends TestCase
         $response->assertJson(fn (AssertableJson $json) =>$json->etc());
     }
 
-    /**
-     * Admin can create a role test
+     /**
+     * Authorized user role can create role test
      *
      * @return void
      */
-    public function test_admin_can_create_role() : void
+    public function test_authorized_user_role_can_create_role() : void
     {
-        $user = User::factory()->create();
-        $admin_role = Role::firstORCreate([
-            'name' => 'admin',
-            'store_id' => null
-        ]);
-
-        if(!$user->hasRole($admin_role)){
-            $user->roles()->attach($admin_role->id);
-        }
-
-        $this->actingAs($user);
-
-        Event::fake();
-        $role = $this->makeRole();
-        $response = $this->post(route('api.roles.store'), $role->toArray());
-
-        $response->assertValid();
-        $response->assertSuccessful();
-        $response->assertSessionHasNoErrors();
-        $response->assertCreated();
-        $this->assertDatabaseHas($role::class, $role->only($role->getFillable()));
-        Event::assertDispatched(\App\Events\Role\RoleCreated::class);
-        $response->assertJson(fn (AssertableJson $json) =>$json->etc());
-    }
-
-    /**
-     * Store admin can create a role test
-     *
-     * @return void
-     */
-    public function test_store_admin_can_create_role() : void
-    {
-        $user = User::factory()->create();
-        $store_admin_role = Role::firstORCreate([
+        $store_admin_role = $this->role([
             'name' => 'store-admin',
             'store_id' => null
         ]);
 
-        if(!$user->hasRole($store_admin_role)){
-            $user->roles()->attach($store_admin_role->id);
-        }
+        $create_role_perm = Permission::firstOrCreate(['name' => 'create role']);
+        $store_admin_role->permissions()->syncWithoutDetaching($create_role_perm);
 
-        $this->actingAs($user);
-
+        $this->user->roles()->syncWithoutDetaching($store_admin_role);
+        $this->actingAs($this->user);
+               
         Event::fake();
         $role = $this->makeRole();
         $response = $this->post(route('api.roles.store'), $role->toArray());
@@ -119,24 +78,29 @@ class CreateRoleTest extends TestCase
     }
 
     /**
-     * None authorized cannot create a role test
+     * Unauthroized user role cannot create role test
      *
      * @return void
      */
-    public function test_non_authorized_user_cannot_create_role() : void
+    public function test_unauthorized_user_role_cannot_create_role() : void
     {
-        $user = User::factory()->create();
-        $this->actingAs($user);
+        $any_role = $this->role([
+            'name' => 'any role',
+            'store_id' => null
+        ]);
+
+        $this->user->roles()->syncWithoutDetaching($any_role);
+
+        $this->actingAs($this->user);
 
         Event::fake();
         $role = $this->makeRole();
         $response = $this->post(route('api.roles.store'), $role->toArray());
-        
+
         $response->assertForbidden();
         $this->assertDatabaseMissing($role::class, $role->only($role->getFillable()));
         Event::assertNotDispatched(\App\Events\Role\RoleCreated::class);
     }
-
 
     /**
      * Setup role test environment.
@@ -148,5 +112,6 @@ class CreateRoleTest extends TestCase
     {
         parent::setUp();
         $this->setUpRole();
+        $this->setUpUser();
     }
 }

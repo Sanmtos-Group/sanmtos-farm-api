@@ -13,10 +13,20 @@ class Permission extends Model
     use HasUuids;
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'name',
+        'is_assignable',
+    ];
+
+    /**
      * The roles that has the permission.
      */
     public function roles(): BelongsToMany
     {
-        return $this->belongsToMany(Role::class, PermissionRole::class);
+        return $this->belongsToMany(Role::class)->using(PermissionRole::class);
     }
 }

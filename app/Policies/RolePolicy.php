@@ -41,7 +41,7 @@ class RolePolicy
      */
     public function update(User $user, Role $role): bool
     {
-        $user_can_update_role = $user->hasPermission('update role') && $role->name !== 'super-admin';
+       $user_can_update_role = $user->hasPermission('update role') && $role->name !== 'super-admin';
 
         // store owner can only edit store roles
         if($user->owns_a_store){
@@ -53,18 +53,10 @@ class RolePolicy
         }
         // store staff can only edit store roles
         else {
-            $user_can_update_role = $user_can_update_role && $user->workingStores->where('store_id', $role->store_id)->count();
+            $user_can_update_role = $user_can_update_role && $user->workStores()->where('store_id', $role->store_id)->count();
 
             if($user_can_update_role){
-                $roles = $user->roles()->where('store_id', $role->store_id)->get();
-                $staff_store_role_has_permission_to_update_role = false;
-                foreach ($roles as $key => $value) {
-                    if($value->permissions()->where('name', 'update role')->first()){
-                        $staff_store_role_has_permission_to_update_role = true;
-                        break;
-                    }
-                }
-                $user_can_update_role = $user_can_update_role && $staff_store_role_has_permission_to_update_role;
+                $user_can_update_role = $user_can_update_role && $this->permissionIsGrantedByTheStoreInActionThroughRole($user, $role, 'update role'); 
             }
 
         }
@@ -77,7 +69,27 @@ class RolePolicy
      */
     public function delete(User $user, Role $role): bool
     {
-        return $user->hasPermission('delete role');
+        $user_can_delete_role = $user->hasPermission('delete role') && $role->name !== 'super-admin';
+
+        // store owner can only delete store roles
+        if($user->owns_a_store){
+            $user_can_delete_role = $user_can_delete_role && $user->store->id == $role->store_id;
+        }
+        // sanmtos staff can only delete non store roles
+        elseif($user->is_staff){
+            $user_can_delete_role = $user_can_delete_role && is_null($role->store_id);
+        }
+        // store staff can only delete store roles
+        else {
+            $user_can_delete_role = $user_can_delete_role && $user->workStores()->where('store_id', $role->store_id)->count();
+
+            if($user_can_delete_role){
+                $user_can_delete_role = $user_can_delete_role && $this->permissionIsGrantedByTheStoreInActionThroughRole($user, $role, 'delete role'); 
+            }
+
+        }
+
+        return $user_can_delete_role;
     }
 
     /**
@@ -94,5 +106,27 @@ class RolePolicy
     public function forceDelete(User $user, Role $role): bool
     {
         //
+    }
+
+    /**
+     *  check if the current permission is granted by the store in action through the role 
+     *  This ensure non permission for a store is used to permform unathourized action on another store 
+     *  as a store has many staffs and those staffs can work for many stores
+     * 
+     * @param App\Models\User $user
+     * @param App\Models\Role $role
+     * @param string $permission
+     */
+
+    private function permissionIsGrantedByTheStoreInActionThroughRole($user,$role, $permission): bool 
+    {
+        $roles = $user->roles()->where('store_id', $role->store_id)->get();
+        // check if the permission to update role is from the store that owns the role to be updated
+        foreach ($roles as $key => $value) {
+            if(!is_null($value->permissions()->where('name', $permission)->first())){
+                return  true;
+            }
+        }
+        return false;
     }
 }

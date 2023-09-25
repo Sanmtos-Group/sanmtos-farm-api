@@ -23,7 +23,12 @@ class TestPermission {
         'read role',
         'update role',
         'delete role',
-
+        
+        'create permission',
+        'read permission',
+        'delete permission',
+        'grant permission',
+        'revoke permission',
     ];
 
     /**
@@ -42,7 +47,7 @@ class TestPermission {
      */
     public static function populateDB(){
         foreach (TestPermission::data() as $key => $value) {
-            $role = Permission::where('name', $value)->first()?? Permission::create([
+            $permission = Permission::firstOrCreate([
                 'name' => $value,
                 'is_assignable' => true
             ]);

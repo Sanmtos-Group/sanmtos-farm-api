@@ -89,14 +89,14 @@ class User extends Authenticatable
     protected function ownsAstore(): CastAttribute
     {
         return CastAttribute::make(
-            get: fn () => ucfirst(empty($this->store)),
+            get: fn () => !empty($this->store),
         );
     } 
 
     /**
      * The stores that the user works for.
      */
-    public function workingStores(): BelongsToMany
+    public function workStores(): BelongsToMany
     {
         return $this->belongsToMany(Store::class, StoreUser::class);
     }
@@ -173,7 +173,7 @@ class User extends Authenticatable
     {
         $user = User::with('roles.permissions')->find($this->id);
         $permissions = $user->roles->flatMap(function ($role) {
-            return $role->permissions;
+            return [$role->name => $role->permissions->toArray()];
         });
         return $permissions;
     }
@@ -190,11 +190,13 @@ class User extends Authenticatable
 
         switch ($permission_type) {
             case 'string':
-                return $this->permissions()->contains($permission);
+                return in_array($permission, $this->permissions()->dot()->all());
                 break;
+                
             case 'object':
-                return $this->permissions()->contains($permission->id, $permission->name);
+                return get_class($permission) == 'App\Models\Permission'? in_array($permission->id, $this->permissions()->dot()->all()) :false;
                 break;
+
             default:
                 return false;
                 break;
