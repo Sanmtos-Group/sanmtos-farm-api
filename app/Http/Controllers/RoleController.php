@@ -9,7 +9,6 @@ use App\Http\Requests\UpdateRoleRequest;
 use App\Http\Resources\PermissionResource;
 use App\Http\Resources\RoleResource;
 
-
 class RoleController extends Controller
 {
 

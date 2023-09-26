@@ -26,6 +26,7 @@ class TestPermission {
         
         'create permission',
         'read permission',
+        'update permission',
         'delete permission',
         'grant permission',
         'revoke permission',
