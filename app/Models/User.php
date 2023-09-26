@@ -86,7 +86,7 @@ class User extends Authenticatable
     /**
      * Determine if a user owns a store
      */
-    protected function ownsAstore(): CastAttribute
+    protected function ownsAStore(): CastAttribute
     {
         return CastAttribute::make(
             get: fn () => !empty($this->store),

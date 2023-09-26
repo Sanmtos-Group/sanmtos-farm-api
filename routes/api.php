@@ -57,6 +57,13 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::apiResource('roles', RoleController::class)->only(['store', 'update', 'destroy']);
+    Route::prefix('roles')->group(function () {
+        Route::name('roles.')->group(function () {
+            Route::get('{role}/permissions', [RoleController::class, 'permissions'])->name('permission.index');
+            Route::match(['put', 'patch'], '{role}/grant-permission/{permission}', [Roleontroller::class, 'grantPermission'])->name('grant_permission');
+            Route::delete('{role}/revoke-permission/{permission}', [RoleController::class, 'revokePermission'])->name('revoke_permission');
+        });
+    });
 
     Route::apiResource('categories', CategoryController::class );
 

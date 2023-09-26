@@ -38,7 +38,7 @@ class CreateRoleTest extends TestCase
         Event::fake();
         $role = $this->makeRole();
         $response = $this->post(route('api.roles.store'), $role->toArray());
-
+        
         $response->assertValid();
         $response->assertSuccessful();
         $response->assertSessionHasNoErrors();

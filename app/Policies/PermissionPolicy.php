@@ -63,4 +63,12 @@ class PermissionPolicy
     {
         //
     }
+
+    /**
+     * Determine whether the user can grant the model.
+     */
+    public function grant(User $user, Permission $permission): bool
+    {
+       return $user->hasPermission('grant permission') && $permission->is_assignable;
+    }
 }
