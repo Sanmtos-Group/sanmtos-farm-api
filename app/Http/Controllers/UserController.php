@@ -40,6 +40,12 @@ class UserController extends Controller
     {
         $users = User::has('workStores')->get();
 
+        $user_resource = new UserResource($users);
+
+        $user_resource->with['message'] = 'Stores staffs retrieved successfully';
+
+        return $user_resource;
+
     }
 
     /**
