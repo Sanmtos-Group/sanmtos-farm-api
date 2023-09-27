@@ -35,9 +35,9 @@ class StoreRelationshipTest extends TestCase
         Event::fake();
 
         $this->assertDatabaseHas($this->store::class, $this->store->toArray());
-        $this->assertEquals(1, $this->store->user()->count());
+        $this->assertEquals(1, $this->store->owner()->count());
 
-        $store_owner = $this->store->user;
+        $store_owner = $this->store->owner;
         $this->assertInstanceOf(\App\Models\User::class, $store_owner);
         $this->assertDatabaseHas($store_owner::class, $store_owner->only($store_owner->getFillable()));
         $this->assertEquals($this->store->id, $store_owner->store->id);

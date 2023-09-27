@@ -26,7 +26,7 @@ class UpdateStoreTest extends TestCase
      */
     public function test_user_can_update_store() : void
     {
-        $user = $this->store->user;
+        $user = $this->store->owner;
         $this->actingAs($user);
 
         $this->store->name = $this->faker()->unique()->name();

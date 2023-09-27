@@ -13,6 +13,7 @@ class TestPermission {
         'read store',
         'update store',
         'delete store',
+        'verify store',
 
         'create product',
         'read product',
@@ -23,6 +24,8 @@ class TestPermission {
         'read role',
         'update role',
         'delete role',
+        'assign role',
+        'remove role',
         
         'create permission',
         'read permission',

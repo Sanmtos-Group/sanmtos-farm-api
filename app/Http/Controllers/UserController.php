@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Role;
 use Illuminate\Http\Request;
+use App\Http\Resources\RoleResource;
 use App\Http\Resources\UserResource;
 
 class UserController extends Controller
@@ -86,5 +88,50 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         //
+    }
+
+    /**
+     * Display a listing of the resource roles.
+     */
+    public function roles(User $user)
+    {
+        $roles = $user->roles();
+        $roles_resouce = new RoleResource($roles);
+        $roles_resouce->with['message'] = "{$user->first_name}'s roles retrieved successfully";
+        return $roles_resouce;
+    }
+
+    /**
+     * Assign role to user.
+     */
+    public function assignRole(User $user, Role $role)
+    {
+        $this->authorize('assign', [$role, $user]);
+
+        $user->roles()->syncWithoutDetaching($role);
+
+
+        $role_resource = new RoleResource($user->roles);
+        $role_resource->with['message'] = "Assigned {$role->name} to {$user->first_name} successfully";
+
+        return $role_resource;
+    }
+
+    /**
+     * Remove use role.
+     * 
+     * @param App\Models\User $user
+     * @param App\Models\Role $role
+     */
+    public function removeRole(User $user, Role $role)
+    {
+        $this->authorize('remove', [$role, $user]);
+
+        $user->roles()->detach($role->id);
+
+        $role_resource = new RoleResource($user->roles);
+        $role_resource->with['message'] = "Remove {$role->name} from {$user->name} successfully";
+
+        return $role_resource;
     }
 }

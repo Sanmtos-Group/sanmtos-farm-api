@@ -75,11 +75,11 @@ class Store extends Model
 
 
     /**
-     * Get the user that owns the store.
+     * Get the owner that owns the store.
      */
-    public function user(): BelongsTo
+    public function owner(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**

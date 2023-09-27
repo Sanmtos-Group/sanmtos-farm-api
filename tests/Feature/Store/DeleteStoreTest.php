@@ -26,7 +26,7 @@ class DeleteStoreTest extends TestCase
      */
     public function test_user_can_delete_store() : void
     {
-        $user = $this->store->user;
+        $user = $this->store->owner;
         $this->actingAs($user);
         Event::fake();
         $response = $this->delete(route('api.stores.destroy', $this->store));

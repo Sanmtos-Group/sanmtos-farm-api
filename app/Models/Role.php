@@ -99,9 +99,7 @@ class Role extends Model
         if(is_null($permission))
             return false;
 
-        if(is_null($this->permissions()->where('permissions.id', $permission->id)->first())){
-            $this->permissions()->save($permission);
-        }
+        $this->permissions()->syncWithoutDetaching($permission);
 
         return true;
     }

@@ -125,6 +125,7 @@ class RoleController extends Controller
 
         $role->permissions()->syncWithoutDetaching($permission);
 
+
         $role_resource = new RoleResource($role);
         $role_resource->with['message'] = "Granted {$permission->name} permission to {$role->name} successfully";
 

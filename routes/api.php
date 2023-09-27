@@ -10,6 +10,7 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StoreController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\VerificationCodeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -59,9 +60,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('roles', RoleController::class)->only(['store', 'update', 'destroy']);
     Route::prefix('roles')->group(function () {
         Route::name('roles.')->group(function () {
-            Route::get('{role}/permissions', [RoleController::class, 'permissions'])->name('permission.index');
-            Route::match(['put', 'patch'], '{role}/grant-permission/{permission}', [Roleontroller::class, 'grantPermission'])->name('grant_permission');
-            Route::delete('{role}/revoke-permission/{permission}', [RoleController::class, 'revokePermission'])->name('revoke_permission');
+            Route::get('{role}/permissions', [RoleController::class, 'permissions'])->name('permissions.index');
+            Route::match(['put', 'patch'], '{role}/grant-permission/{permission}', [RoleController::class, 'grantPermission'])->name('permissions.grant');
+            Route::delete('{role}/revoke-permission/{permission}', [RoleController::class, 'revokePermission'])->name('permissions.revoke');
         });
     });
 
@@ -77,6 +78,15 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::apiResource('stores', StoreController::class)->only(['store', 'update', 'destroy']);
+
+    // Route::apiResource('users', UserController::class)->only(['store', 'update', 'destroy']);
+    Route::prefix('users')->group(function () {
+        Route::name('users.')->group(function () {
+            Route::get('{user}/roles', [UserController::class, 'roles'])->name('roles.index');
+            Route::match(['put', 'patch'], '{user}/assign-role/{role}', [UserController::class, 'assignRole'])->name('roles.assign');
+            Route::delete('{user}/remove-role/{role}', [UserController::class, 'removeRole'])->name('roles.remove');
+        });
+    });
 
 });
 
