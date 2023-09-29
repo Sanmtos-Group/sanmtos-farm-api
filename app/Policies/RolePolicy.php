@@ -23,9 +23,9 @@ class RolePolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Role $role): bool
+    public function view(User $user=null, Role $role): bool
     {
-        return $user->hasPermission('read role');
+        return true;
     }
 
     /**

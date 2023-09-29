@@ -25,7 +25,7 @@ class UpdateRoleRequest extends FormRequest
         return [
             'name' => 'required|string|max:191|',
             'description' => 'nullable|string|max:1000',
-            'store_id' => 'nullable|uuid|exists:stores,id'
+            // 'store_id' => 'nullable|uuid|exists:stores,id'
         ];
     }
 }
