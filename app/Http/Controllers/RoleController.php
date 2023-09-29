@@ -96,8 +96,6 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
-        //$this->authorize('delete', $role);
-
         $role->delete();
         $role_resource = new RoleResource(null);
         $role_resource->with['message'] = 'Role deleted successfully';
