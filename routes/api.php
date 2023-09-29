@@ -7,6 +7,7 @@ use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StoreController;
@@ -48,6 +49,14 @@ Route::middleware('auth:sanctum')->group(function () {
         });
 
     });
+
+    Route::prefix('permissions')->group(function () {
+        Route::name('permissions.')->group(function () {
+            Route::match(['put', 'patch'], 'sync', [PermissionController::class, 'sync'])->name('sync');
+        });
+    });
+    Route::apiResource('permissions', PermissionController::class)->only(['store', 'update', 'destroy']);
+
 
     Route::apiResource('products', ProductController::class)->only(['store', 'update', 'destroy']);
     Route::prefix('products')->group(function () {
@@ -105,6 +114,7 @@ Route::post('login', [LoginController::class, 'login'])->name('login');
 
 Route::apiResource('attributes', AttributeController::class)->only(['index', 'show']);
 Route::apiResource('images', ImageController::class)->only(['index', 'show']);
+Route::apiResource('permissions', PermissionController::class)->only(['index', 'show']);
 Route::apiResource('products', ProductController::class)->only(['index', 'show']);
 Route::apiResource('roles', RoleController::class)->only(['index', 'show']);
 Route::apiResource('stores', StoreController::class)->only(['index', 'show']);

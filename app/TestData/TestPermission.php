@@ -33,6 +33,8 @@ class TestPermission {
         'delete permission',
         'grant permission',
         'revoke permission',
+        'sync permission',
+
     ];
 
     /**
@@ -53,7 +55,6 @@ class TestPermission {
         foreach (TestPermission::data() as $key => $value) {
             $permission = Permission::firstOrCreate([
                 'name' => $value,
-                'is_assignable' => true
             ]);
         }
 

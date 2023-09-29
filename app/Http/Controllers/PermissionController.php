@@ -5,15 +5,27 @@ namespace App\Http\Controllers;
 use App\Models\Permission;
 use App\Http\Requests\StorePermissionRequest;
 use App\Http\Requests\UpdatePermissionRequest;
+use App\Http\Resources\PermissionResource;
+use App\TestData\TestPermission;
 
 class PermissionController extends Controller
 {
+    /**
+     * Create the controller instance.
+     */
+    public function __construct()
+    {
+        $this->authorizeResource(Permission::class, 'permission');
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $permissions = Permission::all();
+        $permission_resource = new PermissionResource($permissions);
+        return $permission_resource;
     }
 
     /**
@@ -62,5 +74,19 @@ class PermissionController extends Controller
     public function destroy(Permission $permission)
     {
         //
+    }
+
+
+    /**
+     * Sync all test data permission to add new in the storage.
+     */
+    public function sync()
+    {
+        TestPermission::populateDB();
+
+        $permissions = Permission::all();
+        $permission_resource = new PermissionResource($permissions);
+        $permission_resource->with['message'] = 'Permissions sync successfully';
+        return $permission_resource;
     }
 }
