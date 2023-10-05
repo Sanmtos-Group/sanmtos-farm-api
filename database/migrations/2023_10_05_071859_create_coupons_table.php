@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('coupons', function (Blueprint $table) {
             $table->uuid()->primary();
             $table->string('code');
-            $table->integer('discount');
+            $table->integer('discount')->default(0)->min(0)->max(100);
             $table->boolean('is_universal')->default(false);
             $table->timestamp('valid_until');
             $table->boolean('is_cancel')->default(false);
