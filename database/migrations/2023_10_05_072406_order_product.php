@@ -13,13 +13,14 @@ return new class extends Migration
     {
         Schema::create('order_product', function (Blueprint $table) {
             $table->uuid()->primary();
-            $table->foreignUuid('order_id')->constrained();
-            $table->foreignUuid('product_id')->constrained();
+            $table->foreignUuid('order_id')->contrained('orders')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignUuid('product_id')->contrained('products')->cascadeOnUpdate()->cascadeOnDelete();
             $table->integer('quantity');
             $table->integer('ordered_price');
             $table->integer('total_price');
-            $table->foreignUuid('promo_id')->constrained();
-            $table->foreignUuid('coupon_id')->constrained();
+            $table->foreignUuid('promo_id')->contrained('promos')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignUuid('coupon_id')->contrained('coupons')->cascadeOnUpdate()->cascadeOnDelete();
+
         });
     }
 

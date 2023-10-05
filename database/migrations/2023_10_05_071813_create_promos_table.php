@@ -19,7 +19,8 @@ return new class extends Migration
             $table->timestamp('start_time');
             $table->timestamp('end_time');
             $table->boolean('is_cancel')->default(false);
-            $table->foreignUuid('store_id')->constrained();
+            $table->foreignUuid('store_id')->contrained('stores')->cascadeOnUpdate()->cascadeOnDelete();
+
         });
     }
 

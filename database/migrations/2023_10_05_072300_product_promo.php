@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('product_promo', function (Blueprint $table) {
             $table->uuid()->primary();
-            $table->foreignUuid('promo_id')->constrained();
-            $table->foreignUuid('product_id')->constrained();
+            $table->foreignUuid('promo_id')->contrained('promos')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignUuid('product')->contrained('products')->cascadeOnUpdate()->cascadeOnDelete();
         });
     }
 

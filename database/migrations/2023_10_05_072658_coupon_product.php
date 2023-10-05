@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('coupon_product', function (Blueprint $table) {
             $table->uuid()->primary();
-            $table->foreignUuid('coupon_id')->constrained();
-            $table->foreignUuid('product_id')->constrained();
+            $table->foreignUuid('coupon_id')->contrained('coupons')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignUuid('product_id')->contrained('products')->cascadeOnUpdate()->cascadeOnDelete();
+
         });
     }
 

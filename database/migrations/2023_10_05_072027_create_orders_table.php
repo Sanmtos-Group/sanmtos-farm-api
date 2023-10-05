@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->uuid()->primary();
             $table->string('number');
-            $table->foreignUuid('user_id')->constrained();
+            $table->foreignUuid('user_id')->contrained('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->integer('price')->default(0);
-            $table->foreignUuid('address_id')->constrained();
+            $table->foreignUuid('address_id')->contrained('addresses')->cascadeOnUpdate()->cascadeOnDelete();
             $table->integer('delivery_fee')->default(0);
             $table->integer('total_price')->default(0);
             $table->string('status')->nullable();
