@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Store;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,13 @@ class PromoFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'name' => fake()->name(),
+            'discount' => fake()->numberBetween(1, 100),
+            'is_universal' => fake()->boolean(),
+            'start_time' => fake()->dateTimeBetween('now', '+1 week'),
+            'end_time' => fake()->dateTimeBetween('+1 day', '+1 month'),
+            'is_cancel' => fake()->boolean(),
+            'store_id' => Store::inRandomOrder()->first()?? Store::factory()->create(),
         ];
     }
 }

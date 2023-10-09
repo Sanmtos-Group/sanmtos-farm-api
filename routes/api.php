@@ -9,6 +9,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PromoController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\UserController;
@@ -66,6 +67,8 @@ Route::middleware('auth:sanctum')->group(function () {
         });
     });
 
+    Route::apiResource('promos', PromoController::class)->only(['store', 'update', 'destroy']);
+    
     Route::apiResource('roles', RoleController::class)->only(['store', 'update', 'destroy']);
     Route::prefix('roles')->group(function () {
         Route::name('roles.')->group(function () {
@@ -116,5 +119,6 @@ Route::apiResource('attributes', AttributeController::class)->only(['index', 'sh
 Route::apiResource('images', ImageController::class)->only(['index', 'show']);
 Route::apiResource('permissions', PermissionController::class)->only(['index', 'show']);
 Route::apiResource('products', ProductController::class)->only(['index', 'show']);
+Route::apiResource('promos', PromoController::class)->only(['index', 'show']);
 Route::apiResource('roles', RoleController::class)->only(['index', 'show']);
 Route::apiResource('stores', StoreController::class)->only(['index', 'show']);
