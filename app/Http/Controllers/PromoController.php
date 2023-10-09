@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Promo;
 use App\Http\Requests\StorePromoRequest;
 use App\Http\Requests\UpdatePromoRequest;
-
+use App\Http\Resources\PromoResource;
 class PromoController extends Controller
 {
     /**
@@ -13,7 +13,9 @@ class PromoController extends Controller
      */
     public function index()
     {
-        //
+        $promos = Promo::all();
+        $promo_resource = new PromoResource($promos);
+        return $promo_resource;
     }
 
     /**

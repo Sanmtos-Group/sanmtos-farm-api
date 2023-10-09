@@ -18,7 +18,7 @@ class PromoFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
+            'name' => fake()->words(fake()->numberBetween(1, 3), true),
             'discount' => fake()->numberBetween(1, 100),
             'is_universal' => fake()->boolean(),
             'start_time' => fake()->dateTimeBetween('now', '+1 week'),
