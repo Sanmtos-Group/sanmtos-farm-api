@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Image;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Storage;
 class ProductController extends Controller
 {
     /**
@@ -37,8 +38,38 @@ class ProductController extends Controller
      * @return App\Http\Resources\ProductResource $product_resource
      */
     public function store(StoreProductRequest $request)
-    {
-        $product = Product::create($request->validated());
+    {  
+        $validated = $request->validated();
+        
+        if(auth()->check()){
+            $user =  auth()->user();
+            $validated['store_id'] = $user->ownsAStore ? $user->store->id : $validated['store_id'];
+        }
+
+        $product = Product::create([
+            'name' => $validated['name'],
+            'description' => $validated['description'] ?? null,
+            'short_description' => $validated['short_description'] ?? null,
+            'price' => $validated['price'],
+            'category_id' => $validated['category_id'],
+            'store_id' => $validated['store_id'],
+        ]);
+
+        // save product images 
+        if($request->hasFile('images'))
+
+            foreach ($request->file('images') as $image) {
+                $path = Storage::disk('public')->putFile('images', $image);
+                $image = new Image();
+                $image->url =  env('APP_URL').Storage::url($path);
+                $image->imageable_id = $product->id;
+                $image->imageable_type = $product::class;
+                $image->save();             
+            }
+
+        // attach the product images
+        $product->images;
+        
         $product_resource = new ProductResource($product);
         $product_resource->with['message'] = 'Product created successfully';
 
