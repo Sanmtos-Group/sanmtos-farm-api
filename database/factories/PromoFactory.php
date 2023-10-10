@@ -19,6 +19,7 @@ class PromoFactory extends Factory
     {
         return [
             'name' => fake()->words(fake()->numberBetween(1, 3), true),
+            'description' => fake()->sentence(),
             'discount' => fake()->numberBetween(1, 100),
             'is_universal' => fake()->boolean(),
             'start_time' => fake()->dateTimeBetween('now', '+1 week'),

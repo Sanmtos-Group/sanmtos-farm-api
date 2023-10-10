@@ -5,9 +5,12 @@ namespace App\Policies;
 use App\Models\Promo;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
+use App\Traits\Policy\AuthorizeAllActionToSuperAdmin;
 
 class PromoPolicy
 {
+    use AuthorizeAllActionToSuperAdmin;
+
     /**
      * Determine whether the user can view any models.
      */
@@ -29,7 +32,7 @@ class PromoPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return true;
     }
 
     /**

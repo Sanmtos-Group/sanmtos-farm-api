@@ -9,6 +9,14 @@ use App\Http\Resources\PromoResource;
 class PromoController extends Controller
 {
     /**
+     * Create the controller instance.
+     */
+    public function __construct()
+    {
+        $this->authorizeResource(Promo::class, 'promo');
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index()

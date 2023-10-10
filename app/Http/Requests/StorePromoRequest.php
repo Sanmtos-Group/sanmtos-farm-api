@@ -23,7 +23,7 @@ class StorePromoRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:191',
-            'description' => 'string|max:1000',
+            'description' => 'required|string|max:1000',
             'discount' => 'integer|min:0|max:100',
             'is_universal' => 'boolean|default:false',
             'start_time' => 'required|date',
