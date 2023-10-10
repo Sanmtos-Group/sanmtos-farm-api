@@ -35,6 +35,12 @@ class TestPermission {
         'revoke permission',
         'sync permission',
 
+        'create promo',
+        'read promo',
+        'update promo',
+        'delete promo',
+        'cancel promo',
+
     ];
 
     /**

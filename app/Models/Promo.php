@@ -18,6 +18,7 @@ class Promo extends Model
      */
     protected $fillable = [
         'name',
+        'description',
         'discount',
         'is_universal',
         'start_time',

@@ -11,7 +11,7 @@ class StorePromoRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,13 @@ class StorePromoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:191',
+            'description' => 'string|max:1000',
+            'discount' => 'integer|min:0|max:100',
+            'is_universal' => 'boolean|default:false',
+            'start_time' => 'required|date',
+            'end_time' => 'required|date',
+            'store_id' => 'uuid|exists:stores,id'
         ];
     }
 }
