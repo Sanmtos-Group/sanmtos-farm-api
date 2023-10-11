@@ -36,9 +36,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 /**
  *  <----- The Auth Routes ----->
- *  These are routes that requires an authenticated authorize users
- *  they include most routes for creating and updating a resource
- *  POST, PUT, PATCH
+ *  These are routes that require an authenticated authorize users
+ *  they include mostly routes for creating and updating a resource
+ *  POST, PUT, PATCH, DELETE requests etc.
  */
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -117,8 +117,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 /**
  *  <----- The Public Routes ----->
- *  These routes that does not require authentication
- *  or authorization. This includes mostly GET request
+ *  These are routes that do not require authentication
+ *  or authorization. They includes mostly GET request
  */
 
 Route::controller(RegisterNewUserController::class)->group(function() {
