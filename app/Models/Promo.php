@@ -32,7 +32,6 @@ class Promo extends Model
         'is_universal',
         'start_time',
         'end_time',
-        'is_cancel',
         'store_id',
     ];
 

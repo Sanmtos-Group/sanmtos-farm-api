@@ -43,10 +43,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('attributes', AttributeController::class)->only(['store', 'update', 'destroy']);
-    Route::prefix('attributes')->group(function () {
+    Route::prefix('attributes/{attribute}/')->group(function () {
         Route::name('attributes.')->group(function () {
-            Route::delete('{attribute}/force-delete', [AttributeController::class, 'forceDestroy'])->name('forceDestroy');
-            Route::patch('{attribute}/restore', [AttributeController::class, 'restore'])->name('restore');
+            Route::controller(AttributeController::class)->group(function(){
+                Route::delete('force-delete', 'forceDestroy')->name('forceDestroy');
+                Route::patch('restore', 'restore')->name('restore');
+            });
+           
         });
 
     });
@@ -62,29 +65,36 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('products', ProductController::class)->only(['store', 'update', 'destroy']);
     Route::prefix('products')->group(function () {
         Route::name('products.')->group(function () {
-            Route::match(['put', 'patch'], '{product}/revoke-verification', [ProductController::class, 'revokeVerification'])->name('revoke_verification');
-            Route::match(['put', 'patch'], '{product}/verify', [ProductController::class, 'verify'])->name('verify');
+            Route::controller(ProductController::class)->group(function (){
+                Route::match(['put', 'patch'], '{product}/revoke-verification', 'revokeVerification')->name('revoke_verification');
+                Route::match(['put', 'patch'], '{product}/verify', 'verify')->name('verify');
+            });
         });
     });
 
     Route::apiResource('promos', PromoController::class)->only(['store', 'update', 'destroy']);
     
     Route::apiResource('roles', RoleController::class)->only(['store', 'update', 'destroy']);
-    Route::prefix('roles')->group(function () {
-        Route::name('roles.')->group(function () {
-            Route::get('{role}/permissions', [RoleController::class, 'permissions'])->name('permissions.index');
-            Route::match(['put', 'patch'], '{role}/grant-permission/{permission}', [RoleController::class, 'grantPermission'])->name('permissions.grant');
-            Route::delete('{role}/revoke-permission/{permission}', [RoleController::class, 'revokePermission'])->name('permissions.revoke');
+    Route::prefix('roles/{role}/')->group(function () {
+        Route::name('roles.permissions.')->group(function () {
+            Route::controller(RoleController::class)->group(function (){
+                Route::get('permissions', 'permissions')->name('index');
+                Route::match(['put', 'patch'], 'grant-permission/{permission}','grantPermission')->name('grant');
+                Route::delete('revoke-permission/{permission}', 'revokePermission')->name('revoke');
+            });
+            
         });
     });
 
     Route::apiResource('categories', CategoryController::class );
 
     Route::apiResource('images', ImageController::class)->only(['store', 'update', 'destroy']);
-    Route::prefix('images')->group(function () {
+    Route::prefix('images/{image}/')->group(function () {
         Route::name('images.')->group(function () {
-            Route::delete('{image}/force-delete', [ImageController::class, 'forceDestroy'])->name('forceDestroy');
-            Route::patch('{image}/restore', [ImageController::class, 'restore'])->name('restore');
+            Route::controller(ImageController::class)->group(function(){
+                Route::delete('force-delete', 'forceDestroy')->name('forceDestroy');
+                Route::patch('restore', 'restore')->name('restore');
+            });
         });
 
     });
@@ -92,11 +102,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('stores', StoreController::class)->only(['store', 'update', 'destroy']);
 
     // Route::apiResource('users', UserController::class)->only(['store', 'update', 'destroy']);
-    Route::prefix('users')->group(function () {
-        Route::name('users.')->group(function () {
-            Route::get('{user}/roles', [UserController::class, 'roles'])->name('roles.index');
-            Route::match(['put', 'patch'], '{user}/assign-role/{role}', [UserController::class, 'assignRole'])->name('roles.assign');
-            Route::delete('{user}/remove-role/{role}', [UserController::class, 'removeRole'])->name('roles.remove');
+    Route::prefix('users/{user}/')->group(function () {
+        Route::name('users.roles.')->group(function () {
+            Route::controller(UserController::class)->group(function (){
+                Route::get('roles', 'roles')->name('index');
+                Route::match(['put', 'patch'], 'assign-role/{role}',  'assignRole')->name('assign');
+                Route::delete('/remove-role/{role}', 'removeRole')->name('remove');
+            });
+           
         });
     });
 
