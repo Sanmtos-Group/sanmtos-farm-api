@@ -25,7 +25,7 @@ class StorePromoRequest extends FormRequest
             'name' => 'required|string|max:191',
             'description' => 'required|string|max:1000',
             'discount' => 'integer|min:0|max:100',
-            'is_universal' => 'boolean|default:false',
+            'is_universal' => 'boolean',
             'start_time' => 'required|date',
             'end_time' => 'required|date',
             'store_id' => 'uuid|exists:stores,id'

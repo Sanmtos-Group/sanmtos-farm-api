@@ -22,6 +22,8 @@ trait WithPromo {
     }
 
     /**
+     * @param null|array  $promo_data
+     * 
      * @return \App\Models\Promo
      */
     protected function makePromo($promo_data = null ): Promo

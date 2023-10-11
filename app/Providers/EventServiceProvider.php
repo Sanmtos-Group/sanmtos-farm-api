@@ -82,6 +82,14 @@ class EventServiceProvider extends ServiceProvider
             \App\Listeners\Product\ProductTrashedListener::class,
         ],
 
+
+        /**
+         *  Promo Events and listeners;
+         */
+        \App\Events\Promo\PromoCreated::class => [
+            \App\Listeners\Promo\PromoCreatedListener::class,
+        ],
+
         /**
          *  Role Events and listeners;
          */

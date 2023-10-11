@@ -11,6 +11,15 @@ class Promo extends Model
     use HasFactory;
     use HasUuids;
 
+    /**
+     * The event map for the model.
+     *
+     * @var array
+     */
+    protected $dispatchesEvents = [
+        'created' => \App\Events\Promo\PromoCreated::class,
+    ];
+
      /**
      * The attributes that are mass assignable.
      *
@@ -25,5 +34,15 @@ class Promo extends Model
         'end_time',
         'is_cancel',
         'store_id',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'is_universal' => 'boolean',
+        'is_cancel' => 'boolean',
     ];
 }

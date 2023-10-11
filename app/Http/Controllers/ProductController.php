@@ -51,6 +51,7 @@ class ProductController extends Controller
             'description' => $validated['description'] ?? null,
             'short_description' => $validated['short_description'] ?? null,
             'price' => $validated['price'],
+            'discount' => $validated['discount'] ?? null,
             'category_id' => $validated['category_id'],
             'store_id' => $validated['store_id'],
         ]);
