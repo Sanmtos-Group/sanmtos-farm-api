@@ -5,13 +5,14 @@ namespace App\Policies;
 use App\Models\Role;
 use App\Models\User;
 use App\Traits\Policy\AuthorizeAllActionToSuperAdmin;
+use App\Traits\Policy\StorePermissionableViaRole;
 use Illuminate\Auth\Access\Response;
 
 class RolePolicy
 {
 
     use AuthorizeAllActionToSuperAdmin;
-
+    use StorePermissionableViaRole;
     /**
      * Determine whether the user can view any models.
      */
@@ -161,25 +162,5 @@ class RolePolicy
         return true;
     }
 
-    /**
-     *  check if the current permission is granted by the store in action through the role 
-     *  This ensure non permission for a store is used to permform unathourized action on another store 
-     *  as a store has many staffs and those staffs can work for many stores
-     * 
-     * @param App\Models\User $user
-     * @param App\Models\Role $role
-     * @param string $permission
-     */
-
-    private function permissionIsGrantedByTheStoreInActionThroughRole($user,$role, $permission): bool 
-    {
-        $roles = $user->roles()->where('store_id', $role->store_id)->get();
-        // check if the permission to update role is from the store that owns the role to be updated
-        foreach ($roles as $key => $value) {
-            if(!is_null($value->permissions()->where('name', $permission)->first())){
-                return  true;
-            }
-        }
-        return false;
-    }
+    
 }

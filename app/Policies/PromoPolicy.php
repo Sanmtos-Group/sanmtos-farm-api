@@ -6,11 +6,12 @@ use App\Models\Promo;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 use App\Traits\Policy\AuthorizeAllActionToSuperAdmin;
+use App\Traits\Policy\StorePermissionableViaRole;
 
 class PromoPolicy
 {
     use AuthorizeAllActionToSuperAdmin;
-
+    use StorePermissionableViaRole;
     /**
      * Determine whether the user can view any models.
      */
@@ -32,7 +33,7 @@ class PromoPolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return  $user->owns_a_store || $user->hasPermission('create promo');
     }
 
     /**
