@@ -41,7 +41,7 @@ class PromoPolicy
      */
     public function update(User $user, Promo $promo): bool
     {
-        //
+        return true;
     }
 
     /**

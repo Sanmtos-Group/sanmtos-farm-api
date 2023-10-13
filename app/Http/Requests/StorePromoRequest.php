@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Promo;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StorePromoRequest extends FormRequest
@@ -11,7 +12,7 @@ class StorePromoRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->user()->can('create', Promo::class);
     }
 
     /**

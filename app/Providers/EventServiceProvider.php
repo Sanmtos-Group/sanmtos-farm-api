@@ -90,6 +90,10 @@ class EventServiceProvider extends ServiceProvider
             \App\Listeners\Promo\PromoCreatedListener::class,
         ],
 
+        \App\Events\Promo\PromoUpdatedd::class => [
+            \App\Listeners\Promo\PromoUpdateddListener::class,
+        ],
+
         /**
          *  Role Events and listeners;
          */

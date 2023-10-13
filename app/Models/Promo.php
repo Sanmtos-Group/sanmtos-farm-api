@@ -18,6 +18,7 @@ class Promo extends Model
      */
     protected $dispatchesEvents = [
         'created' => \App\Events\Promo\PromoCreated::class,
+        'updated' => \App\Events\Promo\PromoUpdated::class,
     ];
 
      /**

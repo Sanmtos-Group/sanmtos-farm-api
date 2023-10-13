@@ -69,7 +69,11 @@ class PromoController extends Controller
      */
     public function update(UpdatePromoRequest $request, Promo $promo)
     {
-        //
+        $promo->update($request->validated());
+        $promo_resource = new PromoResource($promo);
+        $promo_resource->with['message'] = 'Promo updated successfully';
+
+        return $promo_resource;
     }
 
     /**
