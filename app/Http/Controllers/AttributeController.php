@@ -6,6 +6,8 @@ use App\Http\Resources\AttributeResource;
 use App\Models\Attribute;
 use App\Http\Requests\StoreAttributeRequest;
 use App\Http\Requests\UpdateAttributeRequest;
+use Cviebrock\EloquentSluggable\Services\SlugService;
+
 class AttributeController extends Controller
 {
     /**
@@ -63,7 +65,10 @@ class AttributeController extends Controller
      */
     public function update(UpdateAttributeRequest $request, Attribute $attribute)
     {
-        $attribute->update($request->validated());
+        $validated = $request->validated();
+        $validated['slug'] = !empty($validated['slug']?? null)? $validated['slug'] : SlugService::createSlug(Attribute::class, 'slug', $validated['name']);
+        
+        $attribute->update($validated);
         $attribute_resource = new AttributeResource($attribute);
         $attribute_resource->with['message'] = 'Attribute updated successfully';
 

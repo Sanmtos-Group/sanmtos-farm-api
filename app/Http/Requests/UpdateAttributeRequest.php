@@ -23,8 +23,8 @@ class UpdateAttributeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'string|max:191|'.Rule::unique('attributes')->ignore($this->id),
-            'slug' => 'string|max:191|'.Rule::unique('attributes')->ignore($this->id),
+            'name' => 'string|max:191|',//.Rule::unique('attributes')->ignore($this->id),
+            // 'slug' => 'string|max:191|'.Rule::unique('attributes')->ignore($this->id),
        ];
     }
 }
