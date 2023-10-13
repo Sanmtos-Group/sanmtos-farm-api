@@ -73,7 +73,15 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::apiResource('promos', PromoController::class)->only(['store', 'update', 'destroy']);
-    
+    Route::prefix('promos')->group(function () {
+        Route::name('promos.')->group(function () {
+            Route::controller(PromoController::class)->group(function (){
+                Route::match(['put', 'patch'], '{promo}/cancel', 'cancel')->name('cancel');
+                Route::match(['put', 'patch'], '{promo}/continue', 'continue')->name('continue');
+            });
+        });
+    });
+
     Route::apiResource('roles', RoleController::class)->only(['store', 'update', 'destroy']);
     Route::prefix('roles/{role}/')->group(function () {
         Route::name('roles.permissions.')->group(function () {

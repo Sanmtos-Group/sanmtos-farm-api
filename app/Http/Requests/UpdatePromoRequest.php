@@ -23,12 +23,12 @@ class UpdatePromoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:191',
-            'description' => 'required|string|max:1000',
+            'name' => 'string|max:191',
+            'description' => 'string|max:1000',
             'discount' => 'integer|min:0|max:100',
             'is_universal' => 'boolean',
-            'start_time' => 'required|date',
-            'end_time' => 'required|date',
+            'start_time' => 'date',
+            'end_time' => 'date',
             'store_id' => 'uuid|exists:stores,id'
         ];
     }

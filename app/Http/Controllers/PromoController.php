@@ -77,6 +77,33 @@ class PromoController extends Controller
     }
 
     /**
+     * Cancel the specified resource in storage.
+     */
+    public function cancel(Promo $promo)
+    {
+        $promo->is_cancel = false;
+        $promo->save();
+        $promo_resource = new PromoResource($promo);
+        $promo_resource->with['message'] = 'Promo cancelled successfully';
+
+        return $promo_resource;
+    }
+
+    /**
+     * Continue the specified resource in storage.
+     */
+    public function continue(Promo $promo)
+    {
+        $promo->is_cancel = true;
+        $promo->save();
+
+        $promo_resource = new PromoResource($promo);
+        $promo_resource->with['message'] = 'Promo continued successfully';
+
+        return $promo_resource;
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(Promo $promo)
