@@ -30,7 +30,9 @@ class CreateProductTest extends TestCase
         $this->actingAs($user);
 
         Event::fake();
-        $products = $this->makeProduct();
+        $products = $this->makeProduct([
+            'regular_price' => null,
+        ]);
         $response = $this->post(route('api.products.store'), $products->toArray());
 
         $response->assertValid();
