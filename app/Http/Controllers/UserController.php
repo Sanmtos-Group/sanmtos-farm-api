@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Role;
-use Illuminate\Http\Request;
 use App\Http\Resources\RoleResource;
 use App\Http\Resources\UserResource;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -19,6 +19,19 @@ class UserController extends Controller
         $user_resource = new UserResource($users);
         return $user_resource;
     }
+
+    /**
+     * Display authenticated user profile
+     */
+    public function profile(Request $request)
+    {
+        $user = $request->user();
+        $user_resource = new UserResource($user);
+        $user_resource->with['message'] = 'User profile retrieved successfully';
+
+        return $user_resource;
+    }
+
 
     /**
      * Display a listing users that are staff.
