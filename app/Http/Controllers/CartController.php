@@ -14,12 +14,7 @@ class CartController extends Controller
      */
     public function index()
     {
-        $cart = Cart::getContent();
 
-        return response()->json([
-            'message' => 'Ok',
-            'data' => $cart
-        ], 200);
     }
 
     /**
@@ -74,14 +69,4 @@ class CartController extends Controller
      *Add products to cart
      */
 
-    public function addToCart(Cart $cart){
-        $products = Product::find($cart->id);
-//        $price = $products->sale_price ? $products->sale_price : $products->regular_price;
-        $carts = Cart::add($products->id)->associate(Product::class);
-
-        return response()->json([
-            'message' => 'Item added to cart',
-            'data' => $carts
-        ], 201);
-    }
 }
