@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Promo;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdatePromoRequest extends FormRequest
@@ -11,7 +12,7 @@ class UpdatePromoRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user()->can('update', $this->promo);
     }
 
     /**
@@ -22,7 +23,13 @@ class UpdatePromoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'string|max:191',
+            'description' => 'string|max:1000',
+            'discount' => 'integer|min:0|max:100',
+            'is_universal' => 'boolean',
+            'start_time' => 'date',
+            'end_time' => 'date',
+            'store_id' => 'uuid|exists:stores,id'
         ];
     }
 }

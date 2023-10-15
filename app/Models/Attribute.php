@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,6 +14,7 @@ class Attribute extends Model
 {
     use HasFactory; 
     use HasUuids;
+    use Sluggable;
     use SoftDeletes;
 
     /**
@@ -37,6 +39,20 @@ class Attribute extends Model
         'name',
         'slug',
     ];
+
+    /**
+     * Return the sluggable configuration array for this model.
+     *
+     * @return array
+     */
+    public function sluggable(): array
+    {
+        return [
+            'slug' => [
+                'source' => 'name'
+            ]
+        ];
+    }
 
     /**
      * Get all of the products that are assigned this attribute.

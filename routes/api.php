@@ -30,9 +30,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+Route::middleware('auth:sanctum')->get('/user-profile', [UserController::class, 'profile']);
+
 
 
 /**
@@ -74,6 +77,14 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::apiResource('promos', PromoController::class)->only(['store', 'update', 'destroy']);
+    Route::prefix('promos')->group(function () {
+        Route::name('promos.')->group(function () {
+            Route::controller(PromoController::class)->group(function (){
+                Route::match(['put', 'patch'], '{promo}/cancel', 'cancel')->name('cancel');
+                Route::match(['put', 'patch'], '{promo}/continue', 'continue')->name('continue');
+            });
+        });
+    });
 
     Route::apiResource('roles', RoleController::class)->only(['store', 'update', 'destroy']);
     Route::prefix('roles/{role}/')->group(function () {
@@ -87,7 +98,7 @@ Route::middleware('auth:sanctum')->group(function () {
         });
     });
 
-    Route::apiResource('categories', CategoryController::class );
+    Route::apiResource('categories', CategoryController::class )->only(['store', 'update', 'destroy']);
 
     Route::apiResource('images', ImageController::class)->only(['store', 'update', 'destroy']);
     Route::prefix('images/{image}/')->group(function () {
@@ -137,3 +148,4 @@ Route::apiResource('promos', PromoController::class)->only(['index', 'show']);
 Route::apiResource('roles', RoleController::class)->only(['index', 'show']);
 Route::apiResource('stores', StoreController::class)->only(['index', 'show']);
 Route::apiResource('carts', CartController::class);
+Route::apiResource('categories', CategoryController::class )->only(['index', 'show']);

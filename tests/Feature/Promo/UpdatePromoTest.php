@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\Feature\Product;
+namespace Tests\Feature\Promo;
 
 use App\Models\User;
-Use App\Traits\Testing\WithProduct;
+Use App\Traits\Testing\WithPromo;
 Use App\Traits\Testing\FastRefreshDatabase;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -13,39 +13,39 @@ use Illuminate\Testing\Fluent\AssertableJson;
 
 use Tests\TestCase;
 
-class CreateProductTest extends TestCase
+class UpdatePromoTest extends TestCase
 {
     use FastRefreshDatabase;
     use WithFaker;
-    use WithProduct;
+    use WithPromo;
 
     /**
-     * User can create a product test
+     * User can update a promo test
      *
      * @return void
      */
-    public function test_user_can_create_product() : void
+    public function test_user_can_update_promo() : void
     {
-        $user = User::factory()->create();
+        $user = User::first()?? User::factory()->create();
         $this->actingAs($user);
 
+        $this->promo->name = $this->faker()->unique()->name();
+
         Event::fake();
-        $products = $this->makeProduct([
-            'regular_price' => null,
-        ]);
-        $response = $this->post(route('api.products.store'), $products->toArray());
+        $response = $this->patch(route('api.promos.update', $this->promo), $this->promo->toArray());
+        $this->promo->refresh();
 
         $response->assertValid();
-        $response->assertSuccessful();
+        $response->assertOk();
         $response->assertSessionHasNoErrors();
-        $this->assertDatabaseHas($products::class, $products->only($products->getFillable()));
-        Event::assertDispatched(\App\Events\Product\ProductCreated::class);
+        $this->assertDatabaseHas($this->promo::class, $this->promo->only($this->promo->getFillable()));
+        Event::assertDispatched(\App\Events\Promo\PromoUpdated::class);
         $response->assertJson(fn (AssertableJson $json) =>$json->etc());
     }
 
 
     /**
-     * Setup product test environment.
+     * Setup promo test environment.
      * 
      * @override Illuminate\Foundation\Testing\TestCase  setUp()
      * @return void
@@ -53,6 +53,6 @@ class CreateProductTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->setUpProduct();
+        $this->setUpPromo();
     }
 }

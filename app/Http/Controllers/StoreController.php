@@ -33,9 +33,7 @@ class StoreController extends Controller
      */
     public function store(StoreStoreRequest $request)
     {
-        $validated = $request->validated();
-        $validated['slug'] = !empty($validated['slug']?? null)? $validated['slug'] : SlugService::createSlug(Store::class, 'slug', $validated['name']);
-        $store = Store::create($validated);
+        $store = Store::create( $request->validated());
         $store_resource = new StoreResource($store);
         $store_resource->with['message'] = 'Store created successfully';
 
