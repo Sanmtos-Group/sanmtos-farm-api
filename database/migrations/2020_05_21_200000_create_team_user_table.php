@@ -14,11 +14,10 @@ return new class extends Migration
     {
         Schema::create('team_user', function (Blueprint $table) {
             $table->uuid('id')->primary()->default(DB::raw('UUID()'));
-            $table->foreignUuid('team_id')->contrained('teams')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignUuid('user_id')->contrained('users')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignUuid('team_id')->constrained('teams')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignUuid('user_id')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('role')->nullable();
             $table->timestamps();
-
             $table->unique(['team_id', 'user_id']);
         });
     }

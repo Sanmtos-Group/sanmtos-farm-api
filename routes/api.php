@@ -5,6 +5,7 @@ use App\Http\Controllers\Authentication\LoginController;
 use App\Http\Controllers\Authentication\RegisterNewUserController;
 use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\PermissionController;
@@ -49,7 +50,7 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::delete('force-delete', 'forceDestroy')->name('forceDestroy');
                 Route::patch('restore', 'restore')->name('restore');
             });
-           
+
         });
 
     });
@@ -73,7 +74,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::apiResource('promos', PromoController::class)->only(['store', 'update', 'destroy']);
-    
+
     Route::apiResource('roles', RoleController::class)->only(['store', 'update', 'destroy']);
     Route::prefix('roles/{role}/')->group(function () {
         Route::name('roles.permissions.')->group(function () {
@@ -82,7 +83,7 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::match(['put', 'patch'], 'grant-permission/{permission}','grantPermission')->name('grant');
                 Route::delete('revoke-permission/{permission}', 'revokePermission')->name('revoke');
             });
-            
+
         });
     });
 
@@ -109,7 +110,7 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::match(['put', 'patch'], 'assign-role/{role}',  'assignRole')->name('assign');
                 Route::delete('/remove-role/{role}', 'removeRole')->name('remove');
             });
-           
+
         });
     });
 
@@ -135,3 +136,4 @@ Route::apiResource('products', ProductController::class)->only(['index', 'show']
 Route::apiResource('promos', PromoController::class)->only(['index', 'show']);
 Route::apiResource('roles', RoleController::class)->only(['index', 'show']);
 Route::apiResource('stores', StoreController::class)->only(['index', 'show']);
+Route::apiResource('carts', CartController::class);

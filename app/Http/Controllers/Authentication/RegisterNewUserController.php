@@ -133,6 +133,7 @@ class RegisterNewUserController extends Controller
             $request->session()->regenerate();
             return response()->json([
                 'access_token' => $user->createToken('api_token')->plainTextToken,
+                'data' => $user,
                 'token_type' => 'Bearer',
                 "message" => "You have successfully logged in!"
             ], 200);
