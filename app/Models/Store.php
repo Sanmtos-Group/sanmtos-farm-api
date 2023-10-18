@@ -106,4 +106,12 @@ class Store extends Model
         return $this->hasOne(Product::class)->latestOfMany();
     }
 
+    /**
+     * Get the shop's promos.
+     */
+    public function promos(): HasMany
+    {
+        return $this->hasMany(Promo::class);
+    }
+
 }
