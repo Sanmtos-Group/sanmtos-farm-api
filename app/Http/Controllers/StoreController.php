@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProductResource;
 use App\Http\Resources\StoreResource;
 use App\Models\Store;
 use App\Http\Requests\StoreStoreRequest;
@@ -82,5 +83,27 @@ class StoreController extends Controller
         $store_resource->with['message'] = 'Store deleted successfully';
 
         return $store_resource;
+    }
+
+    /**
+     * Display the specified store products.
+     */
+    public function products(Store $store)
+    {
+        $store_products = $store->products()->paginate();
+        $product_resource = new ProductResource($store_products);
+        $product_resource->with['message'] = $store->name. '\'s products retrieved successfully';
+        return $product_resource;
+    }
+
+    /**
+     * Display the specified store promos.
+     */
+    public function promos(Store $store)
+    {
+        $store_products = $store->promos()->paginate();
+        $product_resource = new ProductResource($store_products);
+        $product_resource->with['message'] = $store->name. '\'s promos retrieved successfully';
+        return $product_resource;
     }
 }

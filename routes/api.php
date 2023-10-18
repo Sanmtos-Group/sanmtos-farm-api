@@ -147,5 +147,13 @@ Route::apiResource('products', ProductController::class)->only(['index', 'show']
 Route::apiResource('promos', PromoController::class)->only(['index', 'show']);
 Route::apiResource('roles', RoleController::class)->only(['index', 'show']);
 Route::apiResource('stores', StoreController::class)->only(['index', 'show']);
+Route::prefix('stores/{store}/')->group(function () {
+    Route::name('stores.')->group(function () {
+        Route::controller(StoreController::class)->group(function(){
+            Route::get('products', 'products')->name('products');
+            Route::get('promos', 'promos')->name('promos');
+        });
+    });
+});
 Route::apiResource('carts', CartController::class);
 Route::apiResource('categories', CategoryController::class )->only(['index', 'show']);
