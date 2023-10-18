@@ -29,7 +29,7 @@ class CartController extends Controller
         return response()->json([
             'status' => 'OK',
             'data' => $cartItems,
-            'message' => count($cartItems)? 'Cart items retrived' : 'You do not have an item in your cart yet!',
+            'message' => count($cartItems)? 'Cart items retrieved successfully' : 'You do not have an item in your cart yet!',
         ], 200);
 
     }
@@ -47,20 +47,18 @@ class CartController extends Controller
      */
     public function store(StoreCartRequest $request)
     {
-        $products = Product::find($request->id);
-        if ($products) {
-            return [
-                $products->id, $products->name, $products->price, 1
-            ];
-            $carts = Cart::add($products->id, $products->name, $products->price, 1);
-
-//            $cart = Cart::update($carts->id, 'plus');
-
-            return response()->json([
-                'message' => "Item added successfully",
-                'data' => $cart
-            ], 201);
+        $product = Product::find($request->product_id);
+        if ($product) {
+            Cart::add($product->id, $product->name, $product->price, 1);
         }
+
+        $cartItems = Cart::getContent();
+
+        return response()->json([
+            'status' => 'OK',
+            'data' => $cartItems,
+            'message' => count($cartItems)? 'Cart items retrived sucessfully' : 'You do not have an item in your cart yet!',
+        ], 201);
     }
 
     /**
