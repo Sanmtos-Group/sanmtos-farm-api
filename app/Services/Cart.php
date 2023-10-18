@@ -28,7 +28,7 @@ class Cart {
      * @param string $id
      * @param string $name
      * @param string $price
-     * @param string $quantity
+     * @param int $quantity
      * @param array $options
      * @return void
      */
@@ -54,7 +54,7 @@ class Cart {
      * @param string $action
      * @return void
      */
-    public function update(string $id, string $action): void
+    public static function update(string $id, string $action): void
     {
         $content = self::getContent();
 
@@ -143,7 +143,7 @@ class Cart {
     {
         if(is_null(self::$session))
         self::$session = session();
-    
+
         return self::$session->has(self::DEFAULT_INSTANCE) ? self::$session->get(self::DEFAULT_INSTANCE) : collect([]);
     }
 
@@ -156,7 +156,7 @@ class Cart {
      * @param array $options
      * @return Illuminate\Support\Collection
      */
-    protected static function createCartItem(string $name, string $price, string $quantity, array $options): Collection
+    protected static function createCartItem(string $name, string $price, int $quantity, array $options): Collection
     {
         $price = floatval($price);
         $quantity = intval($quantity);

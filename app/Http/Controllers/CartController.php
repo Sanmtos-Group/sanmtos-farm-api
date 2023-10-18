@@ -31,7 +31,7 @@ class CartController extends Controller
             'data' => $cartItems,
             'message' => count($cartItems)? 'Cart items retrived' : 'You do not have an item in your cart yet!',
         ], 200);
-        
+
     }
 
     /**
@@ -47,7 +47,20 @@ class CartController extends Controller
      */
     public function store(StoreCartRequest $request)
     {
-        //
+        $products = Product::find($request->id);
+        if ($products) {
+            return [
+                $products->id, $products->name, $products->price, 1
+            ];
+            $carts = Cart::add($products->id, $products->name, $products->price, 1);
+
+//            $cart = Cart::update($carts->id, 'plus');
+
+            return response()->json([
+                'message' => "Item added successfully",
+                'data' => $cart
+            ], 201);
+        }
     }
 
     /**
@@ -93,18 +106,18 @@ class CartController extends Controller
     /**
      *Add products to cart
      */
-    public function addToCart(Request $request)
-    {
-        $products = Product::find($request->id);
-        if ($products) {
-            $carts = Cart::add($products->id, $products->name, $products->price, $this->quantity);
-
-            return response()->json([
-                'message' => "Item added successfully",
-                'data' => $carts
-            ], 201);
-        }
-    }
+//    public function addToCart(Request $request)
+//    {
+//        $products = Product::find($request->id); return $products->id;
+//        if ($products) {
+//            $carts = Cart::add($products->id, $products->name, $products->price, $this->quantity);
+//
+//            return response()->json([
+//                'message' => "Item added successfully",
+//                'data' => $carts
+//            ], 201);
+//        }
+//    }
 
 
     /**
