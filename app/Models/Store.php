@@ -103,7 +103,7 @@ class Store extends Model
      */
     public function recentProduct(): HasOne
     {
-        return $this->hasOne(Order::class)->latestOfMany();
+        return $this->hasOne(Product::class)->latestOfMany();
     }
 
 }
