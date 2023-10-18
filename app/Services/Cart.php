@@ -141,6 +141,9 @@ class Cart {
      */
     public static function getContent(): Collection
     {
+        if(is_null(self::$session))
+        self::$session = session();
+    
         return self::$session->has(self::DEFAULT_INSTANCE) ? self::$session->get(self::DEFAULT_INSTANCE) : collect([]);
     }
 

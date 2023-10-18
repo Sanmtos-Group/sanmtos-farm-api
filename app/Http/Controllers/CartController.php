@@ -26,17 +26,12 @@ class CartController extends Controller
     {
         $cartItems = Cart::getContent();
 
-        if ($cartItems) {
-            return response()->json([
-                'data' => $cartItems,
-                'message' => 'Ok'
-            ], 200);
-        }
-
         return response()->json([
-            'data' => null,
-            'message' => 'You do not have an item in your cart yet!',
+            'status' => 'OK',
+            'data' => $cartItems,
+            'message' => count($cartItems)? 'Cart items retrived' : 'You do not have an item in your cart yet!',
         ], 200);
+        
     }
 
     /**
