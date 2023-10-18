@@ -18,8 +18,25 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $products = Product::all();
-        $product_resource = new ProductResource($products);
+        $per_page = is_numeric($request->per_page)? (int) $request->per_page : 15;
+
+        $order_by_name = $request->order_by_name == 'asc' || $request->order_by_name == 'desc'
+                        ? $request->order_by_name : null;
+
+        $order_by_price = $request->order_by_price == 'asc' || $request->order_by_price == 'desc'
+                        ? $request->order_by_price : null;
+        
+        $products = Product::where('id', '<>', null);
+
+        $products = is_null($order_by_price)? $products : $products->orderBy('price', $order_by_price ) ;    
+        $products = is_null($order_by_name)? $products : $products->orderBy('name', $order_by_name ) ;
+
+        $products = $products->paginate(); 
+
+        $product_resource =  ProductResource::collection($products);
+        $product_resource->with['status'] = "OK";
+        $product_resource->with['message'] = 'Products retrived successfully';
+
         return $product_resource;
     }
 
