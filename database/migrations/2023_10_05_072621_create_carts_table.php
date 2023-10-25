@@ -15,9 +15,12 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->contrained('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignUuid('product_id')->contrained('products')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->string('product_name');
+            $table->string('product_image');
             $table->integer('quantity');
-            $table->unsignedDecimal('price', $precision = 19, $scale = 2)->nullable(); 
-            $table->unsignedDecimal('total_price', $precision = 19, $scale = 2)->nullable(); 
+            $table->unsignedDecimal('price', $precision = 19, $scale = 2)->nullable();
+            $table->unsignedDecimal('total_price', $precision = 19, $scale = 2)->nullable();
+            $table->timestamps();
         });
     }
 

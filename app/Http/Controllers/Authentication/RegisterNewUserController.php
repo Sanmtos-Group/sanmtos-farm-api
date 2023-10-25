@@ -7,12 +7,15 @@ use App\Models\Team;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Authentication\RegisterNewUserRequest;
 use App\Http\Resources\UserResource;
+use App\Models\UserConfirmation;
 use App\Models\VerificationCode;
+use App\Notifications\NewUserVerification;
 use App\Notifications\SendLoginOtpCode;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class RegisterNewUserController extends Controller
 {
@@ -29,10 +32,42 @@ class RegisterNewUserController extends Controller
         ]);
 //        $this->createTeam($user->id);
 
+        $token = Str::random(64);
+
+        UserConfirmation::create([
+            'user_id' => $user->id,
+            'token' => $token
+        ]);
+
+        $notify = $user->notify(new NewUserVerification($token));
+
         $user_resource = new UserResource($user);
-        $user_resource->with['message'] = 'User registered successfully. Please proceed to login';
+        $user_resource->with['message'] = 'User registered successfully. Email verification have been sent to your email';
 
         return $user_resource;
+    }
+
+    public function verifyAccount($token)
+    {
+        $verifyUser = UserConfirmation::where('token', $token)->first();
+
+        $message = 'Sorry your email cannot be identified.';
+
+        if(!is_null($verifyUser) ){
+            $user = $verifyUser->user;
+
+            if(!$user->is_email_verified) {
+                $verifyUser->user->is_email_verified = true;
+                $verifyUser->user->save();
+                $message = "Your e-mail is verified. You can now login.";
+            } else {
+                $message = "Your e-mail is already verified. You can now login.";
+            }
+        }
+
+        return response()->json([
+            'message' => $message,
+        ], 200);
     }
 
     public function registerWithOnlyPhoneNumber(Request $request){
@@ -71,6 +106,7 @@ class RegisterNewUserController extends Controller
             # Generate An OTP
             $verificationCode = $this->generateOtp($auth->email);
 
+            # Send Mail
             $user->notify(new SendLoginOtpCode($verificationCode->otp));
 
             # Return With OTP Message
@@ -93,7 +129,7 @@ class RegisterNewUserController extends Controller
             return $verificationCode;
         }
 
-        // Create a New OTP
+        # Create a New OTP
         return VerificationCode::create([
             'user_id' => $user->id,
             'otp' => rand(123456, 999999),

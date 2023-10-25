@@ -150,13 +150,14 @@ class Cart {
     /**
      * Creates a new cart item from given inputs.
      *
+     * @param string $product_id
      * @param string $name
      * @param string $price
      * @param string $quantity
      * @param array $options
      * @return Illuminate\Support\Collection
      */
-    protected static function createCartItem(string $name, string $price, int $quantity, array $options): Collection
+    protected static function createCartItem(string $product_id, string $name, string $price, int $quantity, array $options): Collection
     {
         $price = floatval($price);
         $quantity = intval($quantity);
@@ -166,6 +167,7 @@ class Cart {
         }
 
         return collect([
+            'product_id' => $product_id,
             'name' => $name,
             'price' => $price,
             'quantity' => $quantity,

@@ -7,18 +7,18 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SendLoginOtpCode extends Notification implements ShouldQueue
+class NewUserVerification extends Notification
 {
     use Queueable;
+
+    private $token;
 
     /**
      * Create a new notification instance.
      */
-    private $otp;
-
-    public function __construct($otp)
+    public function __construct($token)
     {
-        $this->otp = $otp;
+        $this->token = $token;
     }
 
     /**
@@ -37,11 +37,11 @@ class SendLoginOtpCode extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('OTP')
-            ->greeting('Hello!')
-            ->line('SANMTOS FARM OTP Code.')
-            ->line("Please use the OTP code: {$this->otp} to complete your transaction.")
-            ->line('Thank you for using our application!');
+            ->subject('Registration Code')
+            ->greeting('Hi!')
+            ->line('Warm welcome to you')
+            ->line("Kindly click on the below link to complete your registration.")
+            ->action("Continue Here", url("/user.verify/{$this->token}"));
     }
 
     /**

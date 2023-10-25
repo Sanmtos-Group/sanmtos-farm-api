@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-//use App\Models\Cart;
 use App\Http\Requests\StoreCartRequest;
 use App\Http\Requests\UpdateCartRequest;
-//use Gloudemans\Shoppingcart\Cart;
 use App\Models\Product;
 use App\Services\Cart;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 
 class CartController extends Controller
@@ -48,17 +47,39 @@ class CartController extends Controller
     public function store(StoreCartRequest $request)
     {
         $product = Product::find($request->product_id);
-        if ($product) {
-            Cart::add($product->id, $product->name, $product->price, 1);
+
+        $user_id = auth()->user()->id;
+
+        if ($user_id && $product){
+            $total = $product->price;
+            $cart = \App\Models\Cart::create([
+                "user_id" => $user_id,
+                "product_id" => $product->id,
+                "product_name" => $product->name,
+                "product_image" => $product->image,
+                "quantity" => 1,
+                "price" => $product->price,
+                "total_price" => $total
+            ]);
+
+            return response()->json([
+                'status' => 'OK',
+                'data' => $cart,
+                'message' => count($cart)? 'Cart items retrived sucessfully' : 'You do not have an item in your cart yet!',
+            ], 201);
+        }else {
+            if ($product) {
+                Cart::add($product->id, $product->name, $product->price, 1, [$product->image]);
+            }
+
+            $cartItems = Cart::getContent();
+
+            return response()->json([
+                'status' => 'OK',
+                'data' => $cartItems,
+                'message' => count($cartItems) ? 'Cart items retrived sucessfully' : 'You do not have an item in your cart yet!',
+            ], 201);
         }
-
-        $cartItems = Cart::getContent();
-
-        return response()->json([
-            'status' => 'OK',
-            'data' => $cartItems,
-            'message' => count($cartItems)? 'Cart items retrived sucessfully' : 'You do not have an item in your cart yet!',
-        ], 201);
     }
 
     /**
@@ -87,6 +108,7 @@ class CartController extends Controller
      */
     public function update(UpdateCartRequest $request, Cart $cart)
     {
+        Cart::update();
     }
 
     /**

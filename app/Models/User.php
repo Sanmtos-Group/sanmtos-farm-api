@@ -42,6 +42,7 @@ class User extends Authenticatable
         'phone_number',
         'email',
         'password',
+        'is_email_verified',
     ];
 
     /**
@@ -91,7 +92,7 @@ class User extends Authenticatable
         return CastAttribute::make(
             get: fn () => !empty($this->store),
         );
-    } 
+    }
 
     /**
      * The stores that the user works for.
@@ -111,7 +112,7 @@ class User extends Authenticatable
 
     /**
      * check if the user has a given role.
-     * 
+     *
      * @param \App\Models\Role||uuid||string $role
      * @return bool
      */
@@ -123,7 +124,7 @@ class User extends Authenticatable
             case 'string':
                 if(Str::isUuid($role))
                     return !is_null($this->roles()->where('roles.id', $role)->first());
-                else 
+                else
                     return !is_null($this->roles()->where('roles.id', $role)->orWhere('roles.name', $role)->first());
                 break;
             case 'object':
@@ -138,7 +139,7 @@ class User extends Authenticatable
 
     /**
      * check if the user has any given roles.
-     * 
+     *
      * @param optional \App\Models\Role||uuid||string||array  $role1, $role2, $role3...
      * @return bool
      */
@@ -166,7 +167,7 @@ class User extends Authenticatable
 
     /**
      * Get all of the permissions for the user through roles.
-     * 
+     *
      * @return Illuminate\Support\Collection
      */
     public function permissions(): Collection
@@ -180,7 +181,7 @@ class User extends Authenticatable
 
     /**
      * check if the user has a permission through it roles.
-     * 
+     *
      * @param optional \App\Models\Permission||uuid||string||array  $permission
      * @return bool
      */
@@ -192,7 +193,7 @@ class User extends Authenticatable
             case 'string':
                 return in_array($permission, $this->permissions()->dot()->all());
                 break;
-                
+
             case 'object':
                 return get_class($permission) == 'App\Models\Permission'? in_array($permission->id, $this->permissions()->dot()->all()) :false;
                 break;
@@ -206,7 +207,7 @@ class User extends Authenticatable
 
     /**
      * check if the user has any given permission through it role.
-     * 
+     *
      * @param optional \App\Models\Permission||uuid||string||array  $permission1, $permission2, $permission3...
      * @return bool
      */

@@ -2,6 +2,7 @@
 
 use App\Actions\Fortify\CreateNewUser;
 use App\Http\Controllers\Authentication\LoginController;
+use App\Http\Controllers\Authentication\LogoutController;
 use App\Http\Controllers\Authentication\RegisterNewUserController;
 use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\AuthController;
@@ -35,6 +36,11 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::middleware('auth:sanctum')->get('/user-profile', [UserController::class, 'profile']);
+
+//Logout route
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::post('logout', [LogoutController::class, 'logout'])->name('logout');
+});
 
 
 
@@ -130,13 +136,14 @@ Route::middleware('auth:sanctum')->group(function () {
 /**
  *  <----- The Public Routes ----->
  *  These are routes that do not require authentication
- *  or authorization. They includes mostly GET request
+ *  or authorization. They include mostly GET request
  */
 
 Route::controller(RegisterNewUserController::class)->group(function() {
     Route::post('password-less',  'registerWithOnlyEmail')->name('password-less');
     Route::post('register',  'register')->name('register');
     Route::post('otp',  'loginWithOtp')->name('otp');
+    Route::get('account/verify/{token}', 'verifyAccount')->name('user.verify');
 });
 Route::post('login', [LoginController::class, 'login'])->name('login');
 
