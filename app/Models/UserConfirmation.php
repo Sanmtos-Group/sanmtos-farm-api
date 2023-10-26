@@ -10,7 +10,7 @@ class UserConfirmation extends Model
 {
     use HasFactory;
 
-    public $table = "users_verify";
+    public $table = "user_confirmations";
 
     /**
      * Write code on Method
