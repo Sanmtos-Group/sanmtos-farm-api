@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCartRequest;
 use App\Http\Requests\UpdateCartRequest;
-use App\Models\Product;
 use App\Facades\CartFacade;
+use App\Models\Cart;
+use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 
@@ -23,7 +24,8 @@ class CartController extends Controller
      */
     public function index()
     {
-        $cart_items = CartFacade::content();
+     
+        $cart_items = auth()->user() ? Cart::where('user_id', auth()->user()->id)->get() :  CartFacade::content();
 
         return response()->json([
             'status' => 'OK',
@@ -50,8 +52,20 @@ class CartController extends Controller
         
         $product = Product::find($validated['product_id']);
 
-        $cart_items = CartFacade::add($product->id, $product->name, $product->price, $validated['quantity']);
-        $cart_items = CartFacade::content();
+        if(auth()->user()){
+            $cart = new Cart();
+            $cart->user_id = auth()->user()->id;
+            $cart->product_id = $product->id;
+            $cart->price = $product->price;
+            $cart->quantity = $validated['quantity'];
+            $cart->save();
+
+            $cart_items = Cart::where('user_id', auth()->user()->id)->get();
+
+        }else {
+            CartFacade::add($product->id, $product->name, $product->price, $validated['quantity']);
+            $cart_items = CartFacade::content();
+        }
 
         return response()->json([
             'status' => 'OK',
@@ -62,36 +76,6 @@ class CartController extends Controller
 
         // $user_id = auth()->user()->id;
 
-        if ($user_id && $product){
-            $total = $product->price;
-            $cart = \App\Models\Cart::create([
-                "user_id" => $user_id,
-                "product_id" => $product->id,
-                "product_name" => $product->name,
-                "product_image" => $product->image,
-                "quantity" => 1,
-                "price" => $product->price,
-                "total_price" => $total
-            ]);
-
-            return response()->json([
-                'status' => 'OK',
-                'data' => $cart,
-                'message' => count($cart)? 'Cart items retrived sucessfully' : 'You do not have an item in your cart yet!',
-            ], 201);
-        }else {
-            if ($product) {
-                Cart::add($product->id, $product->name, $product->price, 1, [$product->image]);
-            }
-
-            $cartItems = Cart::getContent();
-
-            return response()->json([
-                'status' => 'OK',
-                'data' => $cartItems,
-                'message' => count($cartItems) ? 'Cart items retrived sucessfully' : 'You do not have an item in your cart yet!',
-            ], 201);
-        }
     }
 
     /**

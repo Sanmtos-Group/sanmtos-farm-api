@@ -165,6 +165,7 @@ class CartService {
             'name' => $name,
             'price' => $price,
             'quantity' => $quantity,
+            'total_price' => $price * $quantity,
             'options' => $options,
         ]);
     }
