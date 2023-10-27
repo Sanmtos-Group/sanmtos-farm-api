@@ -5,11 +5,11 @@ namespace App\Services;
 use Illuminate\Support\Collection;
 use Illuminate\Session\SessionManager;
 
-class Cart {
+class CartService {
     const MINIMUM_QUANTITY = 1;
     const DEFAULT_INSTANCE = 'shopping-cart';
 
-    protected static $session;
+    protected $session;
     protected $instance;
 
     /**
@@ -19,7 +19,7 @@ class Cart {
      */
     public function __construct(SessionManager $session)
     {
-        self::$session = $session;
+        $this->session = $session;
     }
 
     /**
@@ -28,15 +28,15 @@ class Cart {
      * @param string $id
      * @param string $name
      * @param string $price
-     * @param int $quantity
+     * @param string $quantity
      * @param array $options
      * @return void
      */
-    public static function add($id, $name, $price, $quantity, $options = []): void
+    public function add($id, $name, $price, $quantity, $options = []): void
     {
-        $cartItem = self::createCartItem($name, $price, $quantity, $options);
+        $cartItem = $this->createCartItem($name, $price, $quantity, $options);
 
-        $content = self::getContent();
+        $content = $this->getContent();
 
         if ($content->has($id)) {
             $cartItem->put('quantity', $content->get($id)->get('quantity') + $quantity);
@@ -44,7 +44,7 @@ class Cart {
 
         $content->put($id, $cartItem);
 
-        self::$session->put(self::DEFAULT_INSTANCE, $content);
+        $this->session->put(self::DEFAULT_INSTANCE, $content);
     }
 
     /**
@@ -54,9 +54,9 @@ class Cart {
      * @param string $action
      * @return void
      */
-    public static function update(string $id, string $action): void
+    public function update(string $id, string $action): void
     {
-        $content = self::getContent();
+        $content = $this->getContent();
 
         if ($content->has($id)) {
             $cartItem = $content->get($id);
@@ -78,7 +78,7 @@ class Cart {
 
             $content->put($id, $cartItem);
 
-            self::$session->put(self::DEFAULT_INSTANCE, $content);
+            $this->session->put(self::DEFAULT_INSTANCE, $content);
         }
     }
 
@@ -90,7 +90,7 @@ class Cart {
      */
     public function remove(string $id): void
     {
-        $content = self::getContent();
+        $content = $this->getContent();
 
         if ($content->has($id)) {
             $this->session->put(self::DEFAULT_INSTANCE, $content->except($id));
@@ -104,7 +104,7 @@ class Cart {
      */
     public function clear(): void
     {
-        self::$session->forget(self::DEFAULT_INSTANCE);
+        $this->session->forget(self::DEFAULT_INSTANCE);
     }
 
     /**
@@ -133,31 +133,26 @@ class Cart {
         return number_format($total, 2);
     }
 
-
     /**
      * Returns the content of the cart.
      *
      * @return Illuminate\Support\Collection
      */
-    public static function getContent(): Collection
+    protected function getContent(): Collection
     {
-        if(is_null(self::$session))
-        self::$session = session();
-
-        return self::$session->has(self::DEFAULT_INSTANCE) ? self::$session->get(self::DEFAULT_INSTANCE) : collect([]);
+        return $this->session->has(self::DEFAULT_INSTANCE) ? $this->session->get(self::DEFAULT_INSTANCE) : collect([]);
     }
 
     /**
      * Creates a new cart item from given inputs.
      *
-     * @param string $product_id
      * @param string $name
      * @param string $price
      * @param string $quantity
      * @param array $options
      * @return Illuminate\Support\Collection
      */
-    protected static function createCartItem(string $product_id, string $name, string $price, int $quantity, array $options): Collection
+    protected function createCartItem(string $name, string $price, string $quantity, array $options): Collection
     {
         $price = floatval($price);
         $quantity = intval($quantity);
@@ -167,7 +162,6 @@ class Cart {
         }
 
         return collect([
-            'product_id' => $product_id,
             'name' => $name,
             'price' => $price,
             'quantity' => $quantity,

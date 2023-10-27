@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCartRequest;
 use App\Http\Requests\UpdateCartRequest;
 use App\Models\Product;
-use App\Services\Cart;
+use App\Facades\CartFacade;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 
@@ -23,12 +23,12 @@ class CartController extends Controller
      */
     public function index()
     {
-        $cartItems = Cart::getContent();
+        $cart_items = CartFacade::content();
 
         return response()->json([
             'status' => 'OK',
-            'data' => $cartItems,
-            'message' => count($cartItems)? 'Cart items retrieved successfully' : 'You do not have an item in your cart yet!',
+            'data' => $cart_items,
+            'message' => count($cart_items)? 'Cart items retrieved successfully' : 'You do not have an item in your cart yet!',
         ], 200);
 
     }
@@ -46,9 +46,21 @@ class CartController extends Controller
      */
     public function store(StoreCartRequest $request)
     {
-        $product = Product::find($request->product_id);
+        $validated = $request->validated();
+        
+        $product = Product::find($validated['product_id']);
 
-        $user_id = auth()->user()->id;
+        $cart_items = CartFacade::add($product->id, $product->name, $product->price, $validated['quantity']);
+        $cart_items = CartFacade::content();
+
+        return response()->json([
+            'status' => 'OK',
+            'data' => $cart_items,
+            'message' => count($cart_items)? 'Cart items retrieved successfully' : 'You do not have an item in your cart yet!',
+        ], 200);
+
+
+        // $user_id = auth()->user()->id;
 
         if ($user_id && $product){
             $total = $product->price;
