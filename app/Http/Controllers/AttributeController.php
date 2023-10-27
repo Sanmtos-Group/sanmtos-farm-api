@@ -34,7 +34,10 @@ class AttributeController extends Controller
      */
     public function store(StoreAttributeRequest $request)
     {
-        $attribute = Attribute::create($request->validated());
+        $validated = $request->validated();
+        $validated['slug'] = SlugService::createSlug(Attribute::class, 'slug', $validated['slug'] ?? $validated['name']);
+        
+        $attribute = Attribute::create($validated);
         $attribute_resource = new AttributeResource($attribute);
         $attribute_resource->with['message'] = 'Attribute created successfully';
 

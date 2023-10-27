@@ -23,7 +23,7 @@ class StoreAttributeRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:191|unique:attributes,name',
-            // 'slug' => 'required|string|max:191|unique:attributes,slug',
+            'slug' => 'required|string|max:191|unique:attributes,slug',
       ];
     }
 }
