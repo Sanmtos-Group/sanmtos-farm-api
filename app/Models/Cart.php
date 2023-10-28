@@ -33,6 +33,16 @@ class Cart extends Model
     protected $hidden = ['id','user_id'];
 
     /**
+     * Determine  a cart item  image
+     */
+    protected function imageUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->product->images()->first()->url ?? null,
+        );
+    } 
+
+    /**
      * Determine  a cart item  price
      */
     protected function price(): Attribute
