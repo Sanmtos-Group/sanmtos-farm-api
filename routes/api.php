@@ -148,6 +148,20 @@ Route::controller(RegisterNewUserController::class)->group(function() {
 Route::post('login', [LoginController::class, 'login'])->name('login');
 
 Route::apiResource('attributes', AttributeController::class)->only(['index', 'show']);
+Route::prefix('cart-items/')->group(function () {
+    Route::name('cart-items.')->group(function () {
+        Route::controller(CartController::class)->group(function() {
+            Route::get('',  'items')->name('index');
+            Route::post('',  'add')->name('add');
+            Route::match(['put', 'patch'], '{item}',  'increment')->name('increment');
+            Route::delete('{item}',  'decrement')->name('decrement');
+            Route::delete('{item}/remove',  'remove')->name('remove');
+            Route::delete('',  'clear')->name('clear');
+        });
+    });
+});
+Route::apiResource('carts', CartController::class)->only(['index', 'show']);
+Route::apiResource('categories', CategoryController::class )->only(['index', 'show']);
 Route::apiResource('images', ImageController::class)->only(['index', 'show']);
 Route::apiResource('permissions', PermissionController::class)->only(['index', 'show']);
 Route::apiResource('products', ProductController::class)->only(['index', 'show']);
@@ -162,5 +176,3 @@ Route::prefix('stores/{store}/')->group(function () {
         });
     });
 });
-Route::apiResource('carts', CartController::class);
-Route::apiResource('categories', CategoryController::class )->only(['index', 'show']);

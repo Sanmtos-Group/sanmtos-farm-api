@@ -13,12 +13,6 @@ use Illuminate\Support\Facades\Request;
 
 class CartController extends Controller
 {
-    public $quantity;
-
-    public function mount(): void
-    {
-        $this->quantity = 1;
-    }
 
     /**
      * Display a listing of the resource.
@@ -34,6 +28,8 @@ class CartController extends Controller
         return $cart_resource;
     }
 
+    
+
     /**
      * Show the form for creating a new resource.
      */
@@ -47,33 +43,6 @@ class CartController extends Controller
      */
     public function store(StoreCartRequest $request)
     {
-        $validated = $request->validated();
-        
-        $product = Product::find($validated['product_id']);
-
-        if(auth()->user()){
-            $cart = new Cart();
-            $cart->user_id = auth()->user()->id;
-            $cart->product_id = $product->id;
-            $cart->price = $product->price;
-            $cart->quantity = $validated['quantity'];
-            $cart->save();
-
-            $cart_items = Cart::where('user_id', auth()->user()->id)->get();
-
-        }else {
-            CartFacade::add($product->id, $product->name, $product->price, $validated['quantity']);
-            $cart_items = CartFacade::content();
-        }
-
-        return response()->json([
-            'status' => 'OK',
-            'data' => $cart_items,
-            'message' => count($cart_items)? 'Cart items retrieved successfully' : 'You do not have an item in your cart yet!',
-        ], 200);
-
-
-        // $user_id = auth()->user()->id;
 
     }
 
@@ -82,12 +51,11 @@ class CartController extends Controller
      */
     public function show(Cart $cart)
     {
-        $carts = Cart::get($cart);
 
-        return response()->json([
-            'message' => "OK",
-            'data' => $carts,
-        ], 200);
+        $cart_resource =  new CartResource($cart);
+        $cart_resource->with['message'] = 'Cart item retrived successfully';
+        
+        return $cart_resource;
     }
 
     /**
@@ -101,9 +69,9 @@ class CartController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCartRequest $request, Cart $cart)
+    public function update(UpdateCartRequest $request, Cart $cart=null)
     {
-        Cart::update();
+        
     }
 
     /**
@@ -111,38 +79,166 @@ class CartController extends Controller
      */
     public function destroy(Cart $cart)
     {
-        Cart::remove($cart);
-
-        return response()->json([
-            'message' => "Item deleted successfully",
-        ], 200);
+        $cart->delete();
+        $cart_resource = new CartResource(null);
+        $cart_resource->with['message'] = 'Cart item deleted successfully';
+        
+        return $cart_resource;
     }
 
     /**
-     *Add products to cart
+     * Get the current user's cart items
      */
-//    public function addToCart(Request $request)
-//    {
-//        $products = Product::find($request->id); return $products->id;
-//        if ($products) {
-//            $carts = Cart::add($products->id, $products->name, $products->price, $this->quantity);
-//
-//            return response()->json([
-//                'message' => "Item added successfully",
-//                'data' => $carts
-//            ], 201);
-//        }
-//    }
+    public function items()
+    {
+     
+        $cart_items = auth()->user() ? auth()->user()->cartItems :  CartFacade::content();
 
+        $cart_resource =  new CartResource($cart_items);
+        $cart_resource->with['message'] = 'Cart items retrived successfully';
+        
+        return $cart_resource;
+    }
 
     /**
-     * Clears the cart content.
-     *
-     * @return void
+     * Store item to current user's cart 
+     * 
      */
-    public function clearCart(): void
+    public function add(StoreCartRequest $request){
+        
+        $validated = $request->validated();
+        
+        $product = Product::find($validated['product_id']);
+
+        if(auth()->user())
+        {
+            $cart_item = auth()->user()->cartItems()->where('product_id', $product->id)->first();
+
+            if(is_null($cart_item)){
+                $cart_item = new Cart();
+                $cart_item->user_id = auth()->user()->id;
+                $cart_item->product_id = $product->id;
+                $cart_item->price = $product->price;
+                $cart_item->quantity = $validated['quantity'] ?? 1;
+            }
+            else {
+                $cart_item->quantity +=1;
+            }
+
+            $cart_item->save() ?? null;
+
+            $cart_items = auth()->user()->cartItems;
+        }
+        else {
+            CartFacade::add($product->id, $product->name, $product->price, $validated['quantity']?? 1);
+            $cart_items = CartFacade::content();
+        }
+
+        $cart_resource =  new CartResource($cart_items);
+        $cart_resource->with['message'] = 'Cart items retrived successfully';
+        return $cart_resource;
+    }
+
+    /**
+     * Increment the quantity of a specific user's cart item
+     *
+     */
+    public function increment($item)
     {
-        Cart::clear();
+        if(auth()->user())
+        {
+            $cart_item = auth()->user()->cartItems()->where('product_id', $item)->first();
+            if(!is_null($cart_item))
+            {
+                $cart_item->quantity  +=1;
+                $cart_item->save();
+            }
+
+            $cart_items = auth()->user()->cartItems;
+        }
+        else {
+            CartFacade::update($item, 'plus');
+            $cart_items = CartFacade::content();
+        }
+
+        $cart_resource =  new CartResource($cart_items);
+        $cart_resource->with['message'] = 'Cart item increment successfully';
+        return $cart_resource;
+    }
+
+    /**
+     * Decrement the quantity of a specific user's cart item
+     *
+     */
+    public function decrement($item)
+    {
+        if(auth()->user()){
+            $cart_item = auth()->user()->cartItems()->where('product_id', $item)->first();
+
+            if(!is_null($cart_item))
+            {
+                if( $cart_item->quantity > 1)
+                {
+                    $cart_item->quantity  -=1;
+                    $cart_item->save();
+                }
+                else {
+                    $cart_item->delete();
+                }
+            }
+
+            $cart_items = auth()->user()->cartItems;
+        }
+        else {
+            CartFacade::update($item, 'minus');
+            $cart_items = CartFacade::content();
+        }
+
+        $cart_resource =  new CartResource($cart_items);
+        $cart_resource->with['message'] = 'Cart item dencrement successfully';
+        return $cart_resource;
+    }
+
+    /**
+     * Remove the item from current user's cart
+     *
+     */
+    public function remove($item)
+    {
+        if(auth()->user())
+        {
+            auth()->user()->cartItems()->where('product_id', $item)->delete();
+            $cart_items = auth()->user()->cartItems;
+        }
+        else {
+            CartFacade::remove($item);
+            $cart_items = CartFacade::content();
+        }
+
+        $cart_resource =  new CartResource($cart_items);
+        $cart_resource->with['message'] = 'Cart item removed successfully';
+        return $cart_resource;
+    }
+
+    /**
+     * Clear current user's cart
+     *
+     */
+    public function clear()
+    {
+        if(auth()->user())
+        {
+            auth()->user()->cartItems()->delete();
+            $cart_items = auth()->user()->cartItems;
+        }
+        else {
+            CartFacade::clear();
+            $cart_items = CartFacade::content();
+        }
+
+        $cart_resource =  new CartResource($cart_items);
+        $cart_resource->with['message'] = 'Cart items cleared successfully';
+        return $cart_resource;
     }
 
 }

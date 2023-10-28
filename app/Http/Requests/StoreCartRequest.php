@@ -22,8 +22,9 @@ class StoreCartRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'user_id' => 'nullable|uuid|exists:users,id',
             'product_id' => 'required|uuid|exists:products,id',
-            'quantity'=> 'required|integer|min:1',
+            'quantity'=> 'nullable|integer|min:1',
         ];
     }
 }
