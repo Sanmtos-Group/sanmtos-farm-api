@@ -32,14 +32,23 @@ class Cart extends Model
      */
     protected $hidden = ['id','user_id'];
 
-     /**
+    /**
+     * Determine  a cart item  price
+     */
+    protected function price(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->product->price,
+        );
+    } 
+
+    /**
      * Determine  a cart item total price
      */
     protected function totalPrice(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->price * $this->quantity,
-            set: fn () => $this->price * $this->quantity,
+            get: fn () => $this->product->price * $this->quantity,
         );
     } 
 }

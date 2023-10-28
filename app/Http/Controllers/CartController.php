@@ -162,7 +162,7 @@ class CartController extends Controller
         }
 
         $cart_resource =  new CartResource($cart_items);
-        $cart_resource->with['message'] = 'Cart item increment successfully';
+        $cart_resource->with['message'] = 'Cart item\'s quantity incremented successfully';
         return $cart_resource;
     }
 
@@ -195,7 +195,7 @@ class CartController extends Controller
         }
 
         $cart_resource =  new CartResource($cart_items);
-        $cart_resource->with['message'] = 'Cart item dencrement successfully';
+        $cart_resource->with['message'] = 'Cart item\'s quantity decremented successfully';
         return $cart_resource;
     }
 
