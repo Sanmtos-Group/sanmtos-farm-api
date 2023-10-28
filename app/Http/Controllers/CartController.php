@@ -19,13 +19,7 @@ class CartController extends Controller
      */
     public function index()
     {
-     
-        $cart_items = auth()->user() ? auth()->user()->cartItems :  CartFacade::content();
-
-        $cart_resource =  new CartResource($cart_items);
-        $cart_resource->with['message'] = 'Cart items retrived successfully';
-        
-        return $cart_resource;
+        //
     }
 
     
@@ -43,7 +37,7 @@ class CartController extends Controller
      */
     public function store(StoreCartRequest $request)
     {
-
+        //
     }
 
     /**
@@ -51,11 +45,7 @@ class CartController extends Controller
      */
     public function show(Cart $cart)
     {
-
-        $cart_resource =  new CartResource($cart);
-        $cart_resource->with['message'] = 'Cart item retrived successfully';
-        
-        return $cart_resource;
+        //
     }
 
     /**
@@ -71,7 +61,7 @@ class CartController extends Controller
      */
     public function update(UpdateCartRequest $request, Cart $cart=null)
     {
-        
+        //
     }
 
     /**
@@ -79,11 +69,7 @@ class CartController extends Controller
      */
     public function destroy(Cart $cart)
     {
-        $cart->delete();
-        $cart_resource = new CartResource(null);
-        $cart_resource->with['message'] = 'Cart item deleted successfully';
-        
-        return $cart_resource;
+       //
     }
 
     /**
