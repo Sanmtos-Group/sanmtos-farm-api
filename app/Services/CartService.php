@@ -114,7 +114,7 @@ class CartService {
      */
     public function content(): Collection
     {   
-        $this->refreshCartItemsWithDatabaseInfo();
+        $this->refreshWithDatabaseInfo();
         return is_null($this->session->get(self::DEFAULT_INSTANCE)) ? collect([]) : $this->session->get(self::DEFAULT_INSTANCE);
     }
 
@@ -134,12 +134,42 @@ class CartService {
         return number_format($total, 2);
     }
 
-    /***
+    /**
+     * synchronise cart items to database cart on login
+     * 
+     * @return void
+     */
+    public function SyncToDatabaseOnLogin(): void
+    {
+        $contents = $this->session->has(self::DEFAULT_INSTANCE) ? $this->session->get(self::DEFAULT_INSTANCE) : collect([]);
+        
+        if(auth()->user()) 
+        {
+            foreach ($contents as $key => $cartItem) 
+            {
+                $product = Product::find($key);
+
+                if($product)
+                {
+                    $cart_item = auth()->user()->cartItems()->firstOrNew([
+                        'product_id' => $product->id,
+                    ]);
+                    $cart_item->quantity =  $cartItem->get('quantity');
+                    $cart_item->save();
+                }
+            
+            }
+            $this->clear();
+        }
+        
+    }
+
+    /**
      * Refresh cart items  with current product data information
      * 
      * @return void
      */
-    private function refreshCartItemsWithDatabaseInfo(): void
+    private function refreshWithDatabaseInfo(): void
     {
         $contents = $this->session->has(self::DEFAULT_INSTANCE) ? $this->session->get(self::DEFAULT_INSTANCE) : collect([]);
 
@@ -161,7 +191,7 @@ class CartService {
      */
     protected function getContent(): Collection
     {
-        $this->refreshCartItemsWithDatabaseInfo();
+        $this->refreshWithDatabaseInfo();
         return $this->session->has(self::DEFAULT_INSTANCE) ? $this->session->get(self::DEFAULT_INSTANCE) : collect([]);
     }
 

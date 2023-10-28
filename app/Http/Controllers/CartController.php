@@ -76,8 +76,8 @@ class CartController extends Controller
      * Get the current user's cart items
      */
     public function items()
-    {
-     
+    {     
+
         $cart_items = auth()->user() ? auth()->user()->cartItems :  CartFacade::content();
 
         $cart_resource =  new CartResource($cart_items);
@@ -214,12 +214,11 @@ class CartController extends Controller
         if(auth()->user())
         {
             auth()->user()->cartItems()->delete();
-            $cart_items = auth()->user()->cartItems;
         }
-        else {
-            CartFacade::clear();
-            $cart_items = CartFacade::content();
-        }
+    
+        CartFacade::clear();
+
+        $cart_items = auth()->user() ? auth()->user()->cartItems :  CartFacade::content();
 
         $cart_resource =  new CartResource($cart_items);
         $cart_resource->with['message'] = 'Cart items cleared successfully';

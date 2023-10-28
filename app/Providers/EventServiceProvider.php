@@ -90,8 +90,8 @@ class EventServiceProvider extends ServiceProvider
             \App\Listeners\Promo\PromoCreatedListener::class,
         ],
 
-        \App\Events\Promo\PromoUpdatedd::class => [
-            \App\Listeners\Promo\PromoUpdateddListener::class,
+        \App\Events\Promo\PromoUpdated::class => [
+            \App\Listeners\Promo\PromoUpdatedListener::class,
         ],
 
         /**
@@ -122,6 +122,60 @@ class EventServiceProvider extends ServiceProvider
 
         \App\Events\Store\StoreTrashed::class => [
             \App\Listeners\Store\StoreTrashedListener::class,
+        ],
+
+        /**
+         * Authentication Process Events 
+         * Map listeners of your choice 
+         */
+
+         'Illuminate\Auth\Events\Registered' => [
+            // 'App\Listeners\LogRegisteredUser',
+        ],
+     
+        'Illuminate\Auth\Events\Attempting' => [
+            // 'App\Listeners\LogAuthenticationAttempt',
+        ],
+     
+        'Illuminate\Auth\Events\Authenticated' => [
+            // 'App\Listeners\LogAuthenticated',
+        ],
+     
+        'Illuminate\Auth\Events\Login' => [
+            // 'App\Listeners\LogSuccessfulLogin',
+            \App\Listeners\Cart\CartSyncToDatabaseOnLoginListener::class,
+        ],
+     
+        'Illuminate\Auth\Events\Failed' => [
+            // 'App\Listeners\LogFailedLogin',
+        ],
+     
+        'Illuminate\Auth\Events\Validated' => [
+            // 'App\Listeners\LogValidated',
+        ],
+     
+        'Illuminate\Auth\Events\Verified' => [
+            // 'App\Listeners\LogVerified',
+        ],
+     
+        'Illuminate\Auth\Events\Logout' => [
+            // 'App\Listeners\LogSuccessfulLogout',
+        ],
+     
+        'Illuminate\Auth\Events\CurrentDeviceLogout' => [
+            // 'App\Listeners\LogCurrentDeviceLogout',
+        ],
+     
+        'Illuminate\Auth\Events\OtherDeviceLogout' => [
+            // 'App\Listeners\LogOtherDeviceLogout',
+        ],
+     
+        'Illuminate\Auth\Events\Lockout' => [
+            // 'App\Listeners\LogLockout',
+        ],
+     
+        'Illuminate\Auth\Events\PasswordReset' => [
+            // 'App\Listeners\LogPasswordReset',
         ],
     ];
 
