@@ -30,7 +30,7 @@ class StoreProductRequest extends FormRequest
             // 'discount' => 'integer|min:0|max:100',
             'category_id' => 'required|uuid|exists:categories,id',
             'store_id' => 'required|uuid|exists:stores,id',
-            'images' =>'array',
+            'images' =>'required|array',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', #2mb
             // 'verifier_at' => 'nullable|date',
             // 'verifier_id' => 'nullable|integer|exists:users,id',
