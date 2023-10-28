@@ -118,7 +118,6 @@ class CartController extends Controller
                 $cart_item = new Cart();
                 $cart_item->user_id = auth()->user()->id;
                 $cart_item->product_id = $product->id;
-                $cart_item->price = $product->price;
                 $cart_item->quantity = $validated['quantity'] ?? 1;
             }
             else {
@@ -135,7 +134,7 @@ class CartController extends Controller
         }
 
         $cart_resource =  new CartResource($cart_items);
-        $cart_resource->with['message'] = 'Cart items retrived successfully';
+        $cart_resource->with['message'] = 'Item added to cart successfully';
         return $cart_resource;
     }
 
@@ -216,7 +215,7 @@ class CartController extends Controller
         }
 
         $cart_resource =  new CartResource($cart_items);
-        $cart_resource->with['message'] = 'Cart item removed successfully';
+        $cart_resource->with['message'] = 'Item removed cart successfully';
         return $cart_resource;
     }
 

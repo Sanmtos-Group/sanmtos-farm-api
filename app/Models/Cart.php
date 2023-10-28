@@ -24,13 +24,27 @@ class Cart extends Model
         'product_id',
         'quantity',
     ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = [
+        'image_url',
+        'price',
+        'total_price',
+    ];
     
-      /**
+    /**
      * The attributes that should be hidden for arrays.
      *
      * @var array
      */
-    protected $hidden = ['id','user_id'];
+    protected $hidden = [
+        'user_id',
+        'product',
+    ];
 
     /**
      * Determine  a cart item  image
@@ -60,5 +74,13 @@ class Cart extends Model
         return Attribute::make(
             get: fn () => $this->product->price * $this->quantity,
         );
-    } 
+    }
+    
+    /**
+     * Get the cart product.
+     */
+    public function product(): BelongsTo 
+    {
+        return $this->belongsTo(Product::class);
+    }
 }
