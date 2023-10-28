@@ -4,7 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Collection;
 use Illuminate\Session\SessionManager;
-
+use App\Models\Product;
 class CartService {
     const MINIMUM_QUANTITY = 1;
     const DEFAULT_INSTANCE = 'shopping-cart';
@@ -113,7 +113,8 @@ class CartService {
      * @return Illuminate\Support\Collection
      */
     public function content(): Collection
-    {
+    {   
+        $this->refreshCartItemsWithDatabaseInfo();
         return is_null($this->session->get(self::DEFAULT_INSTANCE)) ? collect([]) : $this->session->get(self::DEFAULT_INSTANCE);
     }
 
@@ -133,6 +134,25 @@ class CartService {
         return number_format($total, 2);
     }
 
+    /***
+     * Refresh cart items  with current product data information
+     * 
+     * @return void
+     */
+    private function refreshCartItemsWithDatabaseInfo(): void
+    {
+        $contents = $this->session->has(self::DEFAULT_INSTANCE) ? $this->session->get(self::DEFAULT_INSTANCE) : collect([]);
+
+        foreach ($contents as $key => $cartItem) {
+            $product = Product::find($key);
+            
+            $cartItem->put('name', $product->name?? $contents->get($key)->get('name'));
+            $cartItem->put('price', $product->price?? $contents->get($key)->get('price'));
+            $cartItem->put('total_price', $cartItem->get('price') * $contents->get($key)->get('quantity'));
+            $contents->put($key, $cartItem);
+        }
+    }
+
     /**
      * Returns the content of the cart.
      *
@@ -140,6 +160,7 @@ class CartService {
      */
     protected function getContent(): Collection
     {
+        $this->refreshCartItemsWithDatabaseInfo();
         return $this->session->has(self::DEFAULT_INSTANCE) ? $this->session->get(self::DEFAULT_INSTANCE) : collect([]);
     }
 
