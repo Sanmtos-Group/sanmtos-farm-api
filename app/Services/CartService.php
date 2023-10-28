@@ -146,9 +146,9 @@ class CartService {
         foreach ($contents as $key => $cartItem) {
             $product = Product::find($key);
             
-            $cartItem->put('name', $product->name?? $contents->get($key)->get('name'));
-            $cartItem->put('price', $product->price?? $contents->get($key)->get('price'));
-            $cartItem->put('total_price', $cartItem->get('price') * $contents->get($key)->get('quantity'));
+            $cartItem->put('name', $product->name?? $contents->get($key)->get('name')?? null);
+            $cartItem->put('price', $product->price?? $contents->get($key)->get('price')?? 0);
+            $cartItem->put('total_price', $cartItem->get('price') * $contents->get($key)->get('quantity')?? 0);
             $contents->put($key, $cartItem);
         }
     }
