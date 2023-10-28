@@ -30,7 +30,7 @@ class Cart extends Model
      *
      * @var array
      */
-    protected $hidden = ['user_id'];
+    protected $hidden = ['id','user_id'];
 
      /**
      * Determine  a cart item total price

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute as CastAttribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Collection;
@@ -99,6 +100,14 @@ class User extends Authenticatable
     public function workStores(): BelongsToMany
     {
         return $this->belongsToMany(Store::class, StoreUser::class);
+    }
+
+    /**
+     * The cart items for the user.
+     */
+    public function cartItems(): hasMany
+    {
+        return $this->hasMany(Cart::class);
     }
 
     /**
@@ -231,4 +240,6 @@ class User extends Authenticatable
 
         return false;
     }
+
+
 }

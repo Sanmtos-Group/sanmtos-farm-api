@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CartResource;
 use App\Http\Requests\StoreCartRequest;
 use App\Http\Requests\UpdateCartRequest;
 use App\Facades\CartFacade;
@@ -25,14 +26,12 @@ class CartController extends Controller
     public function index()
     {
      
-        $cart_items = auth()->user() ? Cart::where('user_id', auth()->user()->id)->get() :  CartFacade::content();
+        $cart_items = auth()->user() ? auth()->user()->cartItems :  CartFacade::content();
 
-        return response()->json([
-            'status' => 'OK',
-            'data' => $cart_items,
-            'message' => count($cart_items)? 'Cart items retrieved successfully' : 'You do not have an item in your cart yet!',
-        ], 200);
-
+        $cart_resource =  new CartResource($cart_items);
+        $cart_resource->with['message'] = 'Cart items retrived successfully';
+        
+        return $cart_resource;
     }
 
     /**
