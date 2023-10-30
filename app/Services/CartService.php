@@ -175,7 +175,8 @@ class CartService {
 
         foreach ($contents as $key => $cartItem) {
             $product = Product::find($key);
-          
+            
+            $cartItem->put('product_id', $product->id?? $contents->get($key)->get('id')?? null);
             $cartItem->put('name', $product->name?? $contents->get($key)->get('name')?? null);
             $cartItem->put('image_url', $product->images()->first()->url?? $contents->get($key)->get('image_url')?? null);
             $cartItem->put('price', $product->price?? $contents->get($key)->get('price')?? 0);

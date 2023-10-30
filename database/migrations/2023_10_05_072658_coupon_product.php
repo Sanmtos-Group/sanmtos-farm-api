@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid()->primary();
             $table->foreignUuid('coupon_id')->contrained('coupons')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignUuid('product_id')->contrained('products')->cascadeOnUpdate()->cascadeOnDelete();
-
+            $table->timestamps();
         });
     }
 

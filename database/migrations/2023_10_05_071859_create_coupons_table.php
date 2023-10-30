@@ -19,6 +19,8 @@ return new class extends Migration
             $table->timestamp('valid_until');
             $table->boolean('is_cancel')->default(false);
             $table->foreignUuid('store_id')->contrained('stores')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->timestamps();
+
         });
     }
 

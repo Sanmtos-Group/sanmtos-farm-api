@@ -20,6 +20,9 @@ return new class extends Migration
             $table->integer('delivery_fee')->default(0);
             $table->integer('total_price')->default(0);
             $table->string('status')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+
         });
     }
 
