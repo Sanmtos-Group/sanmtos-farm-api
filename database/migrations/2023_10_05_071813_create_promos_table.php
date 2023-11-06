@@ -13,20 +13,17 @@ return new class extends Migration
     {
         Schema::create('promos', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('code');
+            $table->string('code')->unique();
             $table->string('name')->nullable();
             $table->text('description')->nullable();
-            $table->integer('discount_in_value')->nullable();
-            $table->integer('discount_in_percent')->default(0)->min(0)->max(100);
+            $table->unsignedDecimal('discount_amount',  $precision = 19, $scale = 2)->nullable();
+            $table->integer('discount_percent', $precision = 5, $scale = 2)->default(0)->min(0)->max(100);
             $table->timestamp('start_time');
             $table->timestamp('end_time');
             $table->boolean('is_cancelled')->default(false);
-            $table->boolean('has_ended')->default(false);
             $table->uuidMorphs('promoable');
             $table->timestamps();
             $table->softDeletes();
-
-            $table->index(['code', 'promoable_id']);
 
         });
     }
