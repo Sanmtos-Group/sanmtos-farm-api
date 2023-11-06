@@ -18,8 +18,8 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->unsignedDecimal('discount_amount',  $precision = 19, $scale = 2)->nullable();
             $table->integer('discount_percent', $precision = 5, $scale = 2)->default(0)->min(0)->max(100);
-            $table->timestamp('start_time');
-            $table->timestamp('end_time');
+            $table->timestamp('start_datetime');
+            $table->timestamp('end_datetime');
             $table->boolean('is_cancelled')->default(false);
             $table->uuidMorphs('promoable');
             $table->timestamps();
