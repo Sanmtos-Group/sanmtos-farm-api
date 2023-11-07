@@ -18,14 +18,15 @@ class PromoFactory extends Factory
     public function definition(): array
     {
         return [
+            'code' => fake()->unique()->word(),
             'name' => fake()->words(fake()->numberBetween(1, 3), true),
             'description' => fake()->sentence(),
             'discount' => fake()->numberBetween(1, 100),
-            'is_universal' => fake()->boolean(),
-            'start_time' => fake()->dateTimeBetween('now', '+1 week')->format('Y-m-d H:i:s'),
-            'end_time' => fake()->dateTimeBetween('+1 day', '+1 month')->format('Y-m-d H:i:s'),
-            'is_cancel' => fake()->boolean(),
-            'store_id' => Store::inRandomOrder()->first()?? Store::factory()->create(),
+            'start_datetime' => fake()->dateTimeBetween('now', '+1 week')->format('Y-m-d H:i:s'),
+            'end_datetime' => fake()->dateTimeBetween('+1 week', '+2 month')->format('Y-m-d H:i:s'),
+            'is_cancelled' => fake()->boolean(),
+            'promoable_id' => fake()->uuid(),
+            'promoable_type' => 'Fake/Promo'
         ];
     }
 }

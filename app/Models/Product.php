@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Traits\HasAttributes;
 use App\Traits\HasImages;
+use App\Traits\HasPromos;
 use Illuminate\Database\Eloquent\Casts\Attribute as CastAttribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,6 +19,7 @@ class Product extends Model
     use HasAttributes;
     use HasFactory;
     use HasImages;
+    use HasPromos;
     use HasUuids;
     use SoftDeletes;
 
@@ -53,7 +55,7 @@ class Product extends Model
      *
      * @var array
      */
-    protected $with = ['images'];
+    protected $with = ['images', 'promos'];
 
      /**
      * Determine if a user owns a store
@@ -89,14 +91,4 @@ class Product extends Model
     {
         return $this->belongsTo(User::class, 'verifier_id');
     }
-
-    /**
-     * Get the attached promos for the product.
-     */
-    public function promos(): BelongsToMany
-    {
-        return $this->belongsToMany(Promo::class)->using(ProductPromo::class);
-
-    }
-
 }

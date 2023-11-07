@@ -30,8 +30,7 @@ class Promo extends Model
         'code',
         'name',
         'description',
-        'discount_amount',
-        'discount_percent', 
+        'discount',
         'start_datetime',
         'end_datetime',
     ];

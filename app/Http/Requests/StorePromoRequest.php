@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use App\Models\Promo;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class StorePromoRequest extends FormRequest
 {
@@ -24,13 +23,14 @@ class StorePromoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code' => 'required|string|max:191|unique',
+            'code' => 'required|string|max:191|unique:promos,code',
             'name' => 'nullable|string|max:191',
             'description' => 'nullable|string|max:1000',
-            'discount_amount' => 'numeric|min:0.01',
-            'discount_percent' => 'integer|min:1|max:100|'.Rule::requiredIf(is_null($this->discount_amount)),
-            'start_datetime' => 'required|date',
-            'end_datetime' => 'required|date',
+            'discount' => 'required|numeric|min:0.01|max:100',
+            'start_datetime' => 'required|date|after_or_equal:'.now(),
+            'end_datetime' => 'required|date|after:start_datetime',
+            'promoable_id' => 'uuid',
+            'promoable_type' => 'string|max:191',
         ];
     }
 }

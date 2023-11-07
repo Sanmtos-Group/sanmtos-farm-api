@@ -25,10 +25,9 @@ class UpdatePromoRequest extends FormRequest
         return [
             'name' => 'nullable|string|max:191',
             'description' => 'nullable|string|max:1000',
-            'discount_amount' => 'numeric|min:0.01',
-            'discount_percent' => 'integer|min:1|max:100',
+            'discount' => 'numeric|min:0.01|max:100',
             'start_datetime' => 'date',
-            'end_datetime' => 'date',
+            'end_datetime' => 'date|after_or_equal:start_datetime',
         ];
     }
 }

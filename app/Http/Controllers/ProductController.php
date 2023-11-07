@@ -4,9 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Image;
 use App\Models\Product;
+
 use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\StorePromoRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Http\Requests\UpdatePromoRequest;
 use App\Http\Resources\ProductResource;
+use App\Http\Resources\PromoResource;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 class ProductController extends Controller
@@ -180,5 +185,32 @@ class ProductController extends Controller
         $product_resource->with['message'] = 'Product verification revoked successfully';
         
         return $product_resource;
+    }
+
+    /**
+     * Display a listing of the resource promos.
+     * 
+     * @return App\Http\Resources\PromoResource $promo_resource
+     */
+    public function promosIndex(Product $product, Request $request)
+    {
+        $promos = $product->promos;
+        $promo_resource = new PromoResource($promos);
+        $promo_resource->with['message'] = 'Product promos retrived successfully';
+        return $promo_resource;
+    }
+
+    /**
+     * Display a listing of the resource promos.
+     * 
+     * @return App\Http\Resources\PromoResource $promo_resource
+     */
+    public function promosStore(Product $product, StorePromoRequest $request)
+    {
+        $validated = $request->validated();
+        $promo = $product->promos()->create($validated);
+        $promo_resource = new PromoResource($promo);
+        $promo_resource->with['message'] = 'Product promo created successfully';
+        return $promo_resource;
     }
 }
