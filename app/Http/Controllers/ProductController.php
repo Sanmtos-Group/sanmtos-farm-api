@@ -200,10 +200,11 @@ class ProductController extends Controller
         return $promo_resource;
     }
 
-    /**
-     * Display a listing of the resource promos.
+     /**
+     * Store a newly created resource promo in storage.
      * 
-     * @return App\Http\Resources\PromoResource $promo_resource
+     * @param App\Http\Requests\StorePromoRequest $request
+     * @return App\Http\Resources\PromoResource $product_resource
      */
     public function promosStore(Product $product, StorePromoRequest $request)
     {
@@ -213,4 +214,5 @@ class ProductController extends Controller
         $promo_resource->with['message'] = 'Product promo created successfully';
         return $promo_resource;
     }
+
 }

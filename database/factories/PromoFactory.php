@@ -18,7 +18,7 @@ class PromoFactory extends Factory
     public function definition(): array
     {
         return [
-            'code' => fake()->unique()->word(),
+            'code' => fake()->unique()->bothify('????-########'),
             'name' => fake()->words(fake()->numberBetween(1, 3), true),
             'description' => fake()->sentence(),
             'discount' => fake()->numberBetween(1, 100),
