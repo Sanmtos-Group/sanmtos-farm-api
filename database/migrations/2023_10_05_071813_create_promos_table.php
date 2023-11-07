@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('promos', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
+            $table->string('code')->unique();
+            $table->string('name')->nullable();
             $table->text('description')->nullable();
-            $table->integer('discount')->default(0)->min(0)->max(100);
-            $table->boolean('is_universal')->default(false);
-            $table->timestamp('start_time');
-            $table->timestamp('end_time');
-            $table->boolean('is_cancel')->default(false);
-            $table->foreignUuid('store_id')->nullable()->contrained('stores')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->unsignedDecimal('discount', $precision = 5, $scale = 2);
+            $table->timestamp('start_datetime');
+            $table->timestamp('end_datetime');
+            $table->boolean('is_cancelled')->default(false);
+            $table->uuidMorphs('promoable');
             $table->timestamps();
             $table->softDeletes();
 

@@ -17,10 +17,24 @@ class CategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->unique()->word(),
+            'name' => fake()->randomElement([
+                'Health & Beauty',
+                'Home & Office', 
+                'Appliances', 
+                'Phone & Tablets', 
+                'Electronics',
+                'Computing',
+                'Fashion',
+                'Baby Wears',
+                'Gaming',
+                'Sporting Goods',
+                'Other Categories'
+            ]).fake()->unique()->bothify('??-###'),
+
             'description' => fake()->realText(),
             'slug' => fake()->unique()->slug(),
             'parent_category_id' => null
         ];
     }
+    
 }

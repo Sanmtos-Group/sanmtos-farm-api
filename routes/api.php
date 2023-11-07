@@ -78,6 +78,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::controller(ProductController::class)->group(function (){
                 Route::match(['put', 'patch'], '{product}/revoke-verification', 'revokeVerification')->name('revoke_verification');
                 Route::match(['put', 'patch'], '{product}/verify', 'verify')->name('verify');
+                Route::post('{product}/promos', 'promosStore')->name('promos.store');
             });
         });
     });
@@ -165,6 +166,14 @@ Route::apiResource('categories', CategoryController::class )->only(['index', 'sh
 Route::apiResource('images', ImageController::class)->only(['index', 'show']);
 Route::apiResource('permissions', PermissionController::class)->only(['index', 'show']);
 Route::apiResource('products', ProductController::class)->only(['index', 'show']);
+Route::prefix('products')->group(function () {
+    Route::name('products.')->group(function () {
+        Route::controller(ProductController::class)->group(function (){
+            Route::get('{product}/promos', 'promosIndex')->name('promos.index');
+        });
+    });
+});
+
 Route::apiResource('promos', PromoController::class)->only(['index', 'show']);
 Route::apiResource('roles', RoleController::class)->only(['index', 'show']);
 Route::apiResource('stores', StoreController::class)->only(['index', 'show']);

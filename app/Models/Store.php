@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Traits\HasImages;
+use App\Traits\HasPromos;
+
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,6 +18,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Store extends Model
 {
     use HasFactory;
+    use HasImages;
+    use HasPromos;
     use HasUuids;
     use Sluggable;
     use SoftDeletes;
@@ -58,6 +63,13 @@ class Store extends Model
     protected $hidden = [
         // 'slug',
     ];
+
+     /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = ['images', 'promos'];
 
     /**
      * Return the sluggable configuration array for this model.
@@ -105,13 +117,4 @@ class Store extends Model
     {
         return $this->hasOne(Product::class)->latestOfMany();
     }
-
-    /**
-     * Get the shop's promos.
-     */
-    public function promos(): HasMany
-    {
-        return $this->hasMany(Promo::class);
-    }
-
 }

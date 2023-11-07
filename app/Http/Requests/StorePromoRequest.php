@@ -23,13 +23,14 @@ class StorePromoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:191',
-            'description' => 'required|string|max:1000',
-            'discount' => 'integer|min:0|max:100',
-            'is_universal' => 'boolean',
-            'start_time' => 'required|date',
-            'end_time' => 'required|date',
-            'store_id' => 'uuid|exists:stores,id'
+            'code' => 'required|string|max:191|unique:promos,code',
+            'name' => 'nullable|string|max:191',
+            'description' => 'nullable|string|max:1000',
+            'discount' => 'required|numeric|min:0.01|max:100',
+            'start_datetime' => 'required|date|after_or_equal:'.now(),
+            'end_datetime' => 'required|date|after:start_datetime',
+            'promoable_id' => 'uuid',
+            'promoable_type' => 'string|max:191',
         ];
     }
 }

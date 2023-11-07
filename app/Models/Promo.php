@@ -27,13 +27,12 @@ class Promo extends Model
      * @var array
      */
     protected $fillable = [
+        'code',
         'name',
         'description',
         'discount',
-        'is_universal',
-        'start_time',
-        'end_time',
-        'store_id',
+        'start_datetime',
+        'end_datetime',
     ];
 
     /**
@@ -42,7 +41,6 @@ class Promo extends Model
      * @var array
      */
     protected $casts = [
-        'is_universal' => 'boolean',
-        'is_cancel' => 'boolean',
+        'is_cancelled' => 'boolean',
     ];
 }
