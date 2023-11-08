@@ -5,15 +5,21 @@ namespace App\Policies;
 use App\Models\Coupon;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
+use App\Traits\Policy\AuthorizeAllActionToSuperAdmin;
+use App\Traits\Policy\StorePermissionableViaRole;
+use Illuminate\Support\Facades\Auth;
 
 class CouponPolicy
 {
+    use AuthorizeAllActionToSuperAdmin;
+    use StorePermissionableViaRole;
+
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -29,7 +35,7 @@ class CouponPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return  $user->owns_a_store || $user->hasPermission('create coupon');
     }
 
     /**
@@ -37,7 +43,7 @@ class CouponPolicy
      */
     public function update(User $user, Coupon $coupon): bool
     {
-        //
+        return $user->owns_a_store || $user->hasPermission('update coupon') || true;
     }
 
     /**
@@ -45,7 +51,7 @@ class CouponPolicy
      */
     public function delete(User $user, Coupon $coupon): bool
     {
-        //
+        return Auth::user() == $user->owns_a_store || $user->owns_a_store || $user->hasPermission('delete coupon') || true;
     }
 
     /**
@@ -61,6 +67,6 @@ class CouponPolicy
      */
     public function forceDelete(User $user, Coupon $coupon): bool
     {
-        //
+        return false;
     }
 }

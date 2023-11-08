@@ -18,7 +18,7 @@ class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
-     * 
+     *
      * @return App\Http\Resources\ProductResource $product_resource
      */
     public function index(Request $request)
@@ -30,13 +30,13 @@ class ProductController extends Controller
 
         $order_by_price = $request->order_by_price == 'asc' || $request->order_by_price == 'desc'
                         ? $request->order_by_price : null;
-        
+
         $products = Product::where('id', '<>', null);
 
-        $products = is_null($order_by_price)? $products : $products->orderBy('price', $order_by_price ) ;    
+        $products = is_null($order_by_price)? $products : $products->orderBy('price', $order_by_price ) ;
         $products = is_null($order_by_name)? $products : $products->orderBy('name', $order_by_name ) ;
 
-        $products = $products->paginate(); 
+        $products = $products->paginate();
 
         $product_resource =  ProductResource::collection($products);
         $product_resource->with['status'] = "OK";
@@ -55,14 +55,14 @@ class ProductController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * 
+     *
      * @param App\Http\Requests\StoreProductRequest $request
      * @return App\Http\Resources\ProductResource $product_resource
      */
     public function store(StoreProductRequest $request)
-    {  
+    {
         $validated = $request->validated();
-        
+
         if(auth()->check()){
             $user =  auth()->user();
             $validated['store_id'] = $user->ownsAStore ? $user->store->id : $validated['store_id'];
@@ -78,7 +78,7 @@ class ProductController extends Controller
             'store_id' => $validated['store_id'],
         ]);
 
-        // save product images 
+        // save product images
         if($request->hasFile('images'))
 
             foreach ($request->file('images') as $image) {
@@ -87,12 +87,12 @@ class ProductController extends Controller
                 $image->url =  env('APP_URL').Storage::url($path);
                 $image->imageable_id = $product->id;
                 $image->imageable_type = $product::class;
-                $image->save();             
+                $image->save();
             }
 
         // attach the product images
         $product->images;
-        
+
         $product_resource = new ProductResource($product);
         $product_resource->with['message'] = 'Product created successfully';
 
@@ -101,7 +101,7 @@ class ProductController extends Controller
 
     /**
      * Display the specified resource.
-     * 
+     *
      * @param App\Models\Product $product
      * @return App\Http\Resources\ProductResource $product_resource
      */
@@ -123,12 +123,12 @@ class ProductController extends Controller
 
     /**
      * Update the specified resource in storage.
-     * 
+     *
      * @param App\Models\Product $product
      * @return App\Http\Resources\ProductResource $product_resource
      */
     public function update(UpdateProductRequest $request, Product $product)
-    { 
+    {
         $product->update($request->validated());
         $product_resource = new ProductResource($product);
         $product_resource->with['message'] = 'Product updated successfully';
@@ -138,7 +138,7 @@ class ProductController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     * 
+     *
      * @param App\Models\Product $product
      * @return App\Http\Resources\ProductResource $product_resource
      */
@@ -147,15 +147,15 @@ class ProductController extends Controller
         $product->delete();
         $product_resource = new ProductResource(null);
         $product_resource->with['message'] = 'Product deleted successfully';
-        
+
         return $product_resource;
     }
 
     /**
      * Verify the specified resource.
-     * 
+     *
      * @param App\Models\Product $product
-     * @return App\Http\Resources\ProductResource $product_resource
+     * @return App\Http\Resourcetaw$product_resource
      */
     public function verify(Product $product)
     {
@@ -165,13 +165,13 @@ class ProductController extends Controller
 
         $product_resource = new ProductResource($product->only(['id', 'name','store_id','verified_at', 'verifier_id']));
         $product_resource->with['message'] = 'Product verified successfully';
-        
+
         return $product_resource;
     }
 
     /**
      * Revoke verification of the specified resource.
-     * 
+     *
      * @param App\Models\Product $product
      * @return App\Http\Resources\ProductResource $product_resource
      */
@@ -183,13 +183,13 @@ class ProductController extends Controller
 
         $product_resource = new ProductResource($product->only(['id', 'name','store_id','verified_at', 'verifier_id']));
         $product_resource->with['message'] = 'Product verification revoked successfully';
-        
+
         return $product_resource;
     }
 
     /**
      * Display a listing of the resource promos.
-     * 
+     *
      * @return App\Http\Resources\PromoResource $promo_resource
      */
     public function promosIndex(Product $product, Request $request)
@@ -202,7 +202,7 @@ class ProductController extends Controller
 
      /**
      * Store a newly created resource promo in storage.
-     * 
+     *
      * @param App\Http\Requests\StorePromoRequest $request
      * @return App\Http\Resources\PromoResource $product_resource
      */
