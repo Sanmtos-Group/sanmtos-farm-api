@@ -29,7 +29,7 @@ class CategoryFactory extends Factory
                 'Gaming',
                 'Sporting Goods',
                 'Other Categories'
-            ]).fake()->unique()->bothify('??-###'),
+            ]).fake()->unique()->bothify(' ??-###'),
 
             'description' => fake()->realText(),
             'slug' => fake()->unique()->slug(),

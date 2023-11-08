@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Image;
-use App\Models\Product;
-
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\StorePromoRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Requests\UpdatePromoRequest;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\PromoResource;
+use App\Models\Image;
+use App\Models\Product;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;

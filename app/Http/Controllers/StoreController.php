@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ProductResource;
+use App\Http\Resources\PromoResource;
 use App\Http\Resources\StoreResource;
-use App\Models\Store;
+use App\Http\Requests\StorePromoRequest;
 use App\Http\Requests\StoreStoreRequest;
+use App\Http\Requests\UpdatePromoRequest;
 use App\Http\Requests\UpdateStoreRequest;
-use Cviebrock\EloquentSluggable\Services\SlugService;
+use App\Models\Store;
 
+use Cviebrock\EloquentSluggable\Services\SlugService;
+use Illuminate\Http\Request;
 class StoreController extends Controller
 {
     /**
@@ -88,7 +92,7 @@ class StoreController extends Controller
     /**
      * Display the specified store products.
      */
-    public function products(Store $store)
+    public function productIndex(Store $store)
     {
         $store_products = $store->products()->paginate();
         $product_resource = new ProductResource($store_products);
@@ -96,14 +100,32 @@ class StoreController extends Controller
         return $product_resource;
     }
 
+
     /**
-     * Display the specified store promos.
+     * Display a listing of the resource promos.
+     * 
+     * @return App\Http\Resources\PromoResource $promo_resource
      */
-    public function promos(Store $store)
+    public function promosIndex(Store $store, Request $request)
     {
-        $store_products = $store->promos()->paginate();
-        $product_resource = new ProductResource($store_products);
-        $product_resource->with['message'] = $store->name. '\'s promos retrieved successfully';
-        return $product_resource;
+        $promos = $store->promos;
+        $promo_resource = new PromoResource($promos);
+        $promo_resource->with['message'] = 'Store promos retrived successfully';
+        return $promo_resource;
+    }
+
+    /**
+     * Store a newly created resource promo in storage.
+     * 
+     * @param App\Http\Requests\StorePromoRequest $request
+     * @return App\Http\Resources\PromoResource $product_resource
+     */
+    public function promosStore(Store $store, StorePromoRequest $request)
+    {
+        $validated = $request->validated();
+        $promo = $store->promos()->create($validated);
+        $promo_resource = new PromoResource($promo);
+        $promo_resource->with['message'] = 'Store promo created successfully';
+        return $promo_resource;
     }
 }

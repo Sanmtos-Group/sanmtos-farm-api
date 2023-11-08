@@ -119,6 +119,13 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::apiResource('stores', StoreController::class)->only(['store', 'update', 'destroy']);
+    Route::prefix('stores/{store}')->group(function () {
+        Route::name('stores.')->group(function () {
+            Route::controller(StoreController::class)->group(function (){
+                Route::post('promos', 'promosStore')->name('promos.store');
+            });
+        });
+    });
 
     // Route::apiResource('users', UserController::class)->only(['store', 'update', 'destroy']);
     Route::prefix('users/{user}/')->group(function () {
@@ -166,10 +173,10 @@ Route::apiResource('categories', CategoryController::class )->only(['index', 'sh
 Route::apiResource('images', ImageController::class)->only(['index', 'show']);
 Route::apiResource('permissions', PermissionController::class)->only(['index', 'show']);
 Route::apiResource('products', ProductController::class)->only(['index', 'show']);
-Route::prefix('products')->group(function () {
+Route::prefix('products/{product}/')->group(function () {
     Route::name('products.')->group(function () {
         Route::controller(ProductController::class)->group(function (){
-            Route::get('{product}/promos', 'promosIndex')->name('promos.index');
+            Route::get('promos', 'promosIndex')->name('promos.index');
         });
     });
 });
@@ -180,8 +187,8 @@ Route::apiResource('stores', StoreController::class)->only(['index', 'show']);
 Route::prefix('stores/{store}/')->group(function () {
     Route::name('stores.')->group(function () {
         Route::controller(StoreController::class)->group(function(){
-            Route::get('products', 'products')->name('products');
-            Route::get('promos', 'promos')->name('promos');
+            Route::get('products', 'productsIndex')->name('products.index');
+            Route::get('promos', 'promosIndex')->name('promos.index');
         });
     });
 });
