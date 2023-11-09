@@ -76,6 +76,13 @@ class User extends Authenticatable
         // 'owns_a_store',
     ];
 
+    /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = ['roles'];
+
      /**
      * Get the store that the users owns.
      */
