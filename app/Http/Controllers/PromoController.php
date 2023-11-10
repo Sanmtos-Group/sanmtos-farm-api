@@ -53,7 +53,11 @@ class PromoController extends Controller
      */
     public function show(Promo $promo)
     {
-        //
+
+        $promo_resource = new PromoResource($promo);
+        $promo_resource->with['message'] = 'Promo retrived successfully';
+
+        return $promo_resource;
     }
 
     /**
@@ -108,6 +112,10 @@ class PromoController extends Controller
      */
     public function destroy(Promo $promo)
     {
-        //
+        $promo->delete();
+        $promo_resource = new PromoResource(null);
+        $promo_resource->with['message'] = 'Promo deleted successfully';
+        
+        return $promo_resource;
     }
 }
