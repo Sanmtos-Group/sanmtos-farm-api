@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->text('description')->nullable();
             $table->unsignedDecimal('discount', $precision = 5, $scale = 2);
-            $table->timestamp('start_datetime');
-            $table->timestamp('end_datetime_');
+            $table->nullableTimestamps('start_datetime');
+            $table->nullableTimestamps('end_datetime');
             $table->boolean('is_cancelled')->default(0);
             $table->uuidMorphs('promoable');
             $table->timestamps();
