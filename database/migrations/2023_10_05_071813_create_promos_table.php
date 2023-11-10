@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unsignedDecimal('discount', $precision = 5, $scale = 2);
             $table->timestamp('start_datetime');
             $table->timestamp('end_datetime');
-            $table->boolean('is_cancelled')->default(false);
+            $table->boolean('is_cancelled')->default(0);
             $table->uuidMorphs('promoable');
             $table->timestamps();
             $table->softDeletes();
