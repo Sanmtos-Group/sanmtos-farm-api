@@ -56,7 +56,7 @@ class Product extends Model
      *
      * @var array
      */
-    protected $with = ['images', 'promos'];
+    protected $with = ['images', 'active_promo',];
 
      /**
      * Determine if a user owns a store

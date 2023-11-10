@@ -16,9 +16,10 @@ trait HasPromos {
     /**
      * Get all of the model's attributes.
      */
-    public function activePromos()
+    public function active_promo()
     {
+        
         return $this->promos()->where('is_cancelled', false)
-        ->where('end_datetime','>', today());
+        ->where('end_datetime','>', today())->take(1);
     }
 }
