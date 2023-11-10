@@ -6,6 +6,8 @@ use App\Models\Promo;
 use App\Http\Requests\StorePromoRequest;
 use App\Http\Requests\UpdatePromoRequest;
 use App\Http\Resources\PromoResource;
+use Illuminate\Http\Request;
+
 class PromoController extends Controller
 {
     /**
@@ -19,10 +21,32 @@ class PromoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $promos = Promo::all();
-        $promo_resource = new PromoResource($promos);
+
+        $per_page = is_numeric($request->per_page)? (int) $request->per_page : 15;
+
+        $order_by_code = $request->order_by_code == 'asc' || $request->order_by_code == 'desc'
+        ? $request->order_by_code : null;
+
+        $order_by_name = $request->order_by_name == 'asc' || $request->order_by_name == 'desc'
+                        ? $request->order_by_name : null;
+
+        $order_by_created_at = $request->order_by_created_at == 'asc' || $request->order_by_created_at == 'desc'
+                        ? $request->order_by_created_at : null;
+        
+        $promos = Promo::where('id', '<>', null);
+
+        $promos = is_null($order_by_code)? $promos : $promos->orderBy('code', $order_by_code ) ;
+        $promos = is_null($order_by_name)? $promos : $promos->orderBy('name', $order_by_name ) ;
+        $promos = is_null($order_by_created_at)? $promos : $promos->orderBy('name', $order_by_created_at ) ;
+
+        $promos = $promos->paginate($per_page); 
+
+        $promo_resource =  PromoResource::collection($promos);
+        $promo_resource->with['status'] = "OK";
+        $promo_resource->with['message'] = 'Promos retrived successfully';
+
         return $promo_resource;
     }
 
@@ -53,7 +77,11 @@ class PromoController extends Controller
      */
     public function show(Promo $promo)
     {
-        //
+
+        $promo_resource = new PromoResource($promo);
+        $promo_resource->with['message'] = 'Promo retrived successfully';
+
+        return $promo_resource;
     }
 
     /**
@@ -108,6 +136,10 @@ class PromoController extends Controller
      */
     public function destroy(Promo $promo)
     {
-        //
+        $promo->delete();
+        $promo_resource = new PromoResource(null);
+        $promo_resource->with['message'] = 'Promo deleted successfully';
+        
+        return $promo_resource;
     }
 }
