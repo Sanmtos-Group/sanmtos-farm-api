@@ -8,6 +8,7 @@ use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CouponController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProductController;
@@ -89,6 +90,16 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::controller(PromoController::class)->group(function (){
                 Route::match(['put', 'patch'], '{promo}/cancel', 'cancel')->name('cancel');
                 Route::match(['put', 'patch'], '{promo}/continue', 'continue')->name('continue');
+            });
+        });
+    });
+
+    Route::apiResource('coupon', CouponController::class)->only(['store', 'update', 'destroy']);
+    Route::prefix('coupon')->group(function () {
+        Route::name('coupon.')->group(function () {
+            Route::controller(PromoController::class)->group(function (){
+                Route::match(['put', 'patch'], '{coupon}/cancel', 'cancel')->name('cancel');
+                Route::match(['put', 'patch'], '{coupon}/continue', 'continue')->name('continue');
             });
         });
     });
