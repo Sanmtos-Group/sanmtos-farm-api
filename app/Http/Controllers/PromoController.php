@@ -26,6 +26,9 @@ class PromoController extends Controller
 
         $per_page = is_numeric($request->per_page)? (int) $request->per_page : 15;
 
+        $order_by_code = $request->order_by_code == 'asc' || $request->order_by_code == 'desc'
+        ? $request->order_by_code : null;
+
         $order_by_name = $request->order_by_name == 'asc' || $request->order_by_name == 'desc'
                         ? $request->order_by_name : null;
 
@@ -34,6 +37,7 @@ class PromoController extends Controller
         
         $promos = Promo::where('id', '<>', null);
 
+        $promos = is_null($order_by_code)? $promos : $promos->orderBy('code', $order_by_code ) ;
         $promos = is_null($order_by_name)? $promos : $promos->orderBy('name', $order_by_name ) ;
         $promos = is_null($order_by_created_at)? $promos : $promos->orderBy('name', $order_by_created_at ) ;
 
