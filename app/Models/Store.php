@@ -69,7 +69,7 @@ class Store extends Model
      *
      * @var array
      */
-    protected $with = ['images', 'promos'];
+    protected $with = ['images'];
 
     /**
      * Return the sluggable configuration array for this model.
@@ -102,7 +102,7 @@ class Store extends Model
         return $this->belongsToMany(User::class, StoreUser::class);
     }
 
-     /**
+    /**
      * Get the products for the store.
      */
     public function products(): HasMany
@@ -116,5 +116,23 @@ class Store extends Model
     public function recentProduct(): HasOne
     {
         return $this->hasOne(Product::class)->latestOfMany();
+    }
+
+    /**
+     * Get the in promos for the store.
+     */
+    public function inPromos(): HasMany
+    {
+        return $this->hasMany(Promo::class);
+    }
+
+    /**
+     * Get all of the in active promos for the store
+     */
+    public function inActivePromos()
+    {
+        
+        return $this->inPromos()->where('is_cancelled', false)
+        ->where('end_datetime','>', today());
     }
 }
