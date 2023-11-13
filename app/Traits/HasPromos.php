@@ -2,21 +2,21 @@
 namespace App\Traits; 
 
 use App\Models\Promo; 
-
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 trait HasPromos {
 
     /**
-     * Get all of the model's attributes.
+     * Get all of the promos for the model.
      */
-    public function promos()
+    public function promos() : MorphToMany
     {
-        return $this->morphMany(Promo::class, 'promoable');
+        return $this->morphToMany(Promo::class, 'promoable');
     }
 
     /**
-     * Get all of the model's attributes.
+     * Get all of the active promo
      */
-    public function active_promo()
+    public function activePromo()
     {
         
         return $this->promos()->where('is_cancelled', false)

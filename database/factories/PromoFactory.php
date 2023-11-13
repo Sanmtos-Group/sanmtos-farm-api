@@ -25,8 +25,7 @@ class PromoFactory extends Factory
             'start_datetime' => fake()->dateTimeBetween('now', '+1 week')->format('Y-m-d H:i:s'),
             'end_datetime' => fake()->dateTimeBetween('+1 week', '+2 month')->format('Y-m-d H:i:s'),
             'is_cancelled' => fake()->boolean(),
-            'promoable_id' => fake()->uuid(),
-            'promoable_type' => 'Fake/Promo'
+            'store_id' => Store::inRandomOrder()->first()?? Store::factory()->create(),                      
         ];
     }
 }

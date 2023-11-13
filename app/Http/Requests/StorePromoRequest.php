@@ -29,8 +29,7 @@ class StorePromoRequest extends FormRequest
             'discount' => 'required|numeric|min:0.01|max:100',
             'start_datetime' => 'required|date|after_or_equal:'.now(),
             'end_datetime' => 'required|date|after:start_datetime',
-            'promoable_id' => 'uuid',
-            'promoable_type' => 'string|max:191',
+            'store_id' => 'nullable|uuid|exists:stores,id',
         ];
     }
 }

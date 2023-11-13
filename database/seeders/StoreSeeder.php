@@ -17,14 +17,21 @@ class StoreSeeder extends Seeder
     public function run(): void
     {
         Store::factory()->count(20)->create()->each(function($store){
+
+            /**
+             * Create an image for the stroe
+             */
             Image::factory([
                'imageable_id' => $store->id,
                'imageable_type' => $store::class,
             ])->create();
 
+            /**
+             * Create a promo for the store
+             */
+
             Promo::factory([
-                'promoable_id' => $store->id,
-                'promoable_type' => $store::class,
+                'store_id' => $store->id,
              ])->create();
         });
     }

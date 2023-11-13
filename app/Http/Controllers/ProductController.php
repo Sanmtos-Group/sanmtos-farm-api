@@ -3,13 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\StorePromoableRequest;
 use App\Http\Requests\StorePromoRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Requests\UpdatePromoRequest;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\PromoResource;
+
 use App\Models\Image;
 use App\Models\Product;
+use App\Models\Promo;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -202,16 +205,45 @@ class ProductController extends Controller
      /**
      * Store a newly created resource promo in storage.
      *
-     * @param App\Http\Requests\StorePromoRequest $request
+     * @param App\Http\Requests\StorePromoableRequest $request
      * @return App\Http\Resources\PromoResource $product_resource
      */
-    public function promosStore(Product $product, StorePromoRequest $request)
+    public function promosStore(Product $product, StorePromoableRequest $request)
     {
         $validated = $request->validated();
-        $promo = $product->promos()->create($validated);
+        $promo = Promo::find($validated['promo_id']?? null);
+        
+        /**
+         * Ensure the product does not have an active promo 
+         */
+        if(!is_null($product->activePromo)){
+
+            $promo_resource = new PromoResource(null);
+            $promo_resource->with['status'] = 'FAILED';
+            $promo_resource->with['message'] = 'Promo attachment failed: active promo on the product.';
+
+            return $promo_resource;
+        }
+
+        /**
+         * Ensure the promo and product belongs to the same store
+         */
+        if($promo->store_id != $product->store_id){
+
+            $promo_resource = new PromoResource(null);
+            $promo_resource->with['status'] = 'FAILED';
+            $promo_resource->with['message'] = 'Promo attachment failed: promo is of different stores';
+
+            return $promo_resource;
+        }
+        
+        // add the promo to product
+        $product->promos()->sync($promo);
         $promo_resource = new PromoResource($promo);
-        $promo_resource->with['message'] = 'Product promo created successfully';
+        $promo_resource->with['message'] = 'Promo attached to product successfully';
+
         return $promo_resource;
+      
     }
 
 }
