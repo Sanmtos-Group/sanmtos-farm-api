@@ -11,7 +11,7 @@ class UpdateCouponRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user()->can('update', $this->coupon);
     }
 
     /**
@@ -22,7 +22,10 @@ class UpdateCouponRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'code' => 'required|string|max:8',
+            'discount' => 'numeric|min:0.01|max:100',
+            'start_datetime' => 'date',
+            'valid_until' => 'date|after_or_equal:start_datetime',
         ];
     }
 }

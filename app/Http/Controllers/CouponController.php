@@ -20,8 +20,9 @@ class CouponController extends Controller
     public function index()
     {
         $promos = Coupon::all();
-        $promo_resource = new CouponResource($promos);
-        return $promo_resource;
+        $coupon_resource = new CouponResource();
+        $coupon_resource->with['message'] = "Coupon retrieved successfully";
+        return $coupon_resource;
     }
 
     /**
@@ -37,16 +38,28 @@ class CouponController extends Controller
      */
     public function store(StoreCouponRequest $request)
     {
-        $promo_data = $request->validated();
+        $validations = $request->validated();
 
-        $query = Product::where('id', $promo_data->id);
+        $product = Product::where('id', $validations->product_id);
 
-        $promo = Coupon::create($promo_data);
+        $coupon_check = Coupon::where('couponable_id', $product->id, 'code', $validations);
 
-        $promo_resource = new CouponResource($promo);
-        $promo_resource->with['message'] = 'Coupon created successfully';
+        if(! $coupon_check){
+            foreach ($validations as $validation){
+                $coupon = new Coupon();
+                $coupon->code = $validation->code;
+                $coupon->discount = $validation->discount;
+                $coupon->valid_until = $validation->valid_until;
+                $coupon->couponable_type = "App\Models\Products";
+                $coupon->couponable_id = $validation->id;
+                $coupon->save();
+            }
 
-        return $promo_resource;
+            return response()->json([
+                "message" => "Coupon created successfully",
+            ], 201);
+        }
+
     }
 
     /**
@@ -54,7 +67,10 @@ class CouponController extends Controller
      */
     public function show(Coupon $coupon)
     {
-        //
+        $coupons = new CouponResource($coupon);
+        $coupons->with['message'] = "Coupon retrieved successfully.";
+
+        return $coupons;
     }
 
     /**
@@ -70,7 +86,11 @@ class CouponController extends Controller
      */
     public function update(UpdateCouponRequest $request, Coupon $coupon)
     {
-        //
+        $coupon->update($request->validated());
+        $coupon_resource = new CouponResource($coupon);
+        $coupon_resource->with['message'] = 'Coupon updated successfully';
+
+        return $coupon_resource;
     }
 
     /**
@@ -78,6 +98,37 @@ class CouponController extends Controller
      */
     public function destroy(Coupon $coupon)
     {
-        //
+        $coupon->delete();
+
+        $coupon_resource = new CouponResource(null);
+        $coupon_resource->with['message'] = "Coupon deleted successfully";
+
+        return $coupon_resource;
+    }
+
+    /**
+     * Continue a specific coupon running
+    */
+
+    public function continue(Coupon $coupon){
+        $coupon->is_cancel = true;
+        $coupon->save();
+
+        $coupon_resource = new CouponResource($coupon);
+        $coupon_resource->with['message'] = "Coupon continued successfully";
+
+        return $coupon_resource;
+    }
+
+    /**
+     * Cancel a specific running coupon
+     */
+
+    public function cancle(Coupon $coupon){
+        $coupon->is_cancel = false;
+        $coupon->save();
+
+        $coupon_resource = new CouponResource($coupon);
+        $coupon_resource->with['message'] = "Coupon cancelled successfully";
     }
 }

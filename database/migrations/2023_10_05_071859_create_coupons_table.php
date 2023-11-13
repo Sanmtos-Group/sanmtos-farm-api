@@ -12,14 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('coupons', function (Blueprint $table) {
-            $table->uuid()->primary();
-            $table->string('code');
-            $table->integer('discount')->default(0)->min(0)->max(100);
-            $table->boolean('is_universal')->default(false);
-            $table->timestamp('valid_until');
-            $table->boolean('is_cancel')->default(false);
-            $table->foreignUuid('store_id')->contrained('stores')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->uuid('id')->primary();
+            $table->string('code')->unique();
+            $table->unsignedDecimal('discount', $precision = 5, $scale = 2);
+            $table->timestamp('start_datetime');
+            $table->timestamp('valid_until')->nullable();
+            $table->boolean('is_cancelled')->default(false);
+            $table->uuidMorphs('couponable');
+            $table->index(['code', 'couponable_id']);
             $table->timestamps();
+            $table->softDeletes();
 
         });
     }

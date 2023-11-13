@@ -11,7 +11,7 @@ class StoreCouponRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user()->can('create', $this->coupon);
     }
 
     /**
@@ -22,7 +22,10 @@ class StoreCouponRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'code' => 'required|string|max:8|unique:coupon,code',
+            'discount' => 'required|numeric|min:0.01|max:100',
+            'start_datetime' => 'required|date|after_or_equal:'.now(),
+            'valid_until' => 'required|date|after_or_equal:start_datetime',
         ];
     }
 }

@@ -26,9 +26,9 @@ class CouponPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Coupon $coupon): bool
+    public function view(User $user=null, Coupon $coupon): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -42,9 +42,29 @@ class CouponPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Coupon $coupon): bool
+    public function update(User $user, Coupon $coupon, Role $role): bool
     {
-        return $user->owns_a_store || $user->hasPermission('update coupon') || true;
+        $can_update_coupon = $user->hasPermission('update coupon');
+
+        // store owner can only delete store coupon
+        if($user->owns_a_store){
+            $can_update_coupon = $can_update_coupon && $user->store->id == $coupon->store_id;
+        }
+        // sanmtos staff can only delete non store coupon
+        elseif($user->is_staff){
+            $can_update_coupon = $can_update_coupon && is_null($coupon->store_id);
+        }
+        // store staff can only delete store roles
+        else {
+            $can_update_coupon = $can_update_coupon && $user->workStores()->where('store_id', $coupon->store_id)->count();
+
+            if($can_update_coupon){
+                $can_update_coupon = $can_update_coupon && $this->permissionIsGrantedByTheStoreInActionThroughRole($user, $role, 'delete coupon');
+            }
+
+        }
+
+        return $can_update_coupon;
     }
 
     /**
