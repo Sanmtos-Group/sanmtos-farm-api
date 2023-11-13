@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Coupon;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreCouponRequest extends FormRequest
@@ -11,7 +12,7 @@ class StoreCouponRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()->can('create', $this->coupon);
+        return $this->user()->can('create', Coupon::class);
     }
 
     /**

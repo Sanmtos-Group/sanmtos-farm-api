@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Coupon;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateCouponRequest extends FormRequest
@@ -11,7 +12,7 @@ class UpdateCouponRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()->can('update', $this->coupon);
+        return $this->user()->can('update', Coupon::class);
     }
 
     /**
