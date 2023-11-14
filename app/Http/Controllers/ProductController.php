@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCouponableRequest;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\StorePromoableRequest;
 use App\Http\Requests\StorePromoRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Requests\UpdatePromoRequest;
+use App\Http\Resources\CouponResource;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\PromoResource;
 
+use App\Models\Coupon;
 use App\Models\Image;
 use App\Models\Product;
 use App\Models\Promo;
@@ -38,7 +41,7 @@ class ProductController extends Controller
         $products = is_null($order_by_price)? $products : $products->orderBy('price', $order_by_price ) ;
         $products = is_null($order_by_name)? $products : $products->orderBy('name', $order_by_name ) ;
 
-        $products = $products->paginate();
+        $products = $products->paginate($per_page);
 
         $product_resource =  ProductResource::collection($products);
         $product_resource->with['status'] = "OK";
@@ -243,6 +246,62 @@ class ProductController extends Controller
         $promo_resource->with['message'] = 'Promo attached to product successfully';
 
         return $promo_resource;
+      
+    }
+
+    /**
+     * Display a listing of the resource coupons.
+     *
+     * @return App\Http\Resources\CouponResource $coupon_resource
+     */
+    public function couponsIndex(Product $product, Request $request)
+    {
+        $coupons = $product->coupons;
+        $coupon_resource = new CouponResource($coupons);
+        $coupon_resource->with['message'] = 'Product coupons retrived successfully';
+        return $coupon_resource;
+    }
+     /**
+     * Store a newly created resource coupon in storage.
+     *
+     * @param App\Http\Requests\StoreCouponableRequest $request
+     * @return App\Http\Resources\CouponResource $coupon_resource
+     */
+    public function couponsStore(Product $product, StoreCouponableRequest $request)
+    {
+        $validated = $request->validated();
+        $coupon = Coupon::find($validated['coupon_id']?? null);
+        
+        /**
+         * Ensure the product does not have an active coupon 
+         */
+        if(!is_null($product->activeCoupon)){
+
+            $coupon_resource = new CouponResource(null);
+            $coupon_resource->with['status'] = 'FAILED';
+            $coupon_resource->with['message'] = 'Coupon attachment failed: active coupon on the product.';
+
+            return $coupon_resource;
+        }
+
+        /**
+         * Ensure the coupon and product belongs to the same store
+         */
+        if($coupon->store_id != $product->store_id){
+
+            $coupon_resource = new CouponResource(null);
+            $coupon_resource->with['status'] = 'FAILED';
+            $coupon_resource->with['message'] = 'Coupon attachment failed: coupon is of different stores';
+
+            return $coupon_resource;
+        }
+        
+        // add the coupon to product
+        $product->coupons()->sync($coupon);
+        $coupon_resource = new CouponResource($coupon);
+        $coupon_resource->with['message'] = 'Coupon attached to product successfully';
+
+        return $coupon_resource;
       
     }
 

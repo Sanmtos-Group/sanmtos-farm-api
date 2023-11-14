@@ -80,6 +80,7 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::match(['put', 'patch'], '{product}/revoke-verification', 'revokeVerification')->name('revoke_verification');
                 Route::match(['put', 'patch'], '{product}/verify', 'verify')->name('verify');
                 Route::post('{product}/promos', 'promosStore')->name('promos.store');
+                Route::post('{product}/coupons', 'couponsStore')->name('coupons.store');
             });
         });
     });
@@ -180,20 +181,24 @@ Route::prefix('cart-items/')->group(function () {
     });
 });
 Route::apiResource('carts', CartController::class)->only(['index', 'show']);
+Route::apiResource('coupons', CouponController::class)->only(['index', 'show']);
 Route::apiResource('categories', CategoryController::class )->only(['index', 'show']);
 Route::apiResource('images', ImageController::class)->only(['index', 'show']);
 Route::apiResource('permissions', PermissionController::class)->only(['index', 'show']);
+
 Route::apiResource('products', ProductController::class)->only(['index', 'show']);
 Route::prefix('products/{product}/')->group(function () {
     Route::name('products.')->group(function () {
         Route::controller(ProductController::class)->group(function (){
             Route::get('promos', 'promosIndex')->name('promos.index');
+            Route::get('coupons', 'couponsIndex')->name('coupons.index');
         });
     });
 });
 
 Route::apiResource('promos', PromoController::class)->only(['index', 'show']);
 Route::apiResource('roles', RoleController::class)->only(['index', 'show']);
+
 Route::apiResource('stores', StoreController::class)->only(['index', 'show']);
 Route::prefix('stores/{store}/')->group(function () {
     Route::name('stores.')->group(function () {

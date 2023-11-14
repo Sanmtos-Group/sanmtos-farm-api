@@ -109,7 +109,7 @@ class PromoController extends Controller
      */
     public function cancel(Promo $promo)
     {
-        $promo->is_cancel = false;
+        $promo->is_cancelled = true;
         $promo->save();
         $promo_resource = new PromoResource($promo);
         $promo_resource->with['message'] = 'Promo cancelled successfully';
@@ -122,7 +122,7 @@ class PromoController extends Controller
      */
     public function continue(Promo $promo)
     {
-        $promo->is_cancel = true;
+        $promo->is_cancelled = false;
         $promo->save();
 
         $promo_resource = new PromoResource($promo);

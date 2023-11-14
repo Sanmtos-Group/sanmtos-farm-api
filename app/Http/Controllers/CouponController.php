@@ -7,7 +7,7 @@ use App\Models\Coupon;
 use App\Http\Requests\StoreCouponRequest;
 use App\Http\Requests\UpdateCouponRequest;
 use App\Models\Product;
-
+use Illuminate\Http\Request;
 class CouponController extends Controller
 {
     public function __construct(){
@@ -17,11 +17,31 @@ class CouponController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $promos = Coupon::all();
-        $coupon_resource = new CouponResource();
-        $coupon_resource->with['message'] = "Coupon retrieved successfully";
+        $per_page = is_numeric($request->per_page)? (int) $request->per_page : 15;
+
+        $order_by_code = $request->order_by_code == 'asc' || $request->order_by_code == 'desc'
+        ? $request->order_by_code : null;
+
+        $order_by_name = $request->order_by_name == 'asc' || $request->order_by_name == 'desc'
+                        ? $request->order_by_name : null;
+
+        $order_by_created_at = $request->order_by_created_at == 'asc' || $request->order_by_created_at == 'desc'
+                        ? $request->order_by_created_at : null;
+        
+        $coupons = Coupon::where('id', '<>', null);
+
+        $coupons = is_null($order_by_code)? $coupons : $coupons->orderBy('code', $order_by_code ) ;
+        $coupons = is_null($order_by_name)? $coupons : $coupons->orderBy('name', $order_by_name ) ;
+        $coupons = is_null($order_by_created_at)? $coupons : $coupons->orderBy('name', $order_by_created_at ) ;
+
+        $coupons = $coupons->paginate($per_page); 
+
+        $coupon_resource =  CouponResource::collection($coupons);
+        $coupon_resource->with['status'] = "OK";
+        $coupon_resource->with['message'] = 'Coupons retrived successfully';
+
         return $coupon_resource;
     }
 
@@ -111,7 +131,7 @@ class CouponController extends Controller
     */
 
     public function continue(Coupon $coupon){
-        $coupon->is_cancel = true;
+        $coupon->is_cancelled = false;
         $coupon->save();
 
         $coupon_resource = new CouponResource($coupon);
@@ -124,8 +144,8 @@ class CouponController extends Controller
      * Cancel a specific running coupon
      */
 
-    public function cancle(Coupon $coupon){
-        $coupon->is_cancel = false;
+    public function cancel(Coupon $coupon){
+        $coupon->is_cancelled = true;
         $coupon->save();
 
         $coupon_resource = new CouponResource($coupon);
