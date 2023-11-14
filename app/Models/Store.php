@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasCoupons;
 use App\Traits\HasImages;
 use App\Traits\HasPromos;
 
@@ -17,6 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Store extends Model
 {
+    use HasCoupons;
     use HasFactory;
     use HasImages;
     use HasPromos;
@@ -130,9 +132,25 @@ class Store extends Model
      * Get all of the in active promos for the store
      */
     public function inActivePromos()
-    {
-        
+    { 
         return $this->inPromos()->where('is_cancelled', false)
         ->where('end_datetime','>', today());
+    }
+
+    /**
+     * Get the in coupon for the store.
+     */
+    public function inCoupons(): HasMany
+    {
+        return $this->hasMany(Coupon::class);
+    }
+
+    /**
+     * Get all of the in active coupons for the store
+     */
+    public function inActiveCoupons()
+    {
+        return $this->inCoupons()->where('is_cancelled', false)
+        ->where('valid_until','>', today());
     }
 }

@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('promoables', function (Blueprint $table) {
+        Schema::create('couponables', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('promo_id')->contrained('promos')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->uuidMorphs('promoable');
+            $table->foreignUuid('coupon_id')->contrained('coupons')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->uuidMorphs('couponable');
             $table->timestamps();
 
-            $table->index(['promo_id', 'promoable_id']);
+            $table->index(['coupon_id', 'couponable_id']);
         });
     }
 
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('promoables');
+        Schema::dropIfExists('couponables');
     }
 };

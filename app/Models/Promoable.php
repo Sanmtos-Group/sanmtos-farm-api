@@ -2,10 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class Promoables extends Pivot
+class Promoable extends Pivot
 {
+    use HasFactory;
+    use HasUuids;
+
      /**
      * The attributes that are mass assignable.
      *

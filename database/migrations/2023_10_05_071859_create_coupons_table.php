@@ -13,13 +13,12 @@ return new class extends Migration
     {
         Schema::create('coupons', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('code')->unique();
+            $table->string('code');
             $table->unsignedDecimal('discount', $precision = 5, $scale = 2);
-            $table->timestamp('start_datetime');
             $table->timestamp('valid_until')->nullable();
             $table->boolean('is_cancelled')->default(false);
-            $table->uuidMorphs('couponable');
-            $table->index(['code', 'couponable_id']);
+            $table->foreignUuid('store_id')->nullable()->contrained('stores')->cascadeOnUpdate()->casecadeOnDelete();
+           
             $table->timestamps();
             $table->softDeletes();
 

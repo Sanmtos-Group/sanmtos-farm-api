@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 class Coupon extends Model
 {
     use HasFactory;
@@ -31,6 +31,7 @@ class Coupon extends Model
         'discount',
         'valid_until',
         'couponable',
+        'store_id',
     ];
 
     /**
@@ -41,4 +42,20 @@ class Coupon extends Model
     protected $casts = [
         'is_cancelled' => 'boolean',
     ];
+
+     /**
+     * Get all of the products that are assigned this tag.
+     */
+    public function products(): MorphToMany
+    {
+        return $this->morphedByMany(Promo::class, 'promoable');
+    }
+ 
+    /**
+     * Get all of the stores that are assigned this tag.
+     */
+    public function stores(): MorphToMany
+    {
+        return $this->morphedByMany(Store::class, 'promoable');
+    }
 }

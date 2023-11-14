@@ -28,6 +28,12 @@ class ProductSeeder extends Seeder
              * Attached an active promo
              */
             $product->promos()->sync($product->store->inActivePromos()->inRandomOrder()->first());
+
+
+             /**
+             * Attached an active coupon
+             */
+            $product->coupons()->sync($product->store->inActiveCoupons()->inRandomOrder()->first());
         });
     }
 }

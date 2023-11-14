@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasAttributes;
+use App\Traits\HasCoupons;
 use App\Traits\HasImages;
 use App\Traits\HasPromos;
 
@@ -18,6 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Product extends Model
 {
     use HasAttributes;
+    use HasCoupons;
     use HasFactory;
     use HasImages;
     use HasPromos;

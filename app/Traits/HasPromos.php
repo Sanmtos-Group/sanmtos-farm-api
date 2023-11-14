@@ -18,7 +18,6 @@ trait HasPromos {
      */
     public function activePromo()
     {
-        
         return $this->promos()->where('is_cancelled', false)
         ->where('end_datetime','>', today())->take(1);
     }
