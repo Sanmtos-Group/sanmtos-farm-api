@@ -58,28 +58,14 @@ class CouponController extends Controller
      */
     public function store(StoreCouponRequest $request)
     {
-        $validations = $request->validated();
+        $validated = $request->validated();
 
-        $product = Product::where('id', $validations->product_id);
+        $coupon = Coupon::create($validated);
 
-        $coupon_check = Coupon::where('couponable_id', $product->id, 'code', $validations);
+        $coupon_resource = new CouponResource($coupon);
+        $coupon_resource->with['message'] = 'Coupon created successfully';
 
-        if(! $coupon_check){
-            foreach ($validations as $validation){
-                $coupon = new Coupon();
-                $coupon->code = $validation->code;
-                $coupon->discount = $validation->discount;
-                $coupon->valid_until = $validation->valid_until;
-                $coupon->couponable_type = "App\Models\Products";
-                $coupon->couponable_id = $validation->id;
-                $coupon->save();
-            }
-
-            return response()->json([
-                "message" => "Coupon created successfully",
-            ], 201);
-        }
-
+        return $coupon_resource;
     }
 
     /**

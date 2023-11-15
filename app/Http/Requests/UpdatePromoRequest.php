@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Promo;
 use Illuminate\Foundation\Http\FormRequest;
-
+use Illuminate\Validation\Rule;
 class UpdatePromoRequest extends FormRequest
 {
     /**
@@ -23,6 +23,7 @@ class UpdatePromoRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'code' => 'string|min:1|max:8|'.Rule::unique('promos')->ignore($this->promo),
             'name' => 'nullable|string|max:191',
             'description' => 'nullable|string|max:1000',
             'discount' => 'numeric|min:0.01|max:100',

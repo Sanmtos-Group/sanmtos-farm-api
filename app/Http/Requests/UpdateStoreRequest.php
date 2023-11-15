@@ -23,7 +23,7 @@ class UpdateStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'string|min:3|max:191|'.Rule::unique('stores')->ignore($this->id),
+            'name' => 'string|min:3|max:191|'.Rule::unique('stores')->ignore($this->store),
             'description' => 'nullable|string|max:1000',
         ];
     }

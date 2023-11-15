@@ -23,7 +23,7 @@ class StorePromoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code' => 'required|string|max:191|unique:promos,code',
+            'code' => 'required|string|max:8|unique:promos,code',
             'name' => 'nullable|string|max:191',
             'description' => 'nullable|string|max:1000',
             'discount' => 'required|numeric|min:0.01|max:100',

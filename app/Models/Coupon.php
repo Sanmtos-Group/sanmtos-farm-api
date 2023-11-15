@@ -30,7 +30,6 @@ class Coupon extends Model
         'code',
         'discount',
         'valid_until',
-        'couponable',
         'store_id',
     ];
 

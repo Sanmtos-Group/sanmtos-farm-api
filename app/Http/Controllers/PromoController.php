@@ -63,8 +63,8 @@ class PromoController extends Controller
      */
     public function store(StorePromoRequest $request)
     {
-        $promo_data = $request->validated();
-        $promo = Promo::create($promo_data);
+        $validated = $request->validated();
+        $promo = Promo::create($validated);
 
         $promo_resource = new PromoResource($promo);
         $promo_resource->with['message'] = 'Promo created successfully';

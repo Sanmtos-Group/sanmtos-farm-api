@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Coupon;
 use Illuminate\Foundation\Http\FormRequest;
-
+use Illuminate\Validation\Rule;
 class UpdateCouponRequest extends FormRequest
 {
     /**
@@ -23,10 +23,9 @@ class UpdateCouponRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code' => 'required|string|max:8',
+            'code' => 'string|min:1|max:8|'.Rule::unique('coupons')->ignore($this->coupon),
             'discount' => 'numeric|min:0.01|max:100',
-            'start_datetime' => 'date',
-            'valid_until' => 'date|after_or_equal:start_datetime',
+            'valid_until' => 'date',
         ];
     }
 }
