@@ -113,9 +113,10 @@ class CouponController extends Controller
     }
 
     /**
-     * Continue a specific coupon running
+     * Continue a specific coupon
+     * 
+     * @param App\Models\Coupon $coupon
     */
-
     public function continue(Coupon $coupon){
         $coupon->is_cancelled = false;
         $coupon->save();
@@ -128,6 +129,8 @@ class CouponController extends Controller
 
     /**
      * Cancel a specific running coupon
+     * 
+     * @param App\Models\Coupon $coupon
      */
 
     public function cancel(Coupon $coupon){
@@ -136,5 +139,7 @@ class CouponController extends Controller
 
         $coupon_resource = new CouponResource($coupon);
         $coupon_resource->with['message'] = "Coupon cancelled successfully";
+
+        return $coupon_resource;
     }
 }

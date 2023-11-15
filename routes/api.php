@@ -98,7 +98,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('coupons', CouponController::class)->only(['store', 'update', 'destroy']);
     Route::prefix('coupons')->group(function () {
         Route::name('coupons.')->group(function () {
-            Route::controller(PromoController::class)->group(function (){
+            Route::controller(CouponController::class)->group(function (){
                 Route::match(['put', 'patch'], '{coupon}/cancel', 'cancel')->name('cancel');
                 Route::match(['put', 'patch'], '{coupon}/continue', 'continue')->name('continue');
             });
