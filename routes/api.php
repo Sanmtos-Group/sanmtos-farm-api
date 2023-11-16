@@ -91,6 +91,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::controller(PromoController::class)->group(function (){
                 Route::match(['put', 'patch'], '{promo}/cancel', 'cancel')->name('cancel');
                 Route::match(['put', 'patch'], '{promo}/continue', 'continue')->name('continue');
+                Route::post('{promo}/products', 'attachProducts')->name('products.attach');
+                Route::delete('{promo}/products', 'detachProducts')->name('products.detach');
             });
         });
     });
@@ -197,6 +199,13 @@ Route::prefix('products/{product}/')->group(function () {
 });
 
 Route::apiResource('promos', PromoController::class)->only(['index', 'show']);
+Route::prefix('promos/{promo}/')->group(function () {
+    Route::name('promos.')->group(function () {
+        Route::controller(PromoController::class)->group(function (){
+            Route::get('products', 'productsIndex')->name('products.index');
+        });
+    });
+});
 Route::apiResource('roles', RoleController::class)->only(['index', 'show']);
 
 Route::apiResource('stores', StoreController::class)->only(['index', 'show']);

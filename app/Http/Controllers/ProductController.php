@@ -241,7 +241,7 @@ class ProductController extends Controller
         }
         
         // add the promo to product
-        $product->promos()->sync($promo);
+        $product->promos()->syncWithoutDetaching($promo);
         $promo_resource = new PromoResource($promo);
         $promo_resource->with['message'] = 'Promo attached to product successfully';
 
@@ -297,7 +297,7 @@ class ProductController extends Controller
         }
         
         // add the coupon to product
-        $product->coupons()->sync($coupon);
+        $product->coupons()->syncWithoutDetaching($coupon);
         $coupon_resource = new CouponResource($coupon);
         $coupon_resource->with['message'] = 'Coupon attached to product successfully';
 

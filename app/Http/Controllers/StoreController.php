@@ -92,11 +92,11 @@ class StoreController extends Controller
     /**
      * Display the specified store products.
      */
-    public function productIndex(Store $store)
+    public function productsIndex(Store $store)
     {
         $store_products = $store->products()->paginate();
-        $product_resource = new ProductResource($store_products);
-        $product_resource->with['message'] = $store->name. '\'s products retrieved successfully';
+        $product_resource = ProductResource::collection($store_products);
+        $product_resource->with['message'] = 'Store products retrieved successfully';
         return $product_resource;
     }
 
@@ -108,8 +108,8 @@ class StoreController extends Controller
      */
     public function promosIndex(Store $store, Request $request)
     {
-        $promos = $store->promos;
-        $promo_resource = new PromoResource($promos);
+        $promos = $store->inPromos()->paginate();
+        $promo_resource = PromoResource::collection($promos);
         $promo_resource->with['message'] = 'Store promos retrived successfully';
         return $promo_resource;
     }

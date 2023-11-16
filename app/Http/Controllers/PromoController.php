@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\Promo;
 use App\Http\Requests\StorePromoRequest;
+use App\Http\Requests\StorePromoableRequest;
 use App\Http\Requests\UpdatePromoRequest;
+use App\Http\Resources\ProductResource;
 use App\Http\Resources\PromoResource;
 use Illuminate\Http\Request;
-
 class PromoController extends Controller
 {
     /**
@@ -141,5 +143,90 @@ class PromoController extends Controller
         $promo_resource->with['message'] = 'Promo deleted successfully';
         
         return $promo_resource;
+    }
+
+    /**
+     * Get all products attached to the promo
+     * 
+     * @param App\Models\Promo $promo
+     * @return App\Http\Resources\ProductResource $product_resource
+     */
+    public function productsIndex(Promo $promo)
+    {
+        $product_resource = new ProductResource($promo->products);
+
+        $product_resource->with['message'] = 'Promo attached products retrieved succesfully';
+        return $product_resource;
+    }
+
+    /**
+     * Attached products to promo
+     * 
+     * @param App\Models\Promo $promo
+     * @return App\Http\Resources\ProductResource $product_resource
+     */
+    public function attachProducts(Promo $promo, StorePromoableRequest $request )
+    {
+        $validated = $request->validated();
+
+        // attach by multiple product ids
+       if(array_key_exists('product_ids', $validated))
+       {
+            foreach($validated['product_ids'] as $id){
+
+                $product = Product::find($id);
+
+                // check if the product is of the same store as the promo
+                if($product->store_id === $promo->store_id)
+                {
+                    $promo->products()->syncWithoutDetaching($product); 
+                }  
+            }     
+       }
+        // attach by single product id
+       elseif(array_key_exists('product_id', $validated))
+       {
+            $product = Product::find($validated['product_id']);
+
+            // check if the product is of the same store as the promo
+            if($product->store_id === $promo->store_id)
+            {
+                $promo->products()->syncWithoutDetaching($product); 
+            }      
+       }
+
+
+        $product_resource = new ProductResource($promo->products);
+
+        $product_resource->with['message'] = 'Product(s) attached to promo succesfully';
+        return $product_resource;
+    }
+
+    /**
+     * Dettached products to promo
+     * 
+     * @param App\Models\Promo $promo
+     * @return App\Http\Resources\ProductResource $product_resource
+     */
+    public function detachProducts(Promo $promo, Request $request )
+    {
+      
+
+        // detach by multiple product ids
+       if($request->has('product_ids'))
+       {
+            $promo->products()->detach($request->product_id); 
+       }
+        // detach by single product id
+       else if($request->has('product_id'))
+       {
+            $promo->products()->detach($request->product_id);   
+       }
+
+
+        $product_resource = new ProductResource($promo->products);
+
+        $product_resource->with['message'] = 'Product(s) detached from promo succesfully';
+        return $product_resource;
     }
 }

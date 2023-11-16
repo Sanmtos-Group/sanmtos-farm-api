@@ -50,7 +50,7 @@ class Promo extends Model
      */
     public function products(): MorphToMany
     {
-        return $this->morphedByMany(Promo::class, 'promoable');
+        return $this->morphedByMany(Product::class, 'promoable');
     }
  
     /**
