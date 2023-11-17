@@ -3,7 +3,7 @@
 /**
  * Flatten multidimensional array to single array
  * 
- * @param array $array
+ * @param array $array 
  * @return array $result;
  */
 function flattenArray($array) : array

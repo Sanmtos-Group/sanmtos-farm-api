@@ -163,9 +163,10 @@ class PromoController extends Controller
      * Attached products to promo
      * 
      * @param App\Models\Promo $promo
+     * @param App\Http\Requests\StorePromoableRequest $request
      * @return App\Http\Resources\ProductResource $product_resource
      */
-    public function attachProducts(Promo $promo, StorePromoableRequest $request )
+    public function attachProducts(Promo $promo, StorePromoableRequest $request)
     {
         $validated = $request->validated();
 
@@ -206,6 +207,7 @@ class PromoController extends Controller
      * Dettached products to promo
      * 
      * @param App\Models\Promo $promo
+     * @param Illuminatie\Http\Request $request
      * @return App\Http\Resources\ProductResource $product_resource
      */
     public function detachProducts(Promo $promo, Request $request )

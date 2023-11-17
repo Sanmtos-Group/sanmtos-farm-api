@@ -42,12 +42,12 @@ class Coupon extends Model
         'is_cancelled' => 'boolean',
     ];
 
-     /**
+    /**
      * Get all of the products that are assigned this tag.
      */
     public function products(): MorphToMany
     {
-        return $this->morphedByMany(Promo::class, 'promoable');
+        return $this->morphedByMany(Product::class, 'couponable');
     }
  
     /**
@@ -55,6 +55,6 @@ class Coupon extends Model
      */
     public function stores(): MorphToMany
     {
-        return $this->morphedByMany(Store::class, 'promoable');
+        return $this->morphedByMany(Store::class, 'couponable');
     }
 }

@@ -160,7 +160,7 @@ class ProductController extends Controller
      * Verify the specified resource.
      *
      * @param App\Models\Product $product
-     * @return App\Http\Resourcetaw$product_resource
+     * @return App\Http\Resources\ProductResource $product_resource
      */
     public function verify(Product $product)
     {
@@ -252,6 +252,8 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource coupons.
      *
+     * @param App\Models\Product $product
+     * @param Illuminatie\Http\Request $request
      * @return App\Http\Resources\CouponResource $coupon_resource
      */
     public function couponsIndex(Product $product, Request $request)
@@ -264,6 +266,7 @@ class ProductController extends Controller
      /**
      * Store a newly created resource coupon in storage.
      *
+     * @param App\Models\Product $product
      * @param App\Http\Requests\StoreCouponableRequest $request
      * @return App\Http\Resources\CouponResource $coupon_resource
      */

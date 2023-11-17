@@ -103,6 +103,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::controller(CouponController::class)->group(function (){
                 Route::match(['put', 'patch'], '{coupon}/cancel', 'cancel')->name('cancel');
                 Route::match(['put', 'patch'], '{coupon}/continue', 'continue')->name('continue');
+                Route::post('{coupon}/products', 'attachProducts')->name('products.attach');
+                Route::delete('{coupon}/products', 'detachProducts')->name('products.detach');
             });
         });
     });
@@ -184,6 +186,13 @@ Route::prefix('cart-items/')->group(function () {
 });
 Route::apiResource('carts', CartController::class)->only(['index', 'show']);
 Route::apiResource('coupons', CouponController::class)->only(['index', 'show']);
+Route::prefix('coupons/{coupon}/')->group(function () {
+    Route::name('coupons.')->group(function () {
+        Route::controller(CouponController::class)->group(function (){
+            Route::get('products', 'productsIndex')->name('products.index');
+        });
+    });
+});
 Route::apiResource('categories', CategoryController::class )->only(['index', 'show']);
 Route::apiResource('images', ImageController::class)->only(['index', 'show']);
 Route::apiResource('permissions', PermissionController::class)->only(['index', 'show']);
