@@ -27,7 +27,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-//        $table->dropIndex('unique_role');
+        // $table->dropIndex('unique_role');
         Schema::dropIfExists('roles');
     }
 };
