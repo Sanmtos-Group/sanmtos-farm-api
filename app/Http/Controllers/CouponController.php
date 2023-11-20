@@ -31,18 +31,18 @@ class CouponController extends Controller
 
         $order_by_created_at = $request->order_by_created_at == 'asc' || $request->order_by_created_at == 'desc'
                         ? $request->order_by_created_at : null;
-        
+
         $coupons = Coupon::where('id', '<>', null);
 
         $coupons = is_null($order_by_code)? $coupons : $coupons->orderBy('code', $order_by_code ) ;
         $coupons = is_null($order_by_name)? $coupons : $coupons->orderBy('name', $order_by_name ) ;
         $coupons = is_null($order_by_created_at)? $coupons : $coupons->orderBy('name', $order_by_created_at ) ;
 
-        $coupons = $coupons->paginate($per_page); 
+        $coupons = $coupons->paginate($per_page);
 
         $coupon_resource =  CouponResource::collection($coupons);
         $coupon_resource->with['status'] = "OK";
-        $coupon_resource->with['message'] = 'Coupons retrived successfully';
+        $coupon_resource->with['message'] = 'Coupons retrieved successfully';
 
         return $coupon_resource;
     }
@@ -116,7 +116,7 @@ class CouponController extends Controller
 
     /**
      * Continue a specific coupon
-     * 
+     *
      * @param App\Models\Coupon $coupon
     */
     public function continue(Coupon $coupon){
@@ -131,7 +131,7 @@ class CouponController extends Controller
 
     /**
      * Cancel a specific running coupon
-     * 
+     *
      * @param App\Models\Coupon $coupon
      */
 
@@ -147,7 +147,7 @@ class CouponController extends Controller
 
     /**
      * Get all products attached to the coupon
-     * 
+     *
      * @param App\Models\Coupon $coupon
      * @return App\Http\Resources\ProductResource $product_resource
      */
@@ -155,16 +155,16 @@ class CouponController extends Controller
     {
         $product_resource = new ProductResource($coupon->products);
 
-        $product_resource->with['message'] = 'Coupon attached products retrieved succesfully';
+        $product_resource->with['message'] = 'Coupon attached products retrieved successfully';
         return $product_resource;
     }
 
      /**
      * Attached products to coupon
-     * 
+     *
      * @param App\Models\Coupon $coupon
      * @param App\Http\Requests\StoreCouponableRequest $request
-     * @return App\Http\Resources\ProductResource $product_resource
+     * @return ProductResource $product_resource
      */
     public function attachProducts(Coupon $coupon, StoreCouponableRequest $request )
     {
@@ -180,9 +180,9 @@ class CouponController extends Controller
                 // check if the product is of the same store as the coupon
                 if($product->store_id === $coupon->store_id)
                 {
-                    $coupon->products()->syncWithoutDetaching($product); 
-                }  
-            }     
+                    $coupon->products()->syncWithoutDetaching($product);
+                }
+            }
        }
         // attach by single product id
        elseif(array_key_exists('product_id', $validated))
@@ -192,8 +192,8 @@ class CouponController extends Controller
             // check if the product is of the same store as the coupon
             if($product->store_id === $coupon->store_id)
             {
-                $coupon->products()->syncWithoutDetaching($product); 
-            }      
+                $coupon->products()->syncWithoutDetaching($product);
+            }
        }
 
 
@@ -205,24 +205,24 @@ class CouponController extends Controller
 
     /**
      * Dettached products to coupon
-     * 
+     *
      * @param App\Models\Coupon $coupon
      * @param Illuminatie\Http\Request $request
      * @return App\Http\Resources\ProductResource $product_resource
      */
     public function detachProducts(Coupon $coupon, Request $request )
     {
-      
+
 
         // detach by multiple product ids
        if($request->has('product_ids'))
        {
-            $coupon->products()->detach($request->product_id); 
+            $coupon->products()->detach($request->product_id);
        }
         // detach by single product id
        else if($request->has('product_id'))
        {
-            $coupon->products()->detach($request->product_id);   
+            $coupon->products()->detach($request->product_id);
        }
 
 
