@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,  
             PromoSeeder::class,
             CouponSeeder::class,
+            PaymentSeeder::class,
         ]);
     }
 }

@@ -10,6 +10,11 @@ class Payment extends Model
 {
     use HasFactory;
     use HasUuids;
+    
+    const GATEWAYS = [
+        'paystack',
+        'flutterwave',
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -34,4 +39,5 @@ class Payment extends Model
         'user_id',
         'payment_gateway_code'
     ];
+
 }

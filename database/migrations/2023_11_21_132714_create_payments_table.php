@@ -12,16 +12,26 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('payments', function (Blueprint $table) {
-            $table->foreignUuid('id');
-            $table->foreignUuid('user_id')->constrained('users');
-            $table->string('payment_gate_way');
-            $table->string('payment_method')->nullable();
-            $table->string('payment_type');
-            $table->unsignedDecimal('amount', $precision = 19, $scale = 2)->default(0.01);
-            $table->foreignUuid('product_id')->constrained('products');
-            $table->string('transaction_reference');
-            $table->enum('transaction_status', ['pending','successful'])->default('pending');
+            $table->uuid('id')->primary();
+            $table->foreignUuid('user_id')->nullable()->contrained('users')->cascadeOnUpdate()->nullOnDelete();
+            $table->unsignedDecimal('amount', $precision = 19, $scale = 2);
+            $table->uuidMorphs('paymentable'); // the item paid for e.g orders, subscriptions etc. 
+
+            $table->string('gateway'); // gateway e.g paystack, flutterwave, 
+            $table->string('method')->nullable(); // method/channel e.g card, transfer, ussd
+            $table->string('currency')->nullable(); // e.g NGN, USD
+            $table->ipAddress('ip_address')->nullable();
+
+            $table->string('transaction_reference')->nullable();
+            $table->enum('transaction_status', ['pending','failed','successful'])->default('pending');
+            $table->jsonb('metadata')->nullable(); // the gateway payment response full data in json format 
+            $table->timestamp('paid_at')->nullable();
+            $table->timestamp('verified_at')->nullable();
+            $table->foreignUuid('verifier_id')->nullable()->contrained('users')->cascadeOnUpdate()->nullOnDelete(); // for manual verification
+            
             $table->timestamps();
+            $table->softDeletes();
+
         });
     }
 
