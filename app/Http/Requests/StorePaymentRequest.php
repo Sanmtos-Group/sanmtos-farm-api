@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Payment;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-
 class StorePaymentRequest extends FormRequest
 {
     /**
@@ -23,11 +23,14 @@ class StorePaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'amount' => 'required|min:3',
-            'email' => 'required|string|email|max:191|',
-            'product_id' => 'required|string|max:36|',
-            'user_id' => 'required|string|max:36|',
-            'payment_type' => 'required|string',
+            'user_id' => 'nullable|uuid|exists:users,id',
+            'amount' => 'required|numeric|min:0.01',
+            'paymentable_id' => 'nullable|uuid',
+            'paymentable_type' => 'nullable|string|max:191',
+            'gateway' => 'required|'.Rule::in(Payment::GATEWAYS),
+            'method' => 'nullable|string|max:191',
+            'currency' => 'nullable|string|max:191',
+            'ip_address' => 'nullable|ip',
         ];
     }
 }

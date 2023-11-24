@@ -12,9 +12,8 @@ class Payment extends Model
     use HasFactory;
     use HasUuids;
     
-    const GATEWAYS = [
+    public const GATEWAYS = [
         'paystack',
-        'flutterwave',
     ];
 
     /**
