@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Payment extends Model
 {
@@ -22,12 +23,14 @@ class Payment extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'user_id',
-        'payment_gate_way',
-        'payment_method',
-        'payment_type',
+        'user_id', 
         'amount',
-        'payment_gateway_code'
+        'paymentable_id',
+        'paymentable_type',
+        'gateway',
+        'method',
+        'currency',
+        'ip_address',
     ];
 
     /**
@@ -36,8 +39,15 @@ class Payment extends Model
      * @var array<int, string>
      */
     protected $hidden = [
-        'user_id',
-        'payment_gateway_code'
+
     ];
+
+    /**
+     * Get the parent paymentable model (order or subcription).
+     */
+    public function paymentable(): MorphTo
+    {
+        return $this->morphTo();
+    }
 
 }
