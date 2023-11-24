@@ -26,6 +26,7 @@ class StoreProductRequest extends FormRequest
             'description' => 'nullable|string|max:1000',
             'short_description' => 'nullable|string|max:191',
             'price' => 'required|numeric|min:0.01',
+            'currency' => 'required|string',
             // 'regular_price' => 'required|numeric|min:0.01',
             // 'discount' => 'integer|min:0|max:100',
             'category_id' => 'required|uuid|exists:categories,id',

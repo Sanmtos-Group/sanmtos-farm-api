@@ -18,11 +18,12 @@ return new class extends Migration
             $table->string('name');
             $table->longText('description')->nullable();
             $table->string('short_description')->nullable();
-            $table->unsignedDecimal('price', $precision = 19, $scale = 2)->default(0.01); 
-            $table->unsignedDecimal('regular_price', $precision = 19, $scale = 2)->nullable(); 
+            $table->unsignedDecimal('price', $precision = 19, $scale = 2)->default(0.01);
+            $table->string('currency')->nullable();
+            $table->unsignedDecimal('regular_price', $precision = 19, $scale = 2)->nullable();
             $table->unsignedDecimal('discount',  $precision = 5, $scale = 2)->default(0)->min(0)->max(100);
-            $table->foreignUuid('category_id')->contrained('categories')->cascadeOnUpdate()->cascadeOnDelete();            
-            $table->foreignUuid('store_id')->contrained('stores')->cascadeOnUpdate()->cascadeOnDelete(); 
+            $table->foreignUuid('category_id')->contrained('categories')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignUuid('store_id')->contrained('stores')->cascadeOnUpdate()->cascadeOnDelete();
             $table->timestamp('verified_at', $precision = 0)->nullable();
             $table->foreignUuid('verifier_id')->nullable()->contrained('users')->cascadeOnUpdate()->nullOnDelete();
             $table->timestamps();

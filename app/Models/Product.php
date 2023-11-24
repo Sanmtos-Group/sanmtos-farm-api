@@ -47,6 +47,7 @@ class Product extends Model
         'description',
         'short_description',
         'price',
+        'currency',
         'regular_price',
         // 'discount',
         'category_id',
@@ -69,7 +70,7 @@ class Product extends Model
             get: fn () => !is_null($this->regular_price) ?  round(($this->regular_price - $this->price)/ $this->regular_price * 100, 2): 0,
             set: fn () => !is_null($this->regular_price) ?  round(($this->regular_price - $this->price)/ $this->regular_price * 100, 2): 0,
         );
-    } 
+    }
 
     /**
      * Get the store that owns the product.
