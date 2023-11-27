@@ -19,7 +19,7 @@ class StoreFactory extends Factory
     {
         return [
             'name' => fake()->unique()->words(fake()->numberBetween(2,5), true), 
-            'slug' => fake()->slug(),
+            // 'slug' => fake()->slug(),
             'description' => fake()->realText(),
             'user_id' => User::factory()->create(), 
         ];

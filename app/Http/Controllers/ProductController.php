@@ -11,12 +11,10 @@ use App\Http\Requests\UpdatePromoRequest;
 use App\Http\Resources\CouponResource;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\PromoResource;
-
 use App\Models\Coupon;
 use App\Models\Image;
 use App\Models\Product;
 use App\Models\Promo;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 class ProductController extends Controller

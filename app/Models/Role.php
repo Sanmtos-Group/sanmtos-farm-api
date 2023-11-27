@@ -25,7 +25,7 @@ class Role extends Model
         'deleted' => \App\Events\Role\RoleDeleted::class,
     ];
     
-     /**
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
@@ -45,7 +45,7 @@ class Role extends Model
         return $this->belongsToMany(User::class);
     }
 
-     /**
+    /**
      * The store that the role belongs .
      */
     public function store(): BelongsTo
@@ -59,7 +59,6 @@ class Role extends Model
     public function permissions(): BelongsToMany
     {
         return $this->belongsToMany(Permission::class)->using(PermissionRole::class);
-
     }
 
     /**

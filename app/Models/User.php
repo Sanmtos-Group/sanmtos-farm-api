@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -83,7 +84,23 @@ class User extends Authenticatable
      */
     protected $with = ['roles'];
 
-     /**
+    /**
+     * Get all of the model's addresses.
+     */
+    public function addresses() : MorphMany
+    {
+        return $this->morphMany(Address::class, 'addressable');
+    }
+
+    /**
+     * Get all of the model's addresses.
+     */
+    public function order() : HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    /**
      * Get the store that the users owns.
      */
     public function store(): HasOne

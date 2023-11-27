@@ -21,6 +21,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             PermissionSeeder::class,
             RoleSeeder::class,
+            CountrySeeder::class,
+            AddressSeeder::class,
             UserSeeder::class,
             AttributeSeeder::class,
             CategorySeeder::class,
@@ -29,7 +31,9 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,  
             PromoSeeder::class,
             CouponSeeder::class,
-            PaymentSeeder::class,
+            PaymentGatewaySeeder::class,
+            // PaymentSeeder::class,
+            OrderSeeder::class,
         ]);
     }
 }

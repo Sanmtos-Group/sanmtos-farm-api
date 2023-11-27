@@ -4,6 +4,7 @@ namespace App\Handlers;
 
 use App\Gateways\PaystackGateway;
 class PaymentHandler {
+    
     /**
      * @var App\Gateways\PaymentGateway $payment_gateway
      */
@@ -50,7 +51,7 @@ class PaymentHandler {
 
     /**
      *  Get the initialized payment gateway
-     *  @return \App\Gateways\any_initialized_payment_gateway $payment_gateway
+     *  @return App\Gateways $payment_gateway
      */
     public function getPaymentGateway(){
         return $this->payment_gateway;

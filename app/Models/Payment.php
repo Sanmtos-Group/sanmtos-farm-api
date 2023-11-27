@@ -14,8 +14,10 @@ class Payment extends Model
     
     public const GATEWAYS = [
         'paystack',
+        'flutterwave',
+        'paypal',
     ];
-
+    
     /**
      * The attributes that are mass assignable.
      *
