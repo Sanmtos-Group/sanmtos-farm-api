@@ -4,8 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
-class Promoable extends Pivot
+
+class Orderable extends Pivot
 {
     use HasFactory;
     use HasUuids;
@@ -13,11 +15,16 @@ class Promoable extends Pivot
      /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var array<int, string>
      */
     protected $fillable = [
+        'order_id',
+        'orderable_id',
+        'orderable_type',
+        'quantity',
+        'price', 
         'promo_id',
-        'promoable_id',
-        'promoable_type',
+        'coupon_id',
+        'total_price',
     ];
 }

@@ -37,4 +37,10 @@ class Image extends Model
         'imageable_type',
     ];
 
+    /**
+     * The attributes that should be visible in arrays.
+     *
+     * @var array
+     */
+    protected $visible = ['id', 'url'];
 }

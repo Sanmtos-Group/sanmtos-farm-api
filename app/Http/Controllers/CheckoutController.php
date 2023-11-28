@@ -7,11 +7,11 @@ use App\Models\Order;
 use App\Models\OrderProduct;
 class CheckoutController extends Controller
 {
-    const MINIMUM_QUANTITY = 1;
-    const DEFAULT_INSTANCE = 'checkingout-order';
-
-    public function summary(){
+    
+    public function index(){
+        
+        $cart_items = auth()->user()->cartItems ;
         $order = new Order ();
-
+        
     }
 }

@@ -39,4 +39,12 @@ class Order extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    /**
+     * Get all of the products that are assigned this tag.
+     */
+    public function products(): MorphToMany
+    {
+        return $this->morphedByMany(Product::class, 'orderable');
+    }
+
 }
