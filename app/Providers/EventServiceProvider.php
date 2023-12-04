@@ -30,16 +30,8 @@ class EventServiceProvider extends ServiceProvider
             \App\Listeners\Address\AddressDeletedListener::class,
         ],
 
-        \App\Events\Address\AddressRestored::class => [
-            \App\Listeners\Address\AddressRestoredListener::class,
-        ],
-
         \App\Events\Address\AddressUpdated::class => [
             \App\Listeners\Address\AddressUpdatedListener::class,
-        ],
-
-        \App\Events\Address\AddressTrashed::class => [
-            \App\Listeners\Address\AddressTrashedListener::class,
         ],
 
         /**
