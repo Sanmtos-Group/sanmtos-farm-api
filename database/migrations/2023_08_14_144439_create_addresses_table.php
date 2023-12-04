@@ -14,6 +14,10 @@ return new class extends Migration
     {
         Schema::create('addresses', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
+            $table->string('dialing_code')->nullable();
+            $table->string('phone_number')->nullable();
             $table->string('address');
             $table->string('zip_code')->nullable();
             $table->foreignUuid('country_id')->contrained('countries')->cascadeOnUpdate()->cascadeOnDelete(); 

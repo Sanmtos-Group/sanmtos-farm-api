@@ -20,6 +20,29 @@ class EventServiceProvider extends ServiceProvider
         ],
 
         /**
+         *  Address Events and listeners;
+         */
+        \App\Events\Address\AddressCreated::class => [
+            \App\Listeners\Address\AddressCreatedListener::class,
+        ],
+
+        \App\Events\Address\AddressDeleted::class => [
+            \App\Listeners\Address\AddressDeletedListener::class,
+        ],
+
+        \App\Events\Address\AddressRestored::class => [
+            \App\Listeners\Address\AddressRestoredListener::class,
+        ],
+
+        \App\Events\Address\AddressUpdated::class => [
+            \App\Listeners\Address\AddressUpdatedListener::class,
+        ],
+
+        \App\Events\Address\AddressTrashed::class => [
+            \App\Listeners\Address\AddressTrashedListener::class,
+        ],
+
+        /**
          *  Attribute Events and listeners;
          */
         \App\Events\Attribute\AttributeCreated::class => [
@@ -33,7 +56,6 @@ class EventServiceProvider extends ServiceProvider
         \App\Events\Attribute\AttributeRestored::class => [
             \App\Listeners\Attribute\AttributeRestoredListener::class,
         ],
-
 
         \App\Events\Attribute\AttributeUpdated::class => [
             \App\Listeners\Attribute\AttributeUpdatedListener::class,

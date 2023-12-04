@@ -8,6 +8,7 @@ use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\PaymentController;
@@ -37,8 +38,6 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::middleware('auth:sanctum')->get('/user-profile', [UserController::class, 'profile']);
-
 //Logout route
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('logout', [LogoutController::class, 'logout'])->name('logout');
@@ -54,6 +53,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
  */
 Route::middleware('auth:sanctum')->group(function () {
 
+    // User Information 
+    Route::get('/user-profile', [UserController::class, 'profile']);
+    Route::get('/user-addresses', [UserController::class, 'addresses']);
+
+   
     Route::apiResource('attributes', AttributeController::class)->only(['store', 'update', 'destroy']);
     Route::prefix('attributes/{attribute}/')->group(function () {
         Route::name('attributes.')->group(function () {
@@ -106,6 +110,17 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::match(['put', 'patch'], '{coupon}/continue', 'continue')->name('continue');
                 Route::post('{coupon}/products', 'attachProducts')->name('products.attach');
                 Route::delete('{coupon}/products', 'detachProducts')->name('products.detach');
+            });
+        });
+    });
+
+    Route::prefix('checkout')->group(function () {
+        Route::name('checkout.')->group(function () {
+            Route::controller(CheckoutController::class)->group(function (){
+                Route::get('order-summary', 'orderSummary' )->name('checkout.order_summary');
+                // Route::match(['put', 'patch'], '{coupon}/continue', 'continue')->name('continue');
+                // Route::post('{coupon}/products', 'attachProducts')->name('products.attach');
+                // Route::delete('{coupon}/products', 'detachProducts')->name('products.detach');
             });
         });
     });

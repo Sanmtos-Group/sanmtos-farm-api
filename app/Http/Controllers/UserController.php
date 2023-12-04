@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Role;
+use App\Http\Resources\AddressResource;
 use App\Http\Resources\RoleResource;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
@@ -30,6 +31,18 @@ class UserController extends Controller
         $user_resource->with['message'] = 'User profile retrieved successfully';
 
         return $user_resource;
+    }
+
+    /**
+     * Display authenticated user addresses
+     */
+    public function addresses(Request $request)
+    {
+        $user = $request->user();
+        $adresses_resource = new AddressResource(auth()->user()->addresses);
+        $adresses_resource->with['message'] = 'User addresses retrieved successfully';
+
+        return $adresses_resource;
     }
 
 

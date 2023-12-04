@@ -18,14 +18,23 @@ class OrderFactory extends Factory
      */
     public function definition(): array
     {   
+        
+        $user =  User::inRandomOrder()->first()?? User::factory()->create();
+        $address = $user->addresses()->inRandomOrder()->first() ??  $user->addresses()->firstOrCreate(Address::factory()->make([
+            'first_name' => $user->first_name,
+            'last_name'  => $user->last_name
+        ])->toArray());
+
         $ordered = fake()->boolean();
         $shipped = fake()->boolean();
         $delivered = fake()->boolean();
 
         return [
             'number' => fake()->unique()->bothify('sf-**#####'),
-            'user_id' => $user =  User::inRandomOrder()->first()?? User::factory()->create(), 
-            'address_id' => $user->addresses()->inRandomOrder()->first()->id ?? $user->addresses()->firstOrCreate(Address::factory()->make(['is_preferred' => true])->toArray()),
+            'user_id' => $user->id,
+            'receiver_full_name' => $user->first_name." ".$user->last_name,
+            'receiver_phone_number' => $user->dialing_code."".$user->phone_number,
+            'receiver_address' => $address->address." | ".$address->lga ." | ".$address->state ." | ".$address->country->name,  
             'delivery_fee' => $delivery_fee = fake()->randomFloat(0, 10),
             'price' => $price = fake()->randomFloat(0, 1),
             'total_price' => $delivery_fee + $price,

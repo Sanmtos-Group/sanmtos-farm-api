@@ -18,6 +18,10 @@ class AddressFactory extends Factory
     public function definition(): array
     {
         return [
+            'first_name' => $this->faker->firstName(),
+            'last_name' => $this->faker->lastName(),
+            'dialing_code' => $this->faker->randomElement(['234']),
+            'phone_number' => "0".$this->faker->randomElement(['7', '8','9']).$this->faker->randomElement(['0', '1']).$this->faker->unique()->randomNumber(8, true),
             'address' => fake()->address(),
             'zip_code' => fake()->postcode(),
             'country_id' => Country::inRandomOrder()->first() ?? Country::factory()->create(), 

@@ -2,6 +2,7 @@
 
 namespace App\TestData; 
 
+use App\Models\Address;
 use App\Models\Role;
 use App\Models\Store;
 use App\Models\User;
@@ -43,6 +44,11 @@ class TestUser {
     public static function populateDB(){
         foreach (TestUser::data() as $key => $value) {
             $user = !empty($value)? User::where('email', $value['email']?? null)->first()?? User::create($value) : null;
+
+            $user->addresses()->firstOrCreate(Address::factory()->make([
+                'first_name' => $user->first_name,
+                'last_name'  => $user->last_name
+            ])->toArray());
         }
 
         $store_admin = User::where('email', self::$store_admin['email']?? 'store-admin@example.com')->first() ??
