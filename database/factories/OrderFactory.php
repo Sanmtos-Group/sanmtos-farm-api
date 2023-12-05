@@ -32,9 +32,7 @@ class OrderFactory extends Factory
         return [
             'number' => fake()->unique()->bothify('sf-**#####'),
             'user_id' => $user->id,
-            'receiver_full_name' => $user->first_name." ".$user->last_name,
-            'receiver_phone_number' => $user->dialing_code."".$user->phone_number,
-            'receiver_address' => $address->address." | ".$address->lga ." | ".$address->state ." | ".$address->country->name,  
+            'address_id' => $address,
             'delivery_fee' => $delivery_fee = fake()->randomFloat(0, 10),
             'price' => $price = fake()->randomFloat(0, 1),
             'total_price' => $delivery_fee + $price,

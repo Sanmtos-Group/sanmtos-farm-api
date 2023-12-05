@@ -15,10 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('number');
             $table->foreignUuid('user_id')->nullable()->contrained('users')->cascadeOnUpdate()->nullOnDelete();
-            
-            $table->string('receiver_full_name');
-            $table->string('receiver_phone_number');
-            $table->string('receiver_address');
+            $table->foreignUuid('address_id')->nullable()->contrained('addresses')->cascadeOnUpdate()->nullOnDelete();            
 
             $table->integer('delivery_fee')->default(0);
             $table->unsignedDecimal('price', $precision = 19, $scale = 2)->default(0); 

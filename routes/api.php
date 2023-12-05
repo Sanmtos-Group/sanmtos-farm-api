@@ -117,7 +117,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('checkout')->group(function () {
         Route::name('checkout.')->group(function () {
             Route::controller(CheckoutController::class)->group(function (){
-                Route::get('order-summary', 'orderSummary' )->name('checkout.order_summary');
+                Route::get('summary', 'summary' )->name('checkout.summary');
                 // Route::match(['put', 'patch'], '{coupon}/continue', 'continue')->name('continue');
                 // Route::post('{coupon}/products', 'attachProducts')->name('products.attach');
                 // Route::delete('{coupon}/products', 'detachProducts')->name('products.detach');

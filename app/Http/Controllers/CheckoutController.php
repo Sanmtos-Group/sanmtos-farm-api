@@ -8,7 +8,7 @@ use App\Models\OrderProduct;
 class CheckoutController extends Controller
 {
     
-    public function orderSummary(){
+    public function summary(){
         
         $cart_items = auth()->user()->cartItems ;
         // $order = new Order();

@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('addressable_type');
             $table->boolean('is_preferred')->default(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
