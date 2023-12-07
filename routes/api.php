@@ -4,12 +4,14 @@ use App\Actions\Fortify\CreateNewUser;
 use App\Http\Controllers\Authentication\LoginController;
 use App\Http\Controllers\Authentication\LogoutController;
 use App\Http\Controllers\Authentication\RegisterNewUserController;
+use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AttributeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CouponController;
+use App\Http\Controllers\CountryController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PermissionController;
@@ -55,7 +57,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // User Information 
     Route::get('/user-profile', [UserController::class, 'profile']);
-    Route::get('/user-addresses', [UserController::class, 'addresses']);
+    Route::get('/user-addresses', [UserController::class, 'indexAddress']);
+    Route::post('/user-addresses', [UserController::class, 'storeAddress']);
 
    
     Route::apiResource('attributes', AttributeController::class)->only(['store', 'update', 'destroy']);
@@ -117,7 +120,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('checkout')->group(function () {
         Route::name('checkout.')->group(function () {
             Route::controller(CheckoutController::class)->group(function (){
-                Route::get('summary', 'summary' )->name('checkout.summary');
+                Route::get('', 'index' )->name('checkout.index');
+                Route::get('summary', 'index' )->name('checkout.summary');
+                Route::match(['put', 'patch'], 'change-delivery-address/{address}', 'changeDeliveryAddress' )->name('checkout.devliveryAddress.change');
                 // Route::match(['put', 'patch'], '{coupon}/continue', 'continue')->name('continue');
                 // Route::post('{coupon}/products', 'attachProducts')->name('products.attach');
                 // Route::delete('{coupon}/products', 'detachProducts')->name('products.detach');
@@ -196,6 +201,7 @@ Route::controller(RegisterNewUserController::class)->group(function() {
 Route::post('login', [LoginController::class, 'login'])->name('login');
 
 Route::apiResource('attributes', AttributeController::class)->only(['index', 'show']);
+Route::apiResource('addresses', AddressController::class)->only(['index', 'show']);
 Route::prefix('cart-items/')->group(function () {
     Route::name('cart-items.')->group(function () {
         Route::controller(CartController::class)->group(function() {
@@ -217,7 +223,9 @@ Route::prefix('coupons/{coupon}/')->group(function () {
         });
     });
 });
+
 Route::apiResource('categories', CategoryController::class )->only(['index', 'show']);
+Route::apiResource('countries', CountryController::class)->only(['index', 'show']);
 Route::apiResource('images', ImageController::class)->only(['index', 'show']);
 Route::apiResource('permissions', PermissionController::class)->only(['index', 'show']);
 

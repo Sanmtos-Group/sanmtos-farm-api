@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CountryResource;
 use App\Models\Country;
 use App\Http\Requests\StoreCountryRequest;
 use App\Http\Requests\UpdateCountryRequest;
@@ -13,7 +14,10 @@ class CountryController extends Controller
      */
     public function index()
     {
-        //
+        $countries = Country::all();
+        $country_resource = new CountryResource($countries);
+        
+        return $country_resource;
     }
 
     /**
@@ -37,7 +41,10 @@ class CountryController extends Controller
      */
     public function show(Country $country)
     {
-        //
+        $country_resource = new CountryResource($country);
+        $country_resource->with['message'] = 'Country retrieved successfully';
+
+        return $country_resource;
     }
 
     /**

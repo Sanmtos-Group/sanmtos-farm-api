@@ -14,7 +14,10 @@ class AddressController extends Controller
      */
     public function index()
     {
-
+        $addresses = Address::paginate();
+        $address_resource = AddressResource::collection($addresses);
+        
+        return $address_resource;
     }
 
     /**

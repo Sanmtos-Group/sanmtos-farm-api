@@ -7,6 +7,7 @@ use App\Models\Role;
 use App\Http\Resources\AddressResource;
 use App\Http\Resources\RoleResource;
 use App\Http\Resources\UserResource;
+use App\Http\Requests\StoreAddressRequest;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -24,10 +25,9 @@ class UserController extends Controller
     /**
      * Display authenticated user profile
      */
-    public function profile(Request $request)
+    public function profile()
     {
-        $user = $request->user();
-        $user_resource = new UserResource($user);
+        $user_resource = new UserResource(auth()->user());
         $user_resource->with['message'] = 'User profile retrieved successfully';
 
         return $user_resource;
@@ -36,10 +36,30 @@ class UserController extends Controller
     /**
      * Display authenticated user addresses
      */
-    public function addresses(Request $request)
+    public function indexAddress()
     {
-        $user = $request->user();
         $adresses_resource = new AddressResource(auth()->user()->addresses);
+        $adresses_resource->with['message'] = 'User addresses retrieved successfully';
+
+        return $adresses_resource;
+    }
+
+     /**
+     * Create new address for authenticated user
+     */
+    public function storeAddress(StoreAddressRequest $request)
+    { 
+        $validated = $request->validated();
+        $validated['first_name'] = array_key_exists('first_name', $validated) ? $validated['first_name'] : auth()->user()->first_name;
+        $validated['last_name'] = array_key_exists('last_name', $validated) ? $validated['last_name'] : auth()->user()->last_name;
+        $validated['dialing_code'] = array_key_exists('dialing_code', $validated) ? $validated['dialing_code'] : auth()->user()->dialing_code;
+        $validated['phone_number'] = array_key_exists('phone_number', $validated) ? $validated['phone_number'] : auth()->user()->phone_number;
+
+        $user = auth()->user();
+        $user->addresses()->create($validated);
+
+        $user = $request->user();
+        $adresses_resource = new AddressResource($user->addresses);
         $adresses_resource->with['message'] = 'User addresses retrieved successfully';
 
         return $adresses_resource;

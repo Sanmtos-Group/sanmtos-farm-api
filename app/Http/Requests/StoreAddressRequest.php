@@ -22,10 +22,16 @@ class StoreAddressRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'address' => 'required, string, min:10',
-            'zip_code' => 'required, number min:4',
-            'state' => 'required, string',
-            'lga' => 'required, string'
+            'first_name' => 'nullable|string|min:3|max:191',
+            'last_name' => 'nullable|string|min:3|max:191',
+            'dialing_code' => 'nullable|string|min:1|max:4',
+            'phone_number' => 'nullable|string|min:6|max:15',
+            'address' => 'required|string|min:3|max:191',
+            'zip_code' => 'nullable|string|max:10',
+            'country_id' => 'required|uuid|exists:countries,id',
+            'state' => 'required|string|max:191',
+            'lga' => 'nullable|string|max:191',
+            'is_preferred' => 'boolean',
         ];
     }
 }
