@@ -88,6 +88,29 @@ class EventServiceProvider extends ServiceProvider
             \App\Listeners\Image\ImageTrashedListener::class,
         ],
 
+        /**
+         *  PaymentGateway Events and listeners;
+         */
+        \App\Events\PaymentGateway\PaymentGatewayCreated::class => [
+            \App\Listeners\PaymentGateway\PaymentGatewayCreatedListener::class,
+        ],
+
+        \App\Events\PaymentGateway\PaymentGatewayDeleted::class => [
+            \App\Listeners\PaymentGateway\PaymentGatewayDeletedListener::class,
+        ],
+
+        \App\Events\PaymentGateway\PaymentGatewayRestored::class => [
+            \App\Listeners\PaymentGateway\PaymentGatewayRestoredListener::class,
+        ],
+
+        \App\Events\PaymentGateway\PaymentGatewayUpdated::class => [
+            \App\Listeners\PaymentGateway\PaymentGatewayUpdatedListener::class,
+        ],
+
+        \App\Events\PaymentGateway\PaymentGatewayTrashed::class => [
+            \App\Listeners\PaymentGateway\PaymentGatewayTrashedListener::class,
+        ],
+
 
         /**
          *  Product Events and listeners;

@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 class PaymentGateway extends Model
 {
     use HasFactory;
     use HasUuids;
+    use SoftDeletes;
 
      /**
      * The attributes that are mass assignable.
@@ -30,17 +31,14 @@ class PaymentGateway extends Model
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
+     * The attributes that should be visible for serialization.
      *
      * @var array<int, string>
      */
-    protected $hidden = [
-        'email',
-        'username',
-        'password',
-        'signature',
-        'public_key',
-        'secret_key',
-        'merchant_email',
+    protected $visible = [
+        'id',
+        'name',
+        'is_active',
+        'is_default',
     ];
 }
