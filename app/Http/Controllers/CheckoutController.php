@@ -18,7 +18,6 @@ class CheckoutController extends Controller
      */
     public function index()
     {
-
         return response()->json([
             "data" => $this->summary(),
             "message" => "Checkout Summary "
@@ -36,6 +35,8 @@ class CheckoutController extends Controller
         {
             $items = auth()->user()->cartItems;
             $items_total_price = 0;
+            $payment_gateway = PaymentGate::where('is_default', true)
+                               ->where('is_active', true)->first();
 
             $items->each( function($item) use (&$items_total_price){
                 $items_total_price += $item->total_price;
@@ -51,6 +52,7 @@ class CheckoutController extends Controller
                 self::DEFAULT_INSTANCE => [
                 'order' =>  $order,
                 'items' => $items,
+                'payment_gateway_id' => $payment_gateway->id ?? null,
                 ]
             ]);
         }
@@ -59,13 +61,13 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Change the delivery address
+     * update or insert the delivery address
      * 
      * @method PUT || PATCH
      * @param App\Models\Address $address
      * @return \Illuminate\Http\Response\Json
      */
-    public function changeDeliveryAddress(Address $address)
+    public function upsertDeliveryAddress(Address $address)
     {
         $new_address = auth()->user()->addresses()->where('id',$address->id)->first();
         
@@ -88,6 +90,39 @@ class CheckoutController extends Controller
         return response()->json([
             "data" => $this->summary(),
             "message" => "Delivery address updated successfully"
+        ], 200);
+
+    }
+
+    /**
+     * Update or insert the payment gateway
+     * 
+     * @method PUT || PATCH
+     * @param App\Models\PaymentGateway $payment_gateway
+     * @return \Illuminate\Http\Response\Json
+     */
+    public function upsertPaymentGateway(PaymentGateway $payment_gateway)
+    {        
+        if(!($payment_gateway->is_active))
+        {
+            return response()->json([
+                "message" => "Failed to update payment payment",
+                "errors"=> [
+                    "adddress" => [
+                        "Payment gateway is currently not active."
+                    ],
+                ]
+            ], 422);  
+        }
+
+        $updatable_summary = $this->summary();
+        $updatable_summary['payment_gateway_id'] = $payment_gateway->id;
+
+        session([self::DEFAULT_INSTANCE => $updatable_summary]);
+
+        return response()->json([
+            "data" => $this->summary(),
+            "message" => "Payment gateway updated updated successfully"
         ], 200);
 
     }

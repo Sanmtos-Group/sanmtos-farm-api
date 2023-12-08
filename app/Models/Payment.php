@@ -28,7 +28,7 @@ class Payment extends Model
         'amount',
         'paymentable_id',
         'paymentable_type',
-        'gateway',
+        'payment_gateway_id',
         'method',
         'currency',
         'ip_address',

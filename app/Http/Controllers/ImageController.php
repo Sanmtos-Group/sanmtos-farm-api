@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Image;
 use App\Http\Requests\StoreImageRequest;
 use App\Http\Requests\UpdateImageRequest;
 use App\Http\Resources\ImageResource;
+use App\Models\Image;
 
 class ImageController extends Controller
 {

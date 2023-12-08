@@ -35,8 +35,12 @@ class PaymentGateway extends Model
      * @var array<int, string>
      */
     protected $hidden = [
+        'email',
+        'username',
         'password',
         'signature',
+        'public_key',
         'secret_key',
+        'merchant_email',
     ];
 }

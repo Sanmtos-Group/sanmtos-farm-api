@@ -4,16 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePaymentGatewayRequest;
 use App\Http\Requests\UpdatePaymentGatewayRequest;
+use App\Http\Resources\PaymentGatewayResource;
 use App\Models\PaymentGateway;
 
 class PaymentGatewayController extends Controller
 {
     /**
      * Display a listing of the resource.
+     * 
+     * @return App\Http\Resources\PaymentGatewayResource $payment_gateway_resource
      */
     public function index()
     {
-        //
+        $payment_gateways = PaymentGateway::all();
+        $payment_gateway_resource = new PaymentGatewayResource($payment_gateways);
+        return $payment_gateway_resource;
     }
 
     /**
@@ -34,10 +39,16 @@ class PaymentGatewayController extends Controller
 
     /**
      * Display the specified resource.
+     * 
+     * @param App\Models\PaymentGateway $payment_gateway
+     * @return App\Http\Resources\PaymentGatewayResource $payment_gateway_resource
      */
     public function show(PaymentGateway $paymentGateway)
     {
-        //
+        $payment_gateway_resource = new PaymentGatewayResource($paymentGateway);
+        $payment_gateway_resource->with['message'] = 'Payment gateway retrieved successfully';
+
+        return  $payment_gateway_resource;
     }
 
     /**

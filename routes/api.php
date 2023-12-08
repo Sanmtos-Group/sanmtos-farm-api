@@ -14,6 +14,7 @@ use App\Http\Controllers\CouponController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PaymentGatewayController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PromoController;
@@ -122,7 +123,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::controller(CheckoutController::class)->group(function (){
                 Route::get('', 'index' )->name('checkout.index');
                 Route::get('summary', 'index' )->name('checkout.summary');
-                Route::match(['put', 'patch'], 'change-delivery-address/{address}', 'changeDeliveryAddress' )->name('checkout.devliveryAddress.change');
+                Route::match(['put', 'patch'], 'delivery-address/{address}', 'upsertDeliveryAddress' )->name('checkout.devliveryAddress.upsert');
+                Route::match(['put', 'patch'], 'payment-gatway/{payment_gateway}', 'upsertPaymentGateway' )->name('checkout.paymentGateway.upsert');
                 // Route::match(['put', 'patch'], '{coupon}/continue', 'continue')->name('continue');
                 // Route::post('{coupon}/products', 'attachProducts')->name('products.attach');
                 // Route::delete('{coupon}/products', 'detachProducts')->name('products.detach');
@@ -227,6 +229,7 @@ Route::prefix('coupons/{coupon}/')->group(function () {
 Route::apiResource('categories', CategoryController::class )->only(['index', 'show']);
 Route::apiResource('countries', CountryController::class)->only(['index', 'show']);
 Route::apiResource('images', ImageController::class)->only(['index', 'show']);
+Route::apiResource('payment-gateways', PaymentGatewayController::class)->only(['index', 'show']);
 Route::apiResource('permissions', PermissionController::class)->only(['index', 'show']);
 
 Route::apiResource('products', ProductController::class)->only(['index', 'show']);
