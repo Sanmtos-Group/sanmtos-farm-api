@@ -82,7 +82,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('permissions', PermissionController::class)->only(['store', 'update', 'destroy']);
 
 
-    Route::apiResource('products', ProductController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('products', ProductController::class)->only(['store', 'update', 'destroy','show']);
     Route::prefix('products')->group(function () {
         Route::name('products.')->group(function () {
             Route::controller(ProductController::class)->group(function (){
