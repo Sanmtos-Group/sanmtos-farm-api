@@ -32,6 +32,8 @@ class Coupon extends Model
         'discount',
         'valid_until',
         'store_id',
+        'used_at',
+        'used_by_user_id'
     ];
     
 
@@ -50,16 +52,16 @@ class Coupon extends Model
      * @var array<int, string>
      */
     protected $appends = [
-        'is_active',
+        'is_valid',
     ];
 
      /**
-     * Determine if a coupon is active
+     * Determine if a coupon is valid
      */
-    protected function isActive(): Attribute
+    protected function isValid(): Attribute
     {
         return Attribute::make(
-            get: fn () => !($this->is_cancelled) && ($this->valid_until > today()),
+            get: fn () => !($this->is_cancelled) && ($this->valid_until > today() && is_null($this->used_at)),
         );
     }
 

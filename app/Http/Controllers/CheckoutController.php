@@ -133,25 +133,28 @@ class CheckoutController extends Controller
      * add coupon to checkout
      * 
      * @method PUT || PATCH
-     * @param App\Models\Coupon $coupon
+     * @param string $code
      * @return \Illuminate\Http\Response\Json
      */
-    public function addCoupon(Coupon $coupon)
-    {    
+    public function addCoupon($coupon)
+    {  
+        $coupon = Coupon::where('code', $coupon)->first();
+
         /**
-         * Check if the coupon is active
-         * to be active, 
+         * Check if the coupon is valid
+         * to be valid, 
          *  the coupon is not cancelled 
          *  the coupon coupon validity date has not passed
+         *  the coupon has not been used
          * 
          * This condition is designed in the copoun model 
          */
-        if(!($coupon->is_active))
+        if( is_null($coupon) || !($coupon->is_valid))
         {
             return response()->json([
                 "message" => "Invalid coupon",
                 "errors"=> [
-                    "adddress" => [
+                    "coupon" => [
                         "Coupon added failed."
                     ],
                 ]

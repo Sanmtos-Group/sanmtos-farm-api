@@ -18,7 +18,9 @@ return new class extends Migration
             $table->timestamp('valid_until')->nullable();
             $table->boolean('is_cancelled')->default(false);
             $table->foreignUuid('store_id')->nullable()->contrained('stores')->cascadeOnUpdate()->casecadeOnDelete();
-           
+            $table->timestamp('used_at')->nullable();
+            $table->foreignUuid('used_by_user_id')->nullable()->contrained('users')->cascadeOnUpdate()->casecadeOnDelete();
+
             $table->timestamps();
             $table->softDeletes();
 
