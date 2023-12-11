@@ -22,6 +22,8 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VerificationCodeController;
+use App\Http\Middleware\CheckoutSummarySessionCleaner;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -124,6 +126,7 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::get('', 'index' )->name('checkout.index');
                 Route::get('summary', 'index' )->name('checkout.summary');
                 Route::match(['put', 'patch'], 'delivery-address/{address}', 'upsertDeliveryAddress' )->name('checkout.devliveryAddress.upsert');
+                Route::match(['put', 'patch'], 'add-coupon/{coupon}', 'addCoupon' )->name('checkout.coupon.add');
                 Route::match(['put', 'patch'], 'payment-gatway/{payment_gateway}', 'upsertPaymentGateway' )->name('checkout.paymentGateway.upsert');
                 // Route::match(['put', 'patch'], '{coupon}/continue', 'continue')->name('continue');
                 // Route::post('{coupon}/products', 'attachProducts')->name('products.attach');
@@ -204,19 +207,23 @@ Route::post('login', [LoginController::class, 'login'])->name('login');
 
 Route::apiResource('attributes', AttributeController::class)->only(['index', 'show']);
 Route::apiResource('addresses', AddressController::class)->only(['index', 'show']);
-Route::prefix('cart-items/')->group(function () {
-    Route::name('cart-items.')->group(function () {
-        Route::controller(CartController::class)->group(function() {
-            Route::get('',  'items')->name('index');
-            Route::post('',  'add')->name('add');
-            Route::match(['put', 'patch'], '{item}',  'increment')->name('increment');
-            Route::delete('{item}',  'decrement')->name('decrement');
-            Route::delete('{item}/remove',  'remove')->name('remove');
-            Route::delete('',  'clear')->name('clear');
+
+Route::middleware([CheckoutSummarySessionCleaner::class])->group(function () {
+    Route::prefix('cart-items/')->group(function () {
+        Route::name('cart-items.')->group(function () {
+            Route::controller(CartController::class)->group(function() {
+                Route::get('',  'items')->name('index')->withoutMiddleware([CheckoutSummarySessionCleaner::class]);
+                Route::post('',  'add')->name('add');
+                Route::match(['put', 'patch'], '{item}',  'increment')->name('increment');
+                Route::delete('{item}',  'decrement')->name('decrement');
+                Route::delete('{item}/remove',  'remove')->name('remove');
+                Route::delete('',  'clear')->name('clear');
+            });
         });
     });
 });
-Route::apiResource('carts', CartController::class)->only(['index', 'show']);
+
+// Route::apiResource('carts', CartController::class)->only(['index', 'show']);
 Route::apiResource('coupons', CouponController::class)->only(['index', 'show']);
 Route::prefix('coupons/{coupon}/')->group(function () {
     Route::name('coupons.')->group(function () {

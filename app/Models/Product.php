@@ -62,7 +62,7 @@ class Product extends Model
     protected $with = ['images', 'activePromo',];
 
      /**
-     * Determine if a user owns a store
+     * Determine product discount
      */
     protected function discount(): CastAttribute
     {

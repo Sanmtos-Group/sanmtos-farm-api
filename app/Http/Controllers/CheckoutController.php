@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Address;
+use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderProduct;
+use App\Models\PaymentGateway;
+use App\Services\CheckoutService;
 class CheckoutController extends Controller
 {
-    const DEFAULT_INSTANCE = 'order-summary';
 
     /**
      * Checking out the cart 
@@ -31,11 +33,11 @@ class CheckoutController extends Controller
     public function summary()
     {
         
-        if(!session()->has(self::DEFAULT_INSTANCE))
+        if(!session()->has(CheckoutService::DEFAULT_INSTANCE))
         {
             $items = auth()->user()->cartItems;
             $items_total_price = 0;
-            $payment_gateway = PaymentGate::where('is_default', true)
+            $payment_gateway = PaymentGateway::where('is_default', true)
                                ->where('is_active', true)->first();
 
             $items->each( function($item) use (&$items_total_price){
@@ -49,7 +51,7 @@ class CheckoutController extends Controller
             ]);
 
             session([
-                self::DEFAULT_INSTANCE => [
+                CheckoutService::DEFAULT_INSTANCE => [
                 'order' =>  $order,
                 'items' => $items,
                 'payment_gateway_id' => $payment_gateway->id ?? null,
@@ -57,7 +59,7 @@ class CheckoutController extends Controller
             ]);
         }
 
-        return session(self::DEFAULT_INSTANCE);
+        return session(CheckoutService::DEFAULT_INSTANCE);
     }
 
     /**
@@ -85,7 +87,7 @@ class CheckoutController extends Controller
 
         $updatable_summary = $this->summary();
         $updatable_summary['order']->address_id = $new_address->id;
-        session([self::DEFAULT_INSTANCE => $updatable_summary]);
+        session([CheckoutService::DEFAULT_INSTANCE => $updatable_summary]);
 
         return response()->json([
             "data" => $this->summary(),
@@ -118,11 +120,66 @@ class CheckoutController extends Controller
         $updatable_summary = $this->summary();
         $updatable_summary['payment_gateway_id'] = $payment_gateway->id;
 
-        session([self::DEFAULT_INSTANCE => $updatable_summary]);
+        session([CheckoutService::DEFAULT_INSTANCE => $updatable_summary]);
 
         return response()->json([
             "data" => $this->summary(),
             "message" => "Payment gateway updated updated successfully"
+        ], 200);
+
+    }
+
+    /**
+     * add coupon to checkout
+     * 
+     * @method PUT || PATCH
+     * @param App\Models\Coupon $coupon
+     * @return \Illuminate\Http\Response\Json
+     */
+    public function addCoupon(Coupon $coupon)
+    {    
+        /**
+         * Check if the coupon is active
+         * to be active, 
+         *  the coupon is not cancelled 
+         *  the coupon coupon validity date has not passed
+         * 
+         * This condition is designed in the copoun model 
+         */
+        if(!($coupon->is_active))
+        {
+            return response()->json([
+                "message" => "Invalid coupon",
+                "errors"=> [
+                    "adddress" => [
+                        "Coupon added failed."
+                    ],
+                ]
+            ], 422);  
+        }
+
+        // check if any of the items in the chart is couponable.
+
+        $updatable_summary = $this->summary();                                                                                                                                                                                                                           
+        $updatable_summary['coupon_id'] = $coupon->id;
+
+        foreach ($updatable_summary['items'] as $key => $item) 
+        {
+
+            if(!is_null($product = $item->product))
+            {
+               if(!is_null($product->coupons()->where('couponable_id', $coupon->id)->where('couponable_type', $product::class )->first()))
+               {
+                    $updatable_summary['items'][$key]->coupon_id =  $coupon->id;  
+                }
+            }
+        }
+
+        session([CheckoutService::DEFAULT_INSTANCE => $updatable_summary]);
+
+        return response()->json([
+            "data" => $this->summary(),
+            "message" => "Coupon added successfully"
         ], 200);
 
     }
