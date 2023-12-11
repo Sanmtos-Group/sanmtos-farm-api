@@ -23,8 +23,6 @@ class Orderable extends Pivot
         'orderable_type',
         'quantity',
         'price', 
-        'promo_id',
-        'coupon_id',
         'total_price',
     ];
 }

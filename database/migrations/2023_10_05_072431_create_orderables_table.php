@@ -17,8 +17,6 @@ return new class extends Migration
             $table->uuidMorphs('orderable');
             $table->integer('quantity');
             $table->unsignedDecimal('price', $precision = 19, $scale = 2); 
-            $table->foreignUuid('promo_id')->contrained('promos')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignUuid('coupon_id')->contrained('coupons')->cascadeOnUpdate()->cascadeOnDelete();
             $table->unsignedDecimal('total_price', $precision = 19, $scale = 2); 
             $table->timestamps();
         });

@@ -22,6 +22,8 @@ class Order extends Model
         'address_id',
         'delivery_fee',
         'price', 
+        'coupon_id',
+        'promo_id',
         'total_price',
         'status',
         'ordered_at',

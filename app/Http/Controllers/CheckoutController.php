@@ -183,4 +183,13 @@ class CheckoutController extends Controller
         ], 200);
 
     }
+
+    /**
+     * Placing the order 
+     * 
+     * @method POST
+     */
+    public function placeOrder(){
+
+    }
 }

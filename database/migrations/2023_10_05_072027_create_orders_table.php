@@ -18,7 +18,9 @@ return new class extends Migration
             $table->foreignUuid('address_id')->nullable()->contrained('addresses')->cascadeOnUpdate()->nullOnDelete();            
 
             $table->integer('delivery_fee')->default(0);
-            $table->unsignedDecimal('price', $precision = 19, $scale = 2)->default(0); 
+            $table->unsignedDecimal('price', $precision = 19, $scale = 2)->default(0);
+            $table->foreignUuid('coupon_id')->nullable()->contrained('coupons')->cascadeOnUpdate()->cascadeOnDelete(); 
+            $table->foreignUuid('promo_id')->nullable()->contrained('promos')->cascadeOnUpdate()->cascadeOnDelete();
             $table->integer('total_price')->default(0);
 
             $table->timestamp('ordered_at')->nullable();

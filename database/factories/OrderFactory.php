@@ -35,6 +35,8 @@ class OrderFactory extends Factory
             'address_id' => $address,
             'delivery_fee' => $delivery_fee = fake()->randomFloat(0, 10),
             'price' => $price = fake()->randomFloat(0, 1),
+            'coupon_id' => null,
+            'promo_id' => null,
             'total_price' => $delivery_fee + $price,
             'status' => ($ordered & $shipped & $delivered) ? 'delivered' : (($ordered & $shipped) ? 'shipped' : ($ordered ? 'ordered': 'failed')),
             'ordered_at' => $ordered? fake()->dateTimeBetween('-1 week', 'now')->format('Y-m-d H:i:s') : null,
