@@ -84,7 +84,7 @@ class ProductController extends Controller
 
         // save product images
         if($request->hasFile('images'))
-
+        {
             foreach ($request->file('images') as $image) {
 
                 // $path = Storage::disk('public')->putFile('images', $image); // local storay
@@ -107,7 +107,7 @@ class ProductController extends Controller
                 $image->imageable_type = $product::class;
                 $image->save();
             }
-
+        }
         // attach the product images
         $product->images;
 
