@@ -32,17 +32,17 @@ class CheckoutController extends Controller
      */
     public function summary()
     {
+        $items_total_price = 0;
+        $items = auth()->user()->cartItems;
         
         if(!session()->has(CheckoutService::DEFAULT_INSTANCE))
         {
-            $items = auth()->user()->cartItems;
-            $items_total_price = 0;
-            $payment_gateway = PaymentGateway::where('is_default', true)
-                               ->where('is_active', true)->first();
-
             $items->each( function($item) use (&$items_total_price){
                 $items_total_price += $item->total_price;
             });
+
+            $payment_gateway = PaymentGateway::where('is_default', true)
+                               ->where('is_active', true)->first();
 
             $order = new Order([
                 'user_id' => auth()->user()->id,
@@ -57,6 +57,10 @@ class CheckoutController extends Controller
                 'payment_gateway_id' => $payment_gateway->id ?? null,
                 ]
             ]);
+        }
+        else {
+            
+            // recaculate items total price + coupon adjusted price if applied
         }
 
         return session(CheckoutService::DEFAULT_INSTANCE);
@@ -147,9 +151,41 @@ class CheckoutController extends Controller
          *  the coupon coupon validity date has not passed
          *  the coupon has not been used
          * 
-         * This condition is designed in the copoun model 
+         * This condition is designed in the coupon model as cast attribute
          */
-        if( is_null($coupon) || !($coupon->is_valid))
+
+         $coupon_is_valid = !is_null($coupon) || ($coupon->is_valid);
+
+
+        // check if any of the items in the chart is couponable.
+
+        $updatable_summary = $this->summary();                                                                                                                                                                                                                           
+
+        foreach ($updatable_summary['items'] as $key => $item) 
+        {
+            if(!$coupon_is_valid)
+            {
+                break;
+            }
+
+            if(!is_null($product = $item->product))
+            {
+                $coupon_is_applicable = !is_null($product->coupons()->where('couponable_id', $product->id)->where('couponable_type', $product::class )->first());
+                
+                $store = $product->store;
+                $coupon_is_applicable = $coupon_is_applicable || !is_null($store->coupons()->where('store_id', $store->id)->first());
+               
+                $coupon_is_applicable = $coupon_is_applicable || $coupon->store_id == null;
+
+                if($coupon_is_applicable)
+               {
+                    $updatable_summary['order']['coupon_id'] = $coupon->id;
+                    break;
+               }
+            }
+        }
+
+        if(!$coupon_is_valid || !$coupon_is_applicable )
         {
             return response()->json([
                 "message" => "Invalid coupon",
@@ -159,23 +195,6 @@ class CheckoutController extends Controller
                     ],
                 ]
             ], 422);  
-        }
-
-        // check if any of the items in the chart is couponable.
-
-        $updatable_summary = $this->summary();                                                                                                                                                                                                                           
-        $updatable_summary['coupon_id'] = $coupon->id;
-
-        foreach ($updatable_summary['items'] as $key => $item) 
-        {
-
-            if(!is_null($product = $item->product))
-            {
-               if(!is_null($product->coupons()->where('couponable_id', $coupon->id)->where('couponable_type', $product::class )->first()))
-               {
-                    $updatable_summary['items'][$key]->coupon_id =  $coupon->id;  
-                }
-            }
         }
 
         session([CheckoutService::DEFAULT_INSTANCE => $updatable_summary]);

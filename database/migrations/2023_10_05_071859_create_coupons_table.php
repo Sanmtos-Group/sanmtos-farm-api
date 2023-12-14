@@ -15,6 +15,8 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('code');
             $table->unsignedDecimal('discount', $precision = 5, $scale = 2);
+            $table->boolean('is_bulk_applicable')->default(false);
+            $table->integer('number_of_items')->default(1);
             $table->timestamp('valid_until')->nullable();
             $table->boolean('is_cancelled')->default(false);
             $table->foreignUuid('store_id')->nullable()->contrained('stores')->cascadeOnUpdate()->casecadeOnDelete();
