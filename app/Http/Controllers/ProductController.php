@@ -15,6 +15,7 @@ use App\Models\Coupon;
 use App\Models\Image;
 use App\Models\Product;
 use App\Models\Promo;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 class ProductController extends Controller
@@ -85,9 +86,23 @@ class ProductController extends Controller
         if($request->hasFile('images'))
 
             foreach ($request->file('images') as $image) {
-                $path = Storage::disk('public')->putFile('images', $image);
+
+                // $path = Storage::disk('public')->putFile('images', $image); // local storay
+
+                $options = [
+                    'overlayImageURL' => null, //
+                    'thumbnail' => true, //true or false
+                    'dimensions' => null, // null or ['width'=>700, 'height'=>700]
+                    'roundCorners' => 0,
+                ];
+
+                // upload to cloudinary
+                $uploaded_image = CloudinaryService::uploadImage($image, 'products/', $options);
+
+                // save image information
                 $image = new Image();
-                $image->url =  env('APP_URL').Storage::url($path);
+                // $image->url =  env('APP_URL').Storage::url($path);  // local storay
+                $image->url = $uploaded_image->getSecurePath(); // cloudinary
                 $image->imageable_id = $product->id;
                 $image->imageable_type = $product::class;
                 $image->save();
