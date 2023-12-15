@@ -25,7 +25,7 @@ class PromoPolicy
      */
     public function view(User $user, Promo $promo): bool
     {
-        //
+        return true;
     }
 
     /**
