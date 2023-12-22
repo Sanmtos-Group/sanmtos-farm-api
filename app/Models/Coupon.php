@@ -30,6 +30,8 @@ class Coupon extends Model
     protected $fillable = [
         'code',
         'discount',
+        'is_bulk_applicable',
+        'number_of_items',
         'valid_until',
         'store_id',
         'used_at',

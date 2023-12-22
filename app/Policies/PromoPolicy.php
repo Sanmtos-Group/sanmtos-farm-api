@@ -15,7 +15,7 @@ class PromoPolicy
     /**
      * Determine whether the user can view any models.
      */
-    public function viewAny(User $user=null): bool
+    public function viewAny(User $user): bool
     {
        return true;
     }
@@ -25,7 +25,7 @@ class PromoPolicy
      */
     public function view(User $user, Promo $promo): bool
     {
-        //
+        return true;
     }
 
     /**

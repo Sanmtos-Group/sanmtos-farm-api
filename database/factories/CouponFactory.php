@@ -21,6 +21,8 @@ class CouponFactory extends Factory
         return [
             'code' => fake()->unique()->bothify('??-##-??'),
             'discount' => fake()->numberBetween(1, 100),
+            'is_bulk_applicable' => $is_bulk_applicable = fake()->boolean(),
+            'number_of_items' => $is_bulk_applicable? fake()->numberBetween(1,10) : 1,
             'valid_until' => fake()->dateTimeBetween('+1 week', '+5 month')->format('Y-m-d H:i:s'),
             'is_cancelled' => fake()->boolean(),
             'store_id' => Store::inRandomOrder()->first()?? Store::factory()->create(), 
