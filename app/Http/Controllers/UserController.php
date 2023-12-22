@@ -9,9 +9,12 @@ use App\Http\Resources\RoleResource;
 use App\Http\Resources\UserResource;
 use App\Http\Requests\StoreAddressRequest;
 use Illuminate\Http\Request;
+use LucasDotVin\Soulbscription\Models\Concerns\HasSubscriptions;
 
 class UserController extends Controller
 {
+    use HasSubscriptions;
+
     /**
      * Display a listing of the resource.
      */
@@ -48,7 +51,7 @@ class UserController extends Controller
      * Create new address for authenticated user
      */
     public function storeAddress(StoreAddressRequest $request)
-    { 
+    {
         $validated = $request->validated();
         $validated['first_name'] = array_key_exists('first_name', $validated) ? $validated['first_name'] : auth()->user()->first_name;
         $validated['last_name'] = array_key_exists('last_name', $validated) ? $validated['last_name'] : auth()->user()->last_name;
@@ -82,7 +85,7 @@ class UserController extends Controller
 
     /**
      * Display a listing users that are store staff.
-     * 
+     *
      */
     public function storeStaffs()
     {
@@ -165,7 +168,7 @@ class UserController extends Controller
 
     /**
      * Remove use role.
-     * 
+     *
      * @param App\Models\User $user
      * @param App\Models\Role $role
      */

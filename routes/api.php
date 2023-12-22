@@ -12,14 +12,17 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\CountryController;
+use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentGatewayController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\PlanController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PromoController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StoreController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VerificationCodeController;
 use App\Http\Middleware\CheckoutSummarySessionCleaner;
@@ -58,12 +61,12 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
  */
 Route::middleware('auth:sanctum')->group(function () {
 
-    // User Information 
+    // User Information
     Route::get('/user-profile', [UserController::class, 'profile']);
     Route::get('/user-addresses', [UserController::class, 'indexAddress']);
     Route::post('/user-addresses', [UserController::class, 'storeAddress']);
 
-   
+
     Route::apiResource('attributes', AttributeController::class)->only(['store', 'update', 'destroy']);
     Route::prefix('attributes/{attribute}/')->group(function () {
         Route::name('attributes.')->group(function () {
@@ -187,6 +190,28 @@ Route::middleware('auth:sanctum')->group(function () {
        Route::get('payment-verify', 'handleGatewayCallback')->name('payment.verify');
        Route::get('payment-transaction', 'getAllTransactions')->name('payment.transaction');
        Route::get('payment-customer-detail', 'getAllCustomersTransacted')->name('payment.customer.details');
+    });
+
+//    Route::apiResource('plans', PlanController::class)->only(
+//        'index', 'store', 'update', 'destroy',
+
+    Route::controller(PlanController::class)->group(function() {
+        Route::get('plans',  'index')->name('plans');
+        Route::post('plans',  'store')->name('plans');
+        Route::put('plans{plan}',  'update')->name('plans.update');
+        Route::delete('plans{plan}',  'destroy')->name('plans.destroy');
+        Route::post('attach-feature', 'attachFeature')->name('plan.attach.feature');
+    });
+
+    Route::apiResource('features', FeatureController::class)->only(
+        'index', 'store', 'update', 'destroy'
+    );
+
+    Route::controller(SubscriptionController::class)->group(function () {
+        Route::post('subscriptions', 'subscribe')->name('subscriptions');
+        Route::post('renew-plan', 'renewPlan')->name('renew-plan');
+        Route::patch('switch-plan', 'switchPlan')->name('switch-plan');
+        Route::patch('cancel-plan', 'cancelPlan')->name('cancel-plan');
     });
 
 });
