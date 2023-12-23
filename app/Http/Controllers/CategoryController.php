@@ -43,6 +43,16 @@ class CategoryController extends Controller
     {
         $request->validated();
 
+        $select = Category::where('name', $request->name)->first();
+
+        if ($select){
+            return response()->json([
+                'message' => 'This category is active',
+                'status' => 'Fail',
+                'data' => null
+            ], 422);
+        }
+
         $insert = [
             "name" => $request->name,
             "description" => $request->description,
