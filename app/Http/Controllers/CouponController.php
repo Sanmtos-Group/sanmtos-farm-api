@@ -10,6 +10,7 @@ use App\Http\Requests\UpdateCouponRequest;
 use App\Models\Coupon;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 class CouponController extends Controller
 {
     public function __construct(){
@@ -180,7 +181,13 @@ class CouponController extends Controller
                 // check if the product is of the same store as the coupon
                 if($product->store_id === $coupon->store_id)
                 {
-                    $coupon->products()->syncWithoutDetaching($product);
+                    // $coupon->products()->syncWithoutDetaching($product);
+                    $coupon->products()->syncWithoutDetaching([
+                        $product->id => [
+                            // Other pivot table attributes if needed
+                            'id' => Str::uuid()->toString(), // Generate UUID for the pivot ID
+                        ]
+                    ]);
                 }
             }
        }
@@ -192,7 +199,13 @@ class CouponController extends Controller
             // check if the product is of the same store as the coupon
             if($product->store_id === $coupon->store_id)
             {
-                $coupon->products()->syncWithoutDetaching($product);
+                // $coupon->products()->syncWithoutDetaching($product);
+                $coupon->products()->syncWithoutDetaching([
+                    $product->id => [
+                        // Other pivot table attributes if needed
+                        'id' => Str::uuid()->toString(), // Generate UUID for the pivot ID
+                    ]
+                ]);
             }
        }
 

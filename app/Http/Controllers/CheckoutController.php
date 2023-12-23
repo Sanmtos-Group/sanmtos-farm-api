@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Address;
 use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\PaymentGateway;
 use App\Services\CheckoutService;
+use Illuminate\Http\Request;
 class CheckoutController extends Controller
 {
 
@@ -22,7 +22,7 @@ class CheckoutController extends Controller
     {
         return response()->json([
             "data" => $this->summary(),
-            "message" => "Checkout Summary "
+            "message" => "Checkout Summary"
         ], 200);
     }
 
@@ -48,6 +48,7 @@ class CheckoutController extends Controller
                 'user_id' => auth()->user()->id,
                 'address_id' => auth()->user()->addresses()->where('is_preferred', true)->first()->id ?? null,
                 'price' => $items_total_price,
+                'total_price' => $items_total_price,
             ]);
 
             session([
@@ -59,8 +60,9 @@ class CheckoutController extends Controller
             ]);
         }
         else {
-            
+             
             // recaculate items total price + coupon adjusted price if applied
+            
         }
 
         return session(CheckoutService::DEFAULT_INSTANCE);
@@ -140,27 +142,16 @@ class CheckoutController extends Controller
      * @param string $code
      * @return \Illuminate\Http\Response\Json
      */
-    public function addCoupon($coupon)
+    public function addCoupon(Request $request)
     {  
-        $coupon = Coupon::where('code', $coupon)->first();
+        $coupon = Coupon::where('id', $request->coupon)
+        ->orWhere('code', $request->coupon)->first();
 
-        /**
-         * Check if the coupon is valid
-         * to be valid, 
-         *  the coupon is not cancelled 
-         *  the coupon coupon validity date has not passed
-         *  the coupon has not been used
-         * 
-         * This condition is designed in the coupon model as cast attribute
-         */
-
-         $coupon_is_valid = !is_null($coupon) || ($coupon->is_valid);
-
-
+        // check if the coupon is applicable
+        $coupon_is_valid = !is_null($coupon) && ($coupon->is_valid ?? false);
+        
+        $updatable_summary = $this->summary(); 
         // check if any of the items in the chart is couponable.
-
-        $updatable_summary = $this->summary();                                                                                                                                                                                                                           
-
         foreach ($updatable_summary['items'] as $key => $item) 
         {
             if(!$coupon_is_valid)
@@ -170,23 +161,43 @@ class CheckoutController extends Controller
 
             if(!is_null($product = $item->product))
             {
-                $coupon_is_applicable = !is_null($product->coupons()->where('couponable_id', $product->id)->where('couponable_type', $product::class )->first());
-                
-                $store = $product->store;
-                $coupon_is_applicable = $coupon_is_applicable || !is_null($store->coupons()->where('store_id', $store->id)->first());
-               
-                $coupon_is_applicable = $coupon_is_applicable || $coupon->store_id == null;
+                // check if the coupon is attached to the product
+                $coupon_is_applicable = !is_null($coupon->products()->where('products.id', $product->id)->first());
+                // check if the coupon and the product belongs to the same store               
+                $coupon_is_applicable = $coupon_is_applicable && $coupon->store_id == $product->store_id;
 
                 if($coupon_is_applicable)
                {
+                    $discount_price = $product->price - ($coupon->discount/100 * $product->price);
+
+                    // check if the coupon is bulk applicaton and exact item's quantity is in the cart
+                    if($coupon->is_bulk_applicable  && $item->quantity = $coupon->number_of_items)
+                    {
+                       $discount_price *= $item->quantity;
+                    }
                     $updatable_summary['order']['coupon_id'] = $coupon->id;
+                    $updatable_summary['order']['total_price'] = $updatable_summary['order']['price'] - $discount_price;
+
                     break;
                }
             }
         }
 
-        if(!$coupon_is_valid || !$coupon_is_applicable )
+        // check if coupon is not added successfully
+        if(!$coupon_is_valid || !$coupon_is_applicable?? false)
         {
+            $items_total_price = 0;
+            $items = auth()->user()->cartItems;
+            $items->each( function($item) use (&$items_total_price){
+                $items_total_price += $item->total_price;
+            });
+
+            // reset order's price, total price and coupon
+            $updatable_summary['order']['price'] = $items_total_price;
+            $updatable_summary['order']['total_price'] = $items_total_price;
+            $updatable_summary['order']['coupon_id'] = null;
+            session([CheckoutService::DEFAULT_INSTANCE => $updatable_summary]);
+
             return response()->json([
                 "message" => "Invalid coupon",
                 "errors"=> [
@@ -198,7 +209,6 @@ class CheckoutController extends Controller
         }
 
         session([CheckoutService::DEFAULT_INSTANCE => $updatable_summary]);
-
         return response()->json([
             "data" => $this->summary(),
             "message" => "Coupon added successfully"

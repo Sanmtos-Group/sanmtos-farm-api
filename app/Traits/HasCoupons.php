@@ -20,6 +20,7 @@ trait HasCoupons {
     public function activeCoupon()
     {
         return $this->coupons()->where('is_cancelled', false)
-        ->where('valid_until','>', today())->take(1);
+        ->where('valid_until','>', today())
+        -where('used_at', null)->take(1);
     }
 }

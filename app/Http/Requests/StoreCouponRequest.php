@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use App\Models\Coupon;
 use Illuminate\Foundation\Http\FormRequest;
-
 class StoreCouponRequest extends FormRequest
 {
     /**
@@ -27,6 +26,8 @@ class StoreCouponRequest extends FormRequest
             'discount' => 'required|numeric|min:0.01|max:100',
             'valid_until' => 'required|date|after:'.now(),
             'store_id' => 'nullable|uuid|exists:stores,id',
+            'is_bulk_applicable' => 'nullable|boolean',
+            'number_of_items' => 'nullable|integer|gt:0',
         ];
     }
 }
