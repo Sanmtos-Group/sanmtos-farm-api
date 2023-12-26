@@ -13,7 +13,7 @@ use LucasDotVin\Soulbscription\Models\Concerns\HasSubscriptions;
 
 class UserController extends Controller
 {
-    use HasSubscriptions;
+    // use HasSubscriptions;
 
     /**
      * Display a listing of the resource.

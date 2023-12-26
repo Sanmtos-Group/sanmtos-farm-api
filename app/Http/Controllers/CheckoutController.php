@@ -34,19 +34,19 @@ class CheckoutController extends Controller
     {
         $items_total_price = 0;
         $items = auth()->user()->cartItems;
-        
+        $address =  auth()->user()->addresses()->where('is_preferred', true)->first() ?? null;
+        $payment_gateway = PaymentGateway::where('is_default', true)
+                               ->where('is_active', true)->first();
+
         if(!session()->has(CheckoutService::DEFAULT_INSTANCE))
         {
-            $items->each( function($item) use (&$items_total_price){
+            $items->each(function($item) use (&$items_total_price){
                 $items_total_price += $item->total_price;
             });
 
-            $payment_gateway = PaymentGateway::where('is_default', true)
-                               ->where('is_active', true)->first();
-
             $order = new Order([
                 'user_id' => auth()->user()->id,
-                'address_id' => auth()->user()->addresses()->where('is_preferred', true)->first()->id ?? null,
+                'address_id' => $address->id ?? null,
                 'price' => $items_total_price,
                 'total_price' => $items_total_price,
             ]);
@@ -60,9 +60,15 @@ class CheckoutController extends Controller
             ]);
         }
         else {
-             
+            $updatable_summary =  session(CheckoutService::DEFAULT_INSTANCE);
+            if(is_null($updatable_summary['order']->address_id ?? null))
+                $updatable_summary['order']->address_id = $address->id ?? null;
+
+            if(is_null($updatable_summary['payment_gateway_id'] ?? null))
+                $updatable_summary['payment_gateway_id'] = $payment_gateway->id ?? null;
+                
+            session([CheckoutService::DEFAULT_INSTANCE => $updatable_summary]);
             // recaculate items total price + coupon adjusted price if applied
-            
         }
 
         return session(CheckoutService::DEFAULT_INSTANCE);
@@ -151,7 +157,8 @@ class CheckoutController extends Controller
         $coupon_is_valid = !is_null($coupon) && ($coupon->is_valid ?? false);
         
         $updatable_summary = $this->summary(); 
-        // check if any of the items in the chart is couponable.
+
+        // checking if any of the items in the chart is couponable.
         foreach ($updatable_summary['items'] as $key => $item) 
         {
             if(!$coupon_is_valid)
@@ -183,7 +190,7 @@ class CheckoutController extends Controller
             }
         }
 
-        // check if coupon is not added successfully
+        // checking if coupon is not added successfully
         if(!$coupon_is_valid || !$coupon_is_applicable?? false)
         {
             $items_total_price = 0;
@@ -217,11 +224,38 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Placing the order 
+     * Confirming the order 
      * 
      * @method POST
      */
-    public function placeOrder(){
+    public function confirmOrder(){
+        $errors = [];
+        $summary = $this->summary();
 
+        if(!array_key_exists('order', $summary))
+        {
+            $errors['order'] = 'No initialized order';
+        }
+        else {
+            
+            if(empty($summary['order']->user_id))
+                $errors['user_id'] = 'No authenticated user';
+
+            if(empty($summary['order']->address_id))
+                $errors['address_id'] = 'Address is required';
+
+            if(empty($summary['order']->total_price))
+                $errors['total_price'] = 'No items total price';
+        }
+
+        if(!array_key_exists('payment_gateway_id', $summary))
+        {
+            $errors['payment_gateway_id'] = 'Please select payment gateway';
+        }
+
+        return response()->json([
+            "data" => $this->summary(),
+            "message" => "Checkout Summary"
+        ], 200);
     }
 }
