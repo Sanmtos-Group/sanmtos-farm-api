@@ -6,6 +6,7 @@ use App\Traits\HasAttributes;
 use App\Traits\HasCoupons;
 use App\Traits\HasImages;
 use App\Traits\HasPromos;
+use App\Traits\HasReviews;
 
 use Illuminate\Database\Eloquent\Casts\Attribute as CastAttribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -23,6 +24,7 @@ class Product extends Model
     use HasFactory;
     use HasImages;
     use HasPromos;
+    use HasReviews;
     use HasUuids;
     use SoftDeletes;
 

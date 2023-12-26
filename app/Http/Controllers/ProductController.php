@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCouponableRequest;
+use App\Http\Requests\StoreLikeRequest;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\StorePromoableRequest;
 use App\Http\Requests\StorePromoRequest;
+use App\Http\Requests\UpdateLikeRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Requests\UpdatePromoRequest;
 use App\Http\Resources\CouponResource;
+use App\Http\Resources\LikeResource;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\PromoResource;
 use App\Models\Coupon;
@@ -320,6 +323,76 @@ class ProductController extends Controller
 
         return $coupon_resource;
       
+    }
+
+    /**
+     * Display list of the specified product likes
+     * 
+     * @param Illuminate\Http\Request $request 
+     * @param App\Models\Product $product
+     */
+    public function indexLikes(Request $request, Product $product)
+    {
+        $per_page = is_numeric($request->per_page)? (int) $request->per_page : 15;
+        
+        $product_likes = $product->likes()->paginate($per_page);
+
+        $product_likes_resource =  LikeResource::collection($product_likes);
+        $product_likes_resource->with['status'] = "OK";
+        $product_likes_resource->with['message'] = $product->name."'s likes list - retrieved successfully";
+
+        return $product_likes_resource;
+    }
+
+    /**
+     * Like of the specified product
+     * 
+     * @param App\Http\Requests\UpdateLikeRequest $request 
+     * @param App\Models\Product $product
+     * @method POST
+     */
+    public function createLikes(StoreLikeRequest $request, Product $product)
+    {
+        $like = $product->likes()->firstOrCreate([
+            'user_id' => auth()->user()->id
+        ]);
+
+        $like_resource = new LikeResource($like);
+        $like_resource->with['status'] = "OK";
+        $like_resource->with['message'] = "Product liked successfully";
+
+        return $like_resource;
+    }
+
+    /**
+     * undo like of the specified product
+     * 
+     * @param App\Http\Requests\UpdateLikeRequest $request 
+     * @param App\Models\Product $product
+     * @method DELETE
+     */
+    public function destroyLikes(UpdateLikeRequest $request, Product $product)
+    {
+
+        $product->likes()->where('user_id', auth()->user()->id)->first()->delete();
+       
+        $like_resource = new LikeResource(null);
+        $like_resource->with['status'] = "OK";
+        $like_resource->with['message'] = "Product like undo successfully";
+    }
+
+    /**
+     * undo all likes of the specified product
+     * 
+     * @param App\Models\Product $product
+     * @method DELETE
+     */
+    public function destroyAllLikes(Product $product){
+        $product->likes()->delete();
+
+        $like_resource = new LikeResource(null);
+        $like_resource->with['status'] = "OK";
+        $like_resource->with['message'] = "Product's likes undo successfully";
     }
 
 }

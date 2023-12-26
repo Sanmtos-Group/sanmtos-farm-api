@@ -95,6 +95,23 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::match(['put', 'patch'], '{product}/verify', 'verify')->name('verify');
                 Route::post('{product}/promos', 'promosStore')->name('promos.store');
                 Route::post('{product}/coupons', 'couponsStore')->name('coupons.store');
+
+                /**
+                 * <-----  PRODUCT LIKES  ----->
+                 * 
+                */
+                // view product likes
+                Route::get('likes', [ProductController::class, 'indexLikes'])->name('likes.index');
+                // like a product
+                Route::post('likes', [ProductController::class, 'createLikes'])->name('likes.create');
+                // undo a product like
+                Route::delete('likes', [ProductController::class, 'destroyLikes'])->name('likes.destroy');
+                // undo all product likes
+                Route::delete('likes/all', [ProductController::class, 'destroyAllLikes'])->name('likes.destroy.all');
+                /**
+                 * <------ END OF PRODUCT LIKES ----->
+                 * 
+                */
             });
         });
     });
