@@ -25,6 +25,8 @@ class UpdateProductRequest extends FormRequest
             'name' => 'string|min:3|max:191',
             'description' => 'nullable|string|max:1000',
             'short_description' => 'nullable|string|max:191',
+            'weight' => 'numeric|min:0.01',
+            'volume' => 'numeric|min:0.01',
             'price' => 'numeric|min:0.01',
             'currency' => 'nullable|string',
             'regular_price' => 'nullable|numeric|min:0.01|gt:price',

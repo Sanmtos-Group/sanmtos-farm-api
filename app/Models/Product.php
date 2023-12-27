@@ -48,6 +48,8 @@ class Product extends Model
         'name',
         'description',
         'short_description',
+        'weight',
+        'volume',
         'price',
         'currency',
         'regular_price',

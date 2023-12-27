@@ -83,7 +83,7 @@ class CheckoutController extends Controller
      */
     public function upsertDeliveryAddress(Address $address)
     {
-        $new_address = auth()->user()->addresses()->where('id',$address->id)->first();
+        $new_address = auth()->user()->addresses()->where('id', $address->id)->first();
         
         if(is_null($new_address))
         {

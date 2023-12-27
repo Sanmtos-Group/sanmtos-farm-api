@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('name');
             $table->longText('description')->nullable();
             $table->string('short_description')->nullable();
+            $table->unsignedDecimal('weight',8,3)->default(0.001)->comment('in KG');
+            $table->unsignedDecimal('volume',8,2)->default(0.00)->comment('in CM^3');
             $table->unsignedDecimal('price', $precision = 19, $scale = 2)->default(0.01);
             $table->string('currency')->nullable();
             $table->unsignedDecimal('regular_price', $precision = 19, $scale = 2)->nullable();

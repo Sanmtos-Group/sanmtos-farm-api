@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 class Coupon extends Model
 {
@@ -34,8 +36,7 @@ class Coupon extends Model
         'number_of_items',
         'valid_until',
         'store_id',
-        'used_at',
-        'used_by_user_id'
+        'user_id',
     ];
     
 
@@ -63,12 +64,30 @@ class Coupon extends Model
     protected function isValid(): Attribute
     {
         return Attribute::make(
-            get: fn () => !($this->is_cancelled) && ($this->valid_until > today() && is_null($this->used_at)),
+            get: fn () => !($this->is_cancelled) 
+            && $this->valid_until >= today() 
+            && is_null($this->user_id)? true : $this->user_id == auth()->user()->id,
         );
     }
 
     /**
-     * Get all of the products that are assigned this tag.
+     * Get the belonging store of the coupon.
+     */
+    public function store(): BelongsTo
+    {
+        return $this->belongsTo(Store::class);
+    }
+
+    /**
+     * Get the recipient of the coupon.
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get all of the products that are assigned this coupon.
      */
     public function products(): MorphToMany
     {
@@ -76,10 +95,18 @@ class Coupon extends Model
     }
  
     /**
-     * Get all of the stores that are assigned this tag.
+     * Get all of the stores that are assigned this coupon.
      */
     public function stores(): MorphToMany
     {
         return $this->morphedByMany(Store::class, 'couponable');
+    }
+
+    /**
+     * Get the usages of the coupon.
+     */
+    public function usages(): HasMany
+    {
+        return $this->hasMany(CouponUsage::class);
     }
 }

@@ -23,6 +23,8 @@ class ProductFactory extends Factory
             'name' =>  fake()->word().fake()->bothify('???'), // ensure word is more than 3 by attached random 3 letters
             'description' => fake()->realText(),
             'short_description' => fake()->sentence(),
+            'weight' => fake()->randomNumber(2),
+            'volume'  => fake()->randomNumber(2),
             'price' => $price = fake()->randomFloat(0, 1), // random floats of 2 decimal place of min 1.00
             'currency' => fake()->currencyCode(),
             'regular_price' => $regular_price = $price + fake()->randomFloat(0, 1),

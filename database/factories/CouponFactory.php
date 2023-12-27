@@ -26,8 +26,7 @@ class CouponFactory extends Factory
             'valid_until' => fake()->dateTimeBetween('+1 week', '+5 month')->format('Y-m-d H:i:s'),
             'is_cancelled' => fake()->boolean(),
             'store_id' => Store::inRandomOrder()->first()?? Store::factory()->create(), 
-            'used_at' => ($is_used = fake()->boolean) ? now() : null,
-            'used_by_user_id' => $is_used ? User::inRandomOrder()->first()?? User::factory()->create() : null,
+            'user_id' => fake()->boolean ? User::inRandomOrder()->first()?? User::factory()->create() : null,
         ];
     }
 }

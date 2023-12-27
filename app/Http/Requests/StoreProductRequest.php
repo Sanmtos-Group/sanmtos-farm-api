@@ -25,6 +25,8 @@ class StoreProductRequest extends FormRequest
             'name' => 'required|string|min:3|max:191',
             'description' => 'nullable|string|max:1000',
             'short_description' => 'nullable|string|max:191',
+            'weight' => 'required|numeric|min:0.01',
+            'volume' => 'required|numeric|min:0.01',
             'price' => 'required|numeric|min:0.01',
             'currency' => 'required|string',
             // 'regular_price' => 'required|numeric|min:0.01',
