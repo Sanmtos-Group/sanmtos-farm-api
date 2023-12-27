@@ -339,7 +339,7 @@ class ProductController extends Controller
 
         $product_likes_resource =  LikeResource::collection($product_likes);
         $product_likes_resource->with['status'] = "OK";
-        $product_likes_resource->with['message'] = $product->name."'s likes list - retrieved successfully";
+        $product_likes_resource->with['message'] = "Product's likes list retrieved successfully";
 
         return $product_likes_resource;
     }
@@ -374,11 +374,13 @@ class ProductController extends Controller
     public function destroyLikes(UpdateLikeRequest $request, Product $product)
     {
 
-        $product->likes()->where('user_id', auth()->user()->id)->first()->delete();
-       
+        $product->likes()->where('user_id', auth()->user()->id)->delete();
+
         $like_resource = new LikeResource(null);
         $like_resource->with['status'] = "OK";
-        $like_resource->with['message'] = "Product like undo successfully";
+        $like_resource->with['message'] = "Product unlike successfully";
+
+        return $like_resource;
     }
 
     /**

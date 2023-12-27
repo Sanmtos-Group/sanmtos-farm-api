@@ -101,13 +101,13 @@ Route::middleware('auth:sanctum')->group(function () {
                  * 
                 */
                 // view product likes
-                Route::get('likes', [ProductController::class, 'indexLikes'])->name('likes.index');
+                Route::get('{product}/likes', [ProductController::class, 'indexLikes'])->name('likes.index');
                 // like a product
-                Route::post('likes', [ProductController::class, 'createLikes'])->name('likes.create');
+                Route::post('{product}/likes', [ProductController::class, 'createLikes'])->name('likes.create');
                 // undo a product like
-                Route::delete('likes', [ProductController::class, 'destroyLikes'])->name('likes.destroy');
+                Route::delete('{product}/likes', [ProductController::class, 'destroyLikes'])->name('likes.destroy');
                 // undo all product likes
-                Route::delete('likes/all', [ProductController::class, 'destroyAllLikes'])->name('likes.destroy.all');
+                Route::delete('{product}/likes/all', [ProductController::class, 'destroyAllLikes'])->name('likes.destroy.all');
                 /**
                  * <------ END OF PRODUCT LIKES ----->
                  * 

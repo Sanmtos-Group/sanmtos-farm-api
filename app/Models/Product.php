@@ -51,17 +51,23 @@ class Product extends Model
         'price',
         'currency',
         'regular_price',
-        // 'discount',
         'category_id',
         'store_id',
     ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+     protected $appends = ['is_liked'];
 
     /**
      * The relationships that should always be loaded.
      *
      * @var array
      */
-    protected $with = ['images', 'activePromo',];
+    protected $with = ['images', 'activePromo'];
 
      /**
      * Determine product discount
