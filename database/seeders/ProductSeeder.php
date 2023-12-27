@@ -15,24 +15,16 @@ class ProductSeeder extends Seeder
      */
     public function run(): void
     {
-        Product::factory()->count(100)->create()->each(function($product){
-            /**
-             * Create an image for the product
-             */
-            Image::factory([
-               'imageable_id' => $product->id,
-               'imageable_type' => $product::class,
-            ])->create();
+        Product::factory()
+        ->count(100)
+        ->hasImages(1)
+        ->hasLikes(3)
+        ->create()->each(function($product){
             
-             /**
-             * Attached an active promo
-             */
+            //Attached an active promo
             $product->promos()->sync($product->store->inActivePromos()->inRandomOrder()->first());
 
-
-             /**
-             * Attached an active coupon
-             */
+            // Attached an active coupon
             $product->coupons()->sync($product->store->inActiveCoupons()->inRandomOrder()->first());
         });
     }

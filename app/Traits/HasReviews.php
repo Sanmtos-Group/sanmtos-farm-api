@@ -1,8 +1,7 @@
 <?php
 namespace App\Traits; 
 
-use App\Models\Attribute; 
-
+use App\Models\Like; 
 trait HasReviews {
 
     /**
