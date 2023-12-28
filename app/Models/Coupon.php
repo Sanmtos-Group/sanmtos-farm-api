@@ -65,8 +65,9 @@ class Coupon extends Model
     {
         return Attribute::make(
             get: fn () => !($this->is_cancelled) 
-            && $this->valid_until >= today() 
-            && is_null($this->user_id)? true : $this->user_id == auth()->user()->id,
+                && $this->valid_until >= today() 
+                && is_null($this->user_id)? true : $this->user_id == auth()->user()->id
+                && is_null($this->usages()->where('user_id', auth()->user()->id)->first())
         );
     }
 

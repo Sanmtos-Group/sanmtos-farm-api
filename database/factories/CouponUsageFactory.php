@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Coupon;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +19,9 @@ class CouponUsageFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'coupon_id' => User::inRandomOrder()->first()?? User::factory()->create(),
+            'user_id' => Coupon::inRandomOrder()->first()?? Coupon::factory()->create(),
+            'used_at' => now(),
         ];
     }
 }

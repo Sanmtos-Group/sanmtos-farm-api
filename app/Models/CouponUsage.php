@@ -10,4 +10,15 @@ class CouponUsage extends Model
 {
     use HasFactory;
     use HasUuids;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'coupon_id',
+        'user_id',
+        'used_at',
+    ];
 }

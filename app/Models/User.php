@@ -265,5 +265,11 @@ class User extends Authenticatable
         return false;
     }
 
-
+    /**
+     * Get the user's coupon usages.
+     */
+    public function couponUsages(): HasMany
+    {
+        return $this->hasMany(CouponUsage::class);
+    }
 }

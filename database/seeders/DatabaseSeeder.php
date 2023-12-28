@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,  
             PromoSeeder::class,
             CouponSeeder::class,
+            // CouponUsageSeeder::class,
             PaymentGatewaySeeder::class,
             // PaymentSeeder::class,
             OrderSeeder::class,
