@@ -12,6 +12,13 @@ class Orderable extends Pivot
     use HasFactory;
     use HasUuids;
 
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'orderables';
+
      /**
      * The attributes that are mass assignable.
      *

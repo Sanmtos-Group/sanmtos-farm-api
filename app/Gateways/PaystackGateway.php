@@ -3,7 +3,7 @@
 namespace App\Gateways;
 
 use App\Interfaces\Payable;
-
+use App\Models\Payment;
 class PaystackGateway implements Payable
 {
     /**

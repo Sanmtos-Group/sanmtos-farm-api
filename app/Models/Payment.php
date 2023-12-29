@@ -44,6 +44,14 @@ class Payment extends Model
     ];
 
     /**
+     * Get the payment gateway of the model
+     */
+    public function gateway()
+    {
+        return $this->belongsTo(PaymentGateway::class, 'payment_gateway_id');
+    }
+
+    /**
      * Get the parent paymentable model (order or subcription).
      */
     public function paymentable(): MorphTo

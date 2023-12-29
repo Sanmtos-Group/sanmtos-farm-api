@@ -34,7 +34,7 @@ class PaymentHandler {
      *  
      *  @return void
      */
-    public function initializePaymentGateway(string $gateway=""){
+    public function initializePaymentGateway(string $gateway){
         switch (strtolower($gateway)) {
 
             case 'paystack':
@@ -47,6 +47,8 @@ class PaymentHandler {
                 # code...
                 break;
         }
+
+        return $this->payment_gateway;
     }
 
     /**

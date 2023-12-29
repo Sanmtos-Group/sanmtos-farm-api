@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
@@ -51,11 +54,19 @@ class Order extends Model
     }
 
     /**
-     * Get all of the products that are assigned this tag.
+     * Get all of the orderables for the order.
      */
-    public function products(): MorphToMany
+    public function orderables(): HasMany
     {
-        return $this->morphedByMany(Product::class, 'orderable');
+        return $this->hasMany(Orderable::class);
+    }
+
+     /**
+     * Get all of the model's payments.
+     */
+    public function payments() : MorphMany
+    {
+        return $this->morphMany(Payment::class, 'paymentable');
     }
 
 }

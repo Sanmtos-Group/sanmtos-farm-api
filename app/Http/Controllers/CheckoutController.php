@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Handlers\PaymentHandler;
 use App\Models\Address;
 use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\PaymentGateway;
+use App\Models\Payment;
 use App\Services\CheckoutService;
 use Illuminate\Http\Request;
 class CheckoutController extends Controller
@@ -22,6 +24,7 @@ class CheckoutController extends Controller
     {
         return response()->json([
             "data" => $this->summary(),
+            'status' => 'OK',
             "message" => "Checkout Summary"
         ], 200);
     }
@@ -88,6 +91,8 @@ class CheckoutController extends Controller
         if(is_null($new_address))
         {
             return response()->json([
+                'data' => null,
+                'status' => 'FAILED',
                 "message" => "Failed to update delivery address",
                 "errors"=> [
                     "adddress" => [
@@ -103,6 +108,7 @@ class CheckoutController extends Controller
 
         return response()->json([
             "data" => $this->summary(),
+            'status' => 'OK',
             "message" => "Delivery address updated successfully"
         ], 200);
 
@@ -120,6 +126,8 @@ class CheckoutController extends Controller
         if(!($payment_gateway->is_active))
         {
             return response()->json([
+                'data' => null,
+                'status' => 'FAILED',
                 "message" => "Failed to update payment payment",
                 "errors"=> [
                     "adddress" => [
@@ -136,6 +144,7 @@ class CheckoutController extends Controller
 
         return response()->json([
             "data" => $this->summary(),
+            'status' => 'OK',
             "message" => "Payment gateway updated updated successfully"
         ], 200);
 
@@ -218,6 +227,7 @@ class CheckoutController extends Controller
         session([CheckoutService::DEFAULT_INSTANCE => $updatable_summary]);
         return response()->json([
             "data" => $this->summary(),
+            'status' => 'OK',
             "message" => "Coupon added successfully"
         ], 200);
 
@@ -253,8 +263,46 @@ class CheckoutController extends Controller
             $errors['payment_gateway_id'] = 'Please select payment gateway';
         }
 
+        if(!empty($errors))
+        {
+            return response()->json([
+                "data" => null,
+                'status' => 'FAILED',
+                "message" => "Order confirmation failed",
+                'errors' => $errors,
+            ], 422);
+        }
+
+        $order = $summary['order'];
+        $order->number = strtoupper('SF'.date('YMd')).(Order::where('created_at', 'like' ,'%'.date('Y-m-d').'%')->count() + 1);
+        $order->save();
+        
+        $items = $summary['items'];
+        $orderables = [];
+
+        $items->each(function($item) use (&$orderables){
+            $orderables[] = [
+                'orderable_id' =>  $item->product->id,
+                'orderable_type' =>  get_class($item->product),
+                'quantity' =>  $item->quantity,
+                'price' =>  $item->price,
+                'total_price' =>  $item->total_price
+            ];
+        });
+        
+        $order->orderables()->createMany($orderables);
+        $payment = $order->payments()->create([
+            'user_id' => auth()->user()->id,
+            'amount' => $order->total_price,
+            'payment_gateway_id' => $summary['payment_gateway_id'],
+        ]);
+
+        $payment_handler = new PaymentHandler();
+        $gateway = $payment_handler->initializePaymentGateway($payment->gateway->name);
+
+
         return response()->json([
-            "data" => $this->summary(),
+            "data" => $gateway->pay($payment),
             "message" => "Checkout Summary"
         ], 200);
     }
