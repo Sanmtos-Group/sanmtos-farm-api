@@ -304,6 +304,8 @@ class CheckoutController extends Controller
             
             DB::commit();
             
+            auth()->user()->cartItems()->delete();
+
             return response()->json([
                 "data" => [
                     'payment_id' => $payment->id,
