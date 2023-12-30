@@ -146,8 +146,8 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::get('', 'index' )->name('checkout.index');
                 Route::get('summary', 'index' )->name('checkout.summary');
                 Route::match(['put', 'patch'], 'delivery-address/{address}', 'upsertDeliveryAddress' )->name('checkout.devliveryAddress.upsert');
-                Route::match(['put', 'patch'], 'add-coupon', 'addCoupon' )->name('checkout.coupon.add');
-                Route::match(['put', 'patch'], 'payment-gatway/{payment_gateway}', 'upsertPaymentGateway' )->name('checkout.paymentGateway.upsert');
+                Route::match(['put', 'patch'], 'coupon', 'addCoupon' )->name('checkout.coupon.add');
+                Route::match(['put', 'patch'], 'payment-gateway/{payment_gateway}', 'upsertPaymentGateway' )->name('checkout.paymentGateway.upsert');
                 Route::post( 'confirm-order', 'confirmOrder')->name('confirmOrder');
                 // Route::post('{coupon}/products', 'attachProducts')->name('products.attach');
                 // Route::delete('{coupon}/products', 'detachProducts')->name('products.detach');
