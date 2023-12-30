@@ -11,6 +11,7 @@ use App\Models\PaymentGateway;
 use App\Models\Payment;
 use App\Services\CheckoutService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 class CheckoutController extends Controller
 {
 
@@ -241,69 +242,87 @@ class CheckoutController extends Controller
     public function confirmOrder(){
         $errors = [];
         $summary = $this->summary();
+        try {
 
-        if(!array_key_exists('order', $summary))
-        {
-            $errors['order'] = 'No initialized order';
-        }
-        else {
+            if(!array_key_exists('order', $summary))
+            {
+                $errors['order'] = 'No initialized order';
+            }
+            else {
+                
+                if(empty($summary['order']->user_id))
+                    $errors['user_id'] = 'No authenticated user';
+
+                if(empty($summary['order']->address_id))
+                    $errors['address_id'] = 'Address is required';
+
+                if(empty($summary['order']->total_price))
+                    $errors['total_price'] = 'No items total price';
+            }
+
+            if(!array_key_exists('payment_gateway_id', $summary))
+            {
+                $errors['payment_gateway_id'] = 'Please select payment gateway';
+            }
+
+            if(!empty($errors))
+            {
+                throw new Exception("Order confirmation failed", 1);
+            }
+
+      
+            DB::beginTransaction();
+
+            $order = $summary['order'];
+            $order->number = strtoupper('SF'.date('YMd')).(Order::where('created_at', 'like' ,'%'.date('Y-m-d').'%')->count() + 1);
+            $order->save();
             
-            if(empty($summary['order']->user_id))
-                $errors['user_id'] = 'No authenticated user';
+            $items = $summary['items'];
+            $orderables = [];
 
-            if(empty($summary['order']->address_id))
-                $errors['address_id'] = 'Address is required';
+            $items->each(function($item) use (&$orderables){
+                $orderables[] = [
+                    'orderable_id' =>  $item->product->id,
+                    'orderable_type' =>  get_class($item->product),
+                    'quantity' =>  $item->quantity,
+                    'price' =>  $item->price,
+                    'total_price' =>  $item->total_price
+                ];
+            });
+            
+            $order->orderables()->createMany($orderables);
+            
+            $payment = $order->payments()->create([
+                'user_id' => auth()->user()->id,
+                'amount' => $order->total_price,
+                'payment_gateway_id' => $summary['payment_gateway_id'],
+            ]);
 
-            if(empty($summary['order']->total_price))
-                $errors['total_price'] = 'No items total price';
-        }
+            $payment_handler = new PaymentHandler();
+            $gateway = $payment_handler->initializePaymentGateway($payment->gateway->name);
+            $payment_url = $gateway->pay($payment)->url ;
+            
+            DB::commit();
+            
+            return response()->json([
+                "data" => [
+                    'payment_id' => $payment->id,
+                    'payment_url' => $payment_url 
+                ],
+                "message" => "Proceed to pay via ".$payment->gateway->name
+            ], 200);
 
-        if(!array_key_exists('payment_gateway_id', $summary))
-        {
-            $errors['payment_gateway_id'] = 'Please select payment gateway';
-        }
+        } catch (\Throwable $th) {
 
-        if(!empty($errors))
-        {
+            DB::rollBack();
+
             return response()->json([
                 "data" => null,
                 'status' => 'FAILED',
-                "message" => "Order confirmation failed",
+                "message" => $th->getMessage(),
                 'errors' => $errors,
             ], 422);
         }
-
-        $order = $summary['order'];
-        $order->number = strtoupper('SF'.date('YMd')).(Order::where('created_at', 'like' ,'%'.date('Y-m-d').'%')->count() + 1);
-        $order->save();
         
-        $items = $summary['items'];
-        $orderables = [];
-
-        $items->each(function($item) use (&$orderables){
-            $orderables[] = [
-                'orderable_id' =>  $item->product->id,
-                'orderable_type' =>  get_class($item->product),
-                'quantity' =>  $item->quantity,
-                'price' =>  $item->price,
-                'total_price' =>  $item->total_price
-            ];
-        });
-        
-        $order->orderables()->createMany($orderables);
-        $payment = $order->payments()->create([
-            'user_id' => auth()->user()->id,
-            'amount' => $order->total_price,
-            'payment_gateway_id' => $summary['payment_gateway_id'],
-        ]);
-
-        $payment_handler = new PaymentHandler();
-        $gateway = $payment_handler->initializePaymentGateway($payment->gateway->name);
-
-
-        return response()->json([
-            "data" => $gateway->pay($payment),
-            "message" => "Checkout Summary"
-        ], 200);
     }
 }

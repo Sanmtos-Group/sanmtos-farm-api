@@ -44,6 +44,14 @@ class Payment extends Model
     ];
 
     /**
+     * Get user making the payment
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
      * Get the payment gateway of the model
      */
     public function gateway()
