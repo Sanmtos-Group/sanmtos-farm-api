@@ -10,6 +10,7 @@ use App\Models\OrderProduct;
 use App\Models\PaymentGateway;
 use App\Models\Payment;
 use App\Services\CheckoutService;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 class CheckoutController extends Controller
@@ -303,7 +304,8 @@ class CheckoutController extends Controller
             $payment_url = $gateway->pay($payment)->url ;
             
             DB::commit();
-            
+
+            session()->forget(CheckoutService::DEFAULT_INSTANCE);
             auth()->user()->cartItems()->delete();
 
             return response()->json([
@@ -319,7 +321,7 @@ class CheckoutController extends Controller
             DB::rollBack();
 
             return response()->json([
-                "data" => null,
+                "data" => [],
                 'status' => 'FAILED',
                 "message" => $th->getMessage(),
                 'errors' => $errors,
