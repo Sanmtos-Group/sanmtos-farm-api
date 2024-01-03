@@ -19,13 +19,8 @@ class ProductSeeder extends Seeder
         ->count(100)
         ->hasImages(1)
         ->hasLikes(3)
-        ->create()->each(function($product){
-            
-            //Attached an active promo
-            $product->promos()->sync($product->store->inActivePromos()->inRandomOrder()->first());
-
-            // Attached an active coupon
-            $product->coupons()->sync($product->store->inActiveCoupons()->inRandomOrder()->first());
-        });
+        ->hasPromos(1)
+        // ->hasCoupons(1)
+        ->create();
     }
 }

@@ -212,13 +212,15 @@ Route::middleware('auth:sanctum')->group(function () {
 //    Route::apiResource('plans', PlanController::class)->only(
 //        'index', 'store', 'update', 'destroy',
 
-    Route::controller(PlanController::class)->group(function() {
-        Route::get('plans',  'index')->name('plans');
-        Route::post('plans',  'store')->name('plans');
-        Route::put('plans{plan}',  'update')->name('plans.update');
-        Route::delete('plans{plan}',  'destroy')->name('plans.destroy');
-        Route::post('attach-feature', 'attachFeature')->name('plan.attach.feature');
-    });
+    Route::apiResource('plans', PlanController::class);
+    
+    // Route::controller(PlanController::class)->group(function() {
+    //     Route::get('plans',  'index')->name('plans');
+    //     Route::post('plans',  'store')->name('plans');
+    //     Route::put('plans{plan}',  'update')->name('plans.update');
+    //     Route::delete('plans{plan}',  'destroy')->name('plans.destroy');
+    //     Route::post('attach-feature', 'attachFeature')->name('plan.attach.feature');
+    // });
 
     Route::apiResource('features', FeatureController::class)->only(
         'index', 'store', 'update', 'destroy'
