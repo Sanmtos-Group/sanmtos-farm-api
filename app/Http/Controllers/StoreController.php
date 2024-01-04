@@ -15,6 +15,15 @@ use Cviebrock\EloquentSluggable\Services\SlugService;
 use Illuminate\Http\Request;
 class StoreController extends Controller
 {
+
+    /**
+     * Create the controller instance.
+     */
+    public function __construct()
+    {
+        $this->authorizeResource(Store::class, 'store');
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -37,8 +46,8 @@ class StoreController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(StoreStoreRequest $request)
-    {
-        $store = Store::create( $request->validated());
+    {   
+        $store = Store::create($request->validated());
         $store_resource = new StoreResource($store);
         $store_resource->with['message'] = 'Store created successfully';
 

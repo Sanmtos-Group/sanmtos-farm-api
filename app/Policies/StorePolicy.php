@@ -4,24 +4,28 @@ namespace App\Policies;
 
 use App\Models\Store;
 use App\Models\User;
+use App\Traits\Policy\AuthorizeAllActionToSuperAdmin;
+use App\Traits\Policy\StorePermissionableViaRole;
 use Illuminate\Auth\Access\Response;
-
 class StorePolicy
 {
+    use AuthorizeAllActionToSuperAdmin;
+    use StorePermissionableViaRole;
+
     /**
      * Determine whether the user can view any models.
      */
-    public function viewAny(User $user): bool
+    public function viewAny(User $user=null): bool
     {
-        //
+        return true;
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Store $store): bool
+    public function view(User $user=null, Store $store): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -29,7 +33,7 @@ class StorePolicy
      */
     public function create(User $user): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -37,7 +41,8 @@ class StorePolicy
      */
     public function update(User $user, Store $store): bool
     {
-        //
+        //only the owner of the store can edit the store
+        return $store->user_id == $user->id;
     }
 
     /**
