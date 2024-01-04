@@ -19,13 +19,14 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
-
+use LucasDotVin\Soulbscription\Models\Concerns\HasSubscriptions;
 class User extends Authenticatable
 {
     use HasApiTokens;
     use HasFactory;
     use HasUuids;
     use HasProfilePhoto;
+    use HasSubscriptions;
     use HasTeams;
     use Notifiable;
     use TwoFactorAuthenticatable;
