@@ -225,9 +225,7 @@ Route::middleware('auth:sanctum')->group(function () {
         
     });
 
-    Route::apiResource('features', FeatureController::class)->only(
-        'index', 'store', 'update', 'destroy'
-    );
+    Route::apiResource('features', FeatureController::class)->only(['store', 'update', 'destroy']);
 
     Route::controller(SubscriptionController::class)->group(function () {
         Route::post('subscriptions', 'subscribe')->name('subscriptions');
@@ -297,6 +295,7 @@ Route::prefix('products/{product}/')->group(function () {
 });
 
 Route::apiResource('plans', PlanController::class)->only(['index', 'show']);
+Route::apiResource('features', FeatureController::class)->only(['index', 'show']);
 
 Route::apiResource('promos', PromoController::class)->only(['index', 'show']);
 Route::prefix('promos/{promo}/')->group(function () {

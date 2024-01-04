@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-
+use LucasDotVin\Soulbscription\Enums\PeriodicityType;
 class StoreFeatureRequest extends FormRequest
 {
     /**
@@ -23,8 +23,10 @@ class StoreFeatureRequest extends FormRequest
     {
         return [
             "consumable" => "required|boolean",
-            "name" => "required|max:100",
-            "periodicity" => "required|int",
+            'name' => 'required|string|max:191|unique:features,name',
+            'periodicity_type' => 'required|string|in:'.PeriodicityType::Year.','.PeriodicityType::Month.','.PeriodicityType::Week.','.PeriodicityType::Day.',',
+            'periodicity' => 'required|integer|max:365',
+            'quota'=> 'boolean',
             "postpaid" => "boolean",
         ];
     }

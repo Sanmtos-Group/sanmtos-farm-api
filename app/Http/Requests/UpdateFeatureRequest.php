@@ -3,7 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-
+use Illuminate\Validation\Rule;
+use LucasDotVin\Soulbscription\Enums\PeriodicityType;
 class UpdateFeatureRequest extends FormRequest
 {
     /**
@@ -22,9 +23,12 @@ class UpdateFeatureRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "consumable" => "required",
-            "name" => "required|max:200",
-            "periodicity" => "required|int",
+            "consumable" => "boolean",
+            'name' => 'string|max:191|'.Rule::unique('features')->ignore($this->feature),
+            'periodicity_type' => 'string|in:'.PeriodicityType::Year.','.PeriodicityType::Month.','.PeriodicityType::Week.','.PeriodicityType::Day.',',
+            'periodicity' => 'integer|max:365',
+            'quota'=> 'boolean',
+            "postpaid" => "boolean",
         ];
     }
 }

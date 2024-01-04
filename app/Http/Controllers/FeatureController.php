@@ -25,7 +25,7 @@ class FeatureController extends Controller
             ->allowedSorts('name', 'created_at')
             ->paginate(15);
 
-        return new FeatureResource($feature);
+        return FeatureResource::collection($feature);
     }
 
     /**
@@ -41,24 +41,9 @@ class FeatureController extends Controller
      */
     public function store(StoreFeatureRequest $request)
     {
-        $request->validated();
+        $validated = $request->validated();
 
-        $select = Feature::where('name', $request->name)->first();
-
-        if ($select){
-            return response()->json([
-                'message' => "This feature is active",
-                'data' => null
-            ],422);
-        }
-
-        $feature = Feature::create([
-            'consumable'       => $request->consumable,
-            'name'             => $request->name,
-            'periodicity_type' => PeriodicityType::Month, //I need to make this dynamic so admin can choose if it's month day or yearly
-            'periodicity'      => $request->periodicity,
-            'postpaid' => $request->postpaid,
-        ]);
+        $feature = Feature::create($validated);
 
         $feature_resource = new FeatureResource($feature);
         $feature_resource->with['message'] = "New feature created successfully";
@@ -69,17 +54,12 @@ class FeatureController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Feature $feature)
     {
-        //
-    }
+        $feature_resource = new FeatureResource($feature);
+        $feature_resource->with['message'] = 'Feature retrived successfully';
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+        return $feature_resource;
     }
 
     /**
@@ -87,18 +67,9 @@ class FeatureController extends Controller
      */
     public function update(UpdateFeatureRequest $request, Feature $feature)
     {
-        $request->validated();
+        $feature->update($request->validated());
 
-        $insert = [
-            "consumable" => $request->consumable,
-            "name" => $request->name,
-            "periodicity" => $request->periodicity,
-            "postpaid" => $request->postpaid,
-        ];
-
-        $save = $feature->update($insert);
-
-        $feature_resource = new FeatureResource($save);
+        $feature_resource = new FeatureResource($feature);
         $feature_resource->with['message'] = "Feature updated successfully";
 
         return $feature_resource;
