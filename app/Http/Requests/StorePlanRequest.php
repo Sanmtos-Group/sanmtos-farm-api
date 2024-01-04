@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-
+use LucasDotVin\Soulbscription\Enums\PeriodicityType;
 class StorePlanRequest extends FormRequest
 {
     /**
@@ -22,8 +22,10 @@ class StorePlanRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|max:200',
-            'grace_days' => 'required|int|max:10'
+            'name' => 'required|string|max:191|unique:plans,name',
+            'periodicity_type' => 'required|string|in:'.PeriodicityType::Year.','.PeriodicityType::Month.','.PeriodicityType::Week.','.PeriodicityType::Day.',',
+            'periodicity' => 'required|integer|max:365',
+            'grace_days' => 'integer|max:10',
         ];
     }
 }

@@ -209,18 +209,21 @@ Route::middleware('auth:sanctum')->group(function () {
        Route::get('payment-customer-detail', 'getAllCustomersTransacted')->name('payment.customer.details');
     });
 
-//    Route::apiResource('plans', PlanController::class)->only(
-//        'index', 'store', 'update', 'destroy',
 
-    // Route::apiResource('plans', PlanController::class);
+    Route::apiResource('plans', PlanController::class)->only(['store', 'update', 'destroy']);
+
+    Route::prefix('plans/{plan}')->group(function () {
+        Route::name('plans.')->group(function () {
+            Route::controller(PlanController::class)->group(function (){
+                Route::post('features', 'attachFeature')->name('features.attach');
+                Route::delete('features', 'detachFeature')->name('features.detach');
+            });
+        });
+    });
     
-    // Route::controller(PlanController::class)->group(function() {
-    //     Route::get('plans',  'index')->name('plans');
-    //     Route::post('plans',  'store')->name('plans');
-    //     Route::put('plans{plan}',  'update')->name('plans.update');
-    //     Route::delete('plans{plan}',  'destroy')->name('plans.destroy');
-    //     Route::post('attach-feature', 'attachFeature')->name('plan.attach.feature');
-    // });
+    Route::controller(PlanController::class)->group(function() {
+        
+    });
 
     Route::apiResource('features', FeatureController::class)->only(
         'index', 'store', 'update', 'destroy'

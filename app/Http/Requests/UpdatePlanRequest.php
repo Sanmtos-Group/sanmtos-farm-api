@@ -3,7 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-
+use Illuminate\Validation\Rule;
+use LucasDotVin\Soulbscription\Enums\PeriodicityType;
 class UpdatePlanRequest extends FormRequest
 {
     /**
@@ -22,7 +23,10 @@ class UpdatePlanRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|max:200',
+            'name' => 'string|max:191|'.Rule::unique('plans')->ignore($this->plan),
+            'periodicity_type' => 'string|in:'.PeriodicityType::Year.','.PeriodicityType::Month.','.PeriodicityType::Week.','.PeriodicityType::Day.',',
+            'periodicity' => 'integer|max:365',
+            'grace_days' => 'integer|max:10',
         ];
     }
 }

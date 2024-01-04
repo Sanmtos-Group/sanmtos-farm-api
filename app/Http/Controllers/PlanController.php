@@ -40,26 +40,12 @@ class PlanController extends Controller
      */
     public function store(StorePlanRequest $request)
     {
-        $request->validated();
+        $validated = $request->validated();
 
-        $select = Plan::where('name', $request->name)->first();
-
-        if ($select){
-            return response()->json([
-                'message' => "This plan is active",
-                'data' => null
-            ],422);
-        }
-
-        $plan = Plan::create([
-            'name'             => $request->name,
-            'periodicity_type' => PeriodicityType::Month, //I need to make this dynamic so admin can choose if it's month day or yearly
-            'periodicity'      => $request->periodicity,
-            'grace_days'       => $request->grace_days,
-        ]);
+        $plan = Plan::create($validated);
 
         $plan_resource = new PlanResource($plan);
-        $plan_resource->with['message'] = 'Plan retrieved successfully';
+        $plan_resource->with['message'] = 'Plan created successfully';
 
         return $plan_resource;
     }
@@ -67,34 +53,23 @@ class PlanController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Plan $plan)
     {
-        //
+        $plan_resource = new PlanResource($plan);
+        $plan_resource->with['message'] = 'Plan retrived successfully';
+
+        return $plan_resource;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(UpdatePlanRequest $request, Plan $plan)
     {
-        $request->validated();
+       $plan->update($request->validated());
 
-        $insert = [
-            "name" => $request->name,
-            "grace_days" => $request->grace_days
-        ];
-
-        $save = $plan->update($insert);
-
-        $plan_resource = new PlanResource($save);
+        $plan_resource = new PlanResource($plan);
         $plan_resource->with['message'] = "Plan updated successfully";
 
         return $plan_resource;
@@ -113,20 +88,73 @@ class PlanController extends Controller
         return $plan_resource;
     }
 
-    public function attachFeature(Request $request){
-        $request->validate([
-            "feature_name" => "required|max:200|min:5",
-            "plan_name" => "required|max:200|min:5",
-            "charges" => "required|int"
-        ]);
+    public function attachFeature(Request $request, Plan $plan){
 
-        $feature = Feature::where('name', $request->feature_name)->first();
-        $plan = Plan::where('name', $request->plan_name)->first();
+        $rule ["charges"] = "required|int";
 
-        $plan_attached = $plan->features()->attach($feature, ['charges' => $request->charges]);
+        // bulk attach features validation rule
+       if(array_key_exists('feature_ids', $request->all()))
+       { 
+            $rule['feature_ids'] = 'required|array';
+            $rule['feature_ids.*'] = 'integer|exists:features,id';
+       }
+        // single attach feature validation rule
+       else  
+       {
+            $rule['feature_id'] = 'required|integer|exists:features,id';
+       }
 
-        $plan_resource = new PlanResource($plan_attached);
+       $validated = $request->validate($rule);
+
+        // bulk attach features validation rule
+        if(array_key_exists('feature_ids', $validated))
+        { 
+            $plan->features()->syncWithPivotValues($ids=$validated['feature_ids'], $values = ['charges'=>$validated['charges']]);
+        }
+        else {
+            $plan->features()->syncWithPivotValues($ids=$validated['feature_id'], $values = ['charges'=>$validated['charges']]);
+        }
+
+        // attach the features to the response;
+        $plan->features;
+
+        $plan_resource = new PlanResource($plan);
         $plan_resource->with['message'] = "Feature attached to plan successfully";
+
+        return $plan_resource;
+    }
+
+    public function detachFeature(Request $request, Plan $plan){
+
+
+        // bulk detach features validation rule
+       if(array_key_exists('feature_ids', $request->all()))
+       { 
+            $rule['feature_ids'] = 'required|array';
+            $rule['feature_ids.*'] = 'integer|exists:features,id';
+       }
+        // single detach feature validation rule
+       else  
+       {
+            $rule['feature_id'] = 'required|integer|exists:features,id';
+       }
+
+       $validated = $request->validate($rule);
+
+        // bulk detach features validation rule
+        if(array_key_exists('feature_ids', $validated))
+        { 
+            $plan->features()->detach($ids=$validated['feature_ids']);
+        }
+        else {
+            $plan->features()->detach($ids=$validated['feature_id']);
+        }
+
+        // attach the features to the response;
+        $plan->features;
+
+        $plan_resource = new PlanResource($plan);
+        $plan_resource->with['message'] = "Feature detached from plan successfully";
 
         return $plan_resource;
     }
