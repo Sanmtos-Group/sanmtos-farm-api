@@ -212,7 +212,7 @@ Route::middleware('auth:sanctum')->group(function () {
 //    Route::apiResource('plans', PlanController::class)->only(
 //        'index', 'store', 'update', 'destroy',
 
-    Route::apiResource('plans', PlanController::class);
+    // Route::apiResource('plans', PlanController::class);
     
     // Route::controller(PlanController::class)->group(function() {
     //     Route::get('plans',  'index')->name('plans');
@@ -292,6 +292,8 @@ Route::prefix('products/{product}/')->group(function () {
         });
     });
 });
+
+Route::apiResource('plans', PlanController::class)->only(['index', 'show']);
 
 Route::apiResource('promos', PromoController::class)->only(['index', 'show']);
 Route::prefix('promos/{promo}/')->group(function () {

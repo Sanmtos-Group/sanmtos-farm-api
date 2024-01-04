@@ -24,7 +24,7 @@ class PlanController extends Controller
             ->allowedSorts('name', 'created_at')
             ->paginate(15);
 
-        return new PlanResource($plans);
+        return PlanResource::collection($plans);
     }
 
     /**
