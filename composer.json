@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "ashallendesign/laravel-exchange-rates": "^7.1",
         "cloudinary-labs/cloudinary-laravel": "^2.0",
         "cviebrock/eloquent-sluggable": "^10.0",
         "darryldecode/cart": "^4.2",
