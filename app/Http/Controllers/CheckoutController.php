@@ -301,8 +301,9 @@ class CheckoutController extends Controller
 
             $payment_handler = new PaymentHandler();
             $gateway = $payment_handler->initializePaymentGateway($payment->gateway->name);
-            $payment_url = $gateway->pay($payment)->url ;
-            
+            $payment->gateway_checkout_url = $gateway->pay($payment)->url ;
+            $payment->save();
+
             DB::commit();
 
             session()->forget(CheckoutService::DEFAULT_INSTANCE);
@@ -311,7 +312,7 @@ class CheckoutController extends Controller
             return response()->json([
                 "data" => [
                     'payment_id' => $payment->id,
-                    'payment_url' => $payment_url 
+                    'payment_url' => $payment->gateway_checkout_url 
                 ],
                 "message" => "Proceed to pay via ".$payment->gateway->name
             ], 200);

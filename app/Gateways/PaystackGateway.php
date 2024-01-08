@@ -4,7 +4,6 @@ namespace App\Gateways;
 
 use App\Interfaces\Payable;
 use App\Models\Payment;
-
 use Illuminate\Support\Facades\Redirect;
 use Paystack;
 class PaystackGateway implements Payable

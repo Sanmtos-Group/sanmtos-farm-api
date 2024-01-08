@@ -17,10 +17,11 @@ return new class extends Migration
             $table->unsignedDecimal('amount', $precision = 19, $scale = 2);
             $table->uuidMorphs('paymentable'); // the item paid for e.g orders, subscriptions etc. 
 
-            $table->foreignUuid('payment_gateway_id')->nullable()->contrained('payment_gateways')->cascadeOnUpdate()->nullOnDelete(); // gateway e.g paystack, flutterwave, 
+            $table->foreignUuid('gateway_id')->nullable()->contrained('payment_gateways')->cascadeOnUpdate()->nullOnDelete(); // gateway e.g paystack, flutterwave, 
             $table->string('method')->nullable(); // method/channel e.g card, transfer, ussd
             $table->string('currency')->nullable(); // e.g NGN, USD
             $table->ipAddress('ip_address')->nullable();
+            $table->string('gateway_checkout_url')->nullable(); // generated gateway checkout url   
 
             $table->string('transaction_reference')->nullable();
             $table->enum('transaction_status', ['pending','failed','successful'])->default('pending');
