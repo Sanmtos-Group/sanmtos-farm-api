@@ -2,12 +2,10 @@
 
 namespace App\Http\Requests\Authentication;
 
-use App\Actions\Fortify\PasswordValidationRules;
 use Illuminate\Foundation\Http\FormRequest;
 
 class LoginRequest extends FormRequest
-{
-    use PasswordValidationRules;
+{    
     /**
      * Determine if the user is authorized to make this request.
      */

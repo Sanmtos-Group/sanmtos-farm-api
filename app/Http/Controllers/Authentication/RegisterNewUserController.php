@@ -101,10 +101,10 @@ class RegisterNewUserController extends Controller
             ]);
 
             # Store email in database
-            $auth = User::create($validate);
+            $user = User::create($validate);
 
             # Generate An OTP
-            $verificationCode = $this->generateOtp($auth->email);
+            $verificationCode = $this->generateOtp($user->email);
 
             # Send Mail
             $user->notify(new SendLoginOtpCode($verificationCode->otp));
@@ -137,51 +137,6 @@ class RegisterNewUserController extends Controller
         ]);
     }
 
-    public function loginWithOtp(Request $request)
-    {
-        #Validation
-        $request->validate([
-            'otp' => 'required'
-        ]);
-
-        #Validation Logic
-        $verificationCode   = VerificationCode::where('otp', $request->otp)->first();
-
-        $now = Carbon::now();
-        if (!$verificationCode) {
-            return response()->json([
-                "message" => "Your OTP is not correct",
-            ], 401);
-        }elseif($verificationCode && $now->isAfter($verificationCode->expire_at)){
-            return response()->json([
-                "message" => "Your OTP has been expired",
-            ], 401);
-        }
-
-        $user = User::whereId($verificationCode->user_id)->first();
-
-        if($user){
-            // Expire The OTP
-            $verificationCode->delete();
-
-            Auth::login($user);
-
-            $request->session()->regenerate();
-            return response()->json([
-                'access_token' => $user->createToken('api_token')->plainTextToken,
-                'data' => $user,
-                'token_type' => 'Bearer',
-                "message" => "You have successfully logged in!"
-            ], 200);
-
-        }
-
-        return response()->json([
-            "message" => "Your Otp is not correct",
-        ], 401);
-
-    }
-
     /**
      * Create a personal team for the user.
      */
@@ -193,4 +148,5 @@ class RegisterNewUserController extends Controller
             'personal_team' => true,
         ]));
     }
+
 }
