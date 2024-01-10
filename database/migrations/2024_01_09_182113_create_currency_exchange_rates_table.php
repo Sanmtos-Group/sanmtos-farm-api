@@ -1,10 +1,8 @@
 <?php
 
-use App\Models\Team;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -13,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('team_invitations', function (Blueprint $table) {
+        Schema::create('currency_exchange_rates', function (Blueprint $table) {
+
             $table->uuid('id')->primary();
-            $table->foreignUuid('team_id')->constrained('teams')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->string('email');
-            $table->string('role')->nullable();
+            $table->string('from')->comment('currency');
+            $table->string('to')->comment('currency');
+            $table->unsignedDecimal('rate', $precision = 19, $scale = 6)->comment('1 from curr. - to curr.');
             $table->timestamps();
-            $table->unique(['team_id', 'email']);
+            
+            $table->index(['from', 'to']);
         });
     }
 
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('team_invitations');
+        Schema::dropIfExists('currency_exchange_rates');
     }
 };

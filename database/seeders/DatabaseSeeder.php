@@ -37,6 +37,7 @@ class DatabaseSeeder extends Seeder
             PaymentGatewaySeeder::class,
             // PaymentSeeder::class,
             OrderSeeder::class,
+            CurrencyExchangeRateSeeder::class,
         ]);
     }
 }

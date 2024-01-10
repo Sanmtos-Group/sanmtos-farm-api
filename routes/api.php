@@ -253,10 +253,13 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::controller(RegisterNewUserController::class)->group(function() {
     Route::post('password-less',  'registerWithOnlyEmail')->name('password-less');
     Route::post('register',  'register')->name('register');
-    Route::post('otp',  'loginWithOtp')->name('otp');
     Route::get('account/verify/{token}', 'verifyAccount')->name('user.verify');
 });
-Route::post('login', [LoginController::class, 'login'])->name('login');
+
+Route::controller(LoginController::class)->group(function() {
+    Route::post('login', 'login')->name('login');
+    Route::post('login-via-otp',  'loginViaOTP')->name('login.viaOTP');
+});
 
 Route::get('search', [SearchController::class, 'search'])->name('search');
 
