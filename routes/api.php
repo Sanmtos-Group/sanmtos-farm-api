@@ -21,6 +21,7 @@ use App\Http\Controllers\PlanController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PromoController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UserController;
@@ -98,7 +99,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
                 /**
                  * <-----  PRODUCT LIKES  ----->
-                 * 
+                 *
                 */
                 // view product likes
                 Route::get('{product}/likes', [ProductController::class, 'indexLikes'])->name('likes.index');
@@ -110,7 +111,7 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::delete('{product}/likes/all', [ProductController::class, 'destroyAllLikes'])->name('likes.destroy.all');
                 /**
                  * <------ END OF PRODUCT LIKES ----->
-                 * 
+                 *
                 */
             });
         });
@@ -220,9 +221,9 @@ Route::middleware('auth:sanctum')->group(function () {
             });
         });
     });
-    
+
     Route::controller(PlanController::class)->group(function() {
-        
+
     });
 
     Route::apiResource('features', FeatureController::class)->only(['store', 'update', 'destroy']);
@@ -232,6 +233,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('renew-plan', 'renewPlan')->name('renew-plan');
         Route::patch('switch-plan', 'switchPlan')->name('switch-plan');
         Route::patch('cancel-plan', 'cancelPlan')->name('cancel-plan');
+    });
+    Route::controller(SearchController::class)->group(function() {
+        Route::get('product-search',  'productSearch')->name('product-search');
+        Route::get('category-search',  'categorySearch')->name('category-search');
+        Route::get('order-search',  'orderSearch')->name('order-search');
+        Route::get('user-search',  'userSearch')->name('user-search');
+        Route::get('store-search',  'storeSearch')->name('store-search');
     });
 
 });
@@ -249,6 +257,8 @@ Route::controller(RegisterNewUserController::class)->group(function() {
     Route::get('account/verify/{token}', 'verifyAccount')->name('user.verify');
 });
 Route::post('login', [LoginController::class, 'login'])->name('login');
+
+Route::get('search', [SearchController::class, 'search'])->name('search');
 
 Route::apiResource('attributes', AttributeController::class)->only(['index', 'show']);
 Route::apiResource('addresses', AddressController::class)->only(['index', 'show']);
