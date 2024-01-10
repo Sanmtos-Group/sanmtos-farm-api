@@ -26,6 +26,7 @@ class SearchController extends Controller
             ->when(request()->created_at, function($query) {
                 $query->where('created_at', 'LIKE', '%' . request()->created_at . '%');
             })
+            ->limit(10)
             ->get();
 
         if (count($search) == 0){
@@ -40,7 +41,6 @@ class SearchController extends Controller
             'data' => $search
         ], 200);
 
-        return $search;
     }
 
     public function productSearch()
@@ -52,6 +52,7 @@ class SearchController extends Controller
             ->when(request()->created_at, function($query) {
                 $query->where('created_at', 'LIKE', '%' . request()->created_at . '%');
             })
+            ->limit(10)
             ->get();
 
         if (count($product) == 0){
@@ -71,6 +72,7 @@ class SearchController extends Controller
     public function categorySearch()
     {
         $category = Category::where('name', 'LIKE', '%' . request()->name . '%')
+            ->limit(10)
             ->get();
 
         if (count($category) == 0){
@@ -101,6 +103,7 @@ class SearchController extends Controller
             ->when(request()->created_at, function($query) {
                 $query->where('created_at', 'LIKE', '%' . request()->created_at . '%');
             })
+            ->limit(10)
             ->get();
 
         if (count($order) == 0){
@@ -131,6 +134,7 @@ class SearchController extends Controller
             ->when(request()->created_at, function($query) {
                 $query->where('created_at', 'LIKE', '%' . request()->created_at . '%');
             })
+            ->limit(10)
             ->get();
 
         if (count($user) == 0){
@@ -152,6 +156,7 @@ class SearchController extends Controller
             ->when(request()->created_at, function($query) {
                 $query->where('created_at', 'LIKE', '%' . request()->created_at . '%');
             })
+            ->limit(10)
             ->get();
 
         if (count($store) == 0){
