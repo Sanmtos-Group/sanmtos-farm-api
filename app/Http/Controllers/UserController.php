@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Address;
 use App\Models\User;
 use App\Models\Role;
 use App\Http\Resources\AddressResource;
 use App\Http\Resources\RoleResource;
 use App\Http\Resources\UserResource;
+use App\Http\Requests\UpdateAddressRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Http\Requests\StoreAddressRequest;
 use Illuminate\Http\Request;
-use LucasDotVin\Soulbscription\Models\Concerns\HasSubscriptions;
-
 class UserController extends Controller
 {
-    // use HasSubscriptions;
 
     /**
      * Display a listing of the resource.
@@ -27,11 +27,31 @@ class UserController extends Controller
 
     /**
      * Display authenticated user profile
+     * 
+     * @method GET
      */
     public function profile()
     {
         $user_resource = new UserResource(auth()->user());
         $user_resource->with['message'] = 'User profile retrieved successfully';
+
+        return $user_resource;
+    }
+
+    /**
+     * Update authenticated user profile
+     * 
+     * @method POST
+     */
+    public function updateProfile(UpdateUserRequest $request)
+    {
+        $validated = $request->validated();
+
+        $user = auth()->user();
+        $user->update($validated);
+        
+        $user_resource = new UserResource($user);
+        $user_resource->with['message'] = 'User profile updated successfully';
 
         return $user_resource;
     }
@@ -47,18 +67,19 @@ class UserController extends Controller
         return $adresses_resource;
     }
 
-     /**
+    /**
      * Create new address for authenticated user
      */
     public function storeAddress(StoreAddressRequest $request)
     {
-        $validated = $request->validated();
-        $validated['first_name'] = array_key_exists('first_name', $validated) ? $validated['first_name'] : auth()->user()->first_name;
-        $validated['last_name'] = array_key_exists('last_name', $validated) ? $validated['last_name'] : auth()->user()->last_name;
-        $validated['dialing_code'] = array_key_exists('dialing_code', $validated) ? $validated['dialing_code'] : auth()->user()->dialing_code;
-        $validated['phone_number'] = array_key_exists('phone_number', $validated) ? $validated['phone_number'] : auth()->user()->phone_number;
-
         $user = auth()->user();
+        $validated = $request->validated();
+
+        $validated['first_name'] = array_key_exists('first_name', $validated) ? $validated['first_name'] : $user->first_name;
+        $validated['last_name'] = array_key_exists('last_name', $validated) ? $validated['last_name'] : $user->last_name;
+        $validated['dialing_code'] = array_key_exists('dialing_code', $validated) ? $validated['dialing_code'] : $user->dialing_code;
+        $validated['phone_number'] = array_key_exists('phone_number', $validated) ? $validated['phone_number'] : $user->phone_number;
+
         $user->addresses()->create($validated);
 
         $user = $request->user();
@@ -68,6 +89,54 @@ class UserController extends Controller
         return $adresses_resource;
     }
 
+    /**
+     * Update new address for authenticated user
+     */
+    public function updateAddress(UpdateAddressRequest $request, Address $address)
+    {
+        // only the owner of the address can edit the address
+        if(is_null(auth()->user()->addresses('id', $address->id)->first()))
+        {
+            return response()->json([
+                'message' => "This action is unauthorized.",
+            ], 403);
+        }
+
+        $validated = $request->validated();
+        $validated['first_name'] = array_key_exists('first_name', $validated) ? $validated['first_name'] : $address->first_name;
+        $validated['last_name'] = array_key_exists('last_name', $validated) ? $validated['last_name'] : $address->last_name;
+        $validated['dialing_code'] = array_key_exists('dialing_code', $validated) ? $validated['dialing_code'] : $address->dialing_code;
+        $validated['phone_number'] = array_key_exists('phone_number', $validated) ? $validated['phone_number'] : $address->phone_number;
+
+        $address->update($validated);
+
+        $user = $request->user();
+        $adresses_resource = new AddressResource($address);
+        $adresses_resource->with['message'] = 'User address updated successfully';
+
+        return $adresses_resource;
+    }
+
+    /**
+     * Update new address for authenticated user
+     */
+    public function deleteAddress(Address $address)
+    {
+        // only the owner of the address can edit the address
+        if(is_null(auth()->user()->addresses('id', $address->id)->first()))
+        {
+            return response()->json([
+                'message' => "This action is unauthorized.",
+            ], 403);
+        }
+
+        $address->delete();
+
+        $adresses_resource = new AddressResource(null);
+        $adresses_resource->with['message'] = 'User address deleted successfully';
+
+        return $adresses_resource;
+    }
 
     /**
      * Display a listing users that are staff.

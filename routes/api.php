@@ -42,18 +42,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
-//Logout route
-Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::post('logout', [LogoutController::class, 'logout'])->name('logout');
-});
-
-
-
 /**
  *  <----- The Auth Routes ----->
  *  These are routes that require an authenticated authorize users
@@ -62,11 +50,30 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
  */
 Route::middleware('auth:sanctum')->group(function () {
 
-    // User Information
-    Route::get('/user-profile', [UserController::class, 'profile']);
-    Route::get('/user-addresses', [UserController::class, 'indexAddress']);
-    Route::post('/user-addresses', [UserController::class, 'storeAddress']);
+    // Logout route
+    Route::post('logout', [LogoutController::class, 'logout'])->name('logout');
 
+    // User Profile
+    Route::prefix('user-profile')->group(function () {
+        Route::name('user.')->group(function () {
+            Route::controller(UserController::class)->group(function(){
+                Route::get('', 'profile')->name('profile');
+                Route::match(['put', 'patch'],'', 'updateProfile')->name('updateProfile');
+            });
+        });
+    });
+
+    // User Address
+    Route::prefix('user-addresses')->group(function () {
+        Route::name('user.')->group(function () {
+            Route::controller(UserController::class)->group(function(){
+                Route::get('', 'indexAddress')->name('addresses');
+                Route::post('', 'storeAddress')->name('storeAddresses');
+                Route::match(['put', 'patch'],'{address}', 'updateAddress')->name('updateAddress');
+                Route::delete('{address}', 'deleteAddress')->name('deleteAddress');
+            });
+        });
+    });
 
     Route::apiResource('attributes', AttributeController::class)->only(['store', 'update', 'destroy']);
     Route::prefix('attributes/{attribute}/')->group(function () {

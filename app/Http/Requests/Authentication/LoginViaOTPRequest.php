@@ -58,6 +58,4 @@ class LoginViaOTPRequest extends FormRequest
           
         });
     }
-
-
 }
