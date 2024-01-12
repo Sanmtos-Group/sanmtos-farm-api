@@ -19,6 +19,6 @@ class CurrencyExchangeRate extends Model
     protected $fillable = [
         'from',
         'to',
-        'rate',
+        'value',
     ];
 }

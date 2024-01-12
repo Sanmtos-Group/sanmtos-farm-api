@@ -19,7 +19,7 @@ class CurrencyExchangeRateFactory extends Factory
         return [
             'from' => strtoupper(fake()->bothify("???")),
             'to'  => strtoupper(fake()->bothify("???")),
-            'rate' => fake()->randomFloat(6),
+            'value' => fake()->randomFloat(6),
         ];
     }
 }

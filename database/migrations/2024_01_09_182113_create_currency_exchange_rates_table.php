@@ -16,7 +16,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('from')->comment('currency');
             $table->string('to')->comment('currency');
-            $table->unsignedDecimal('rate', $precision = 19, $scale = 6)->comment('1 from curr. - to curr.');
+            $table->unsignedDecimal('value', $precision = 19, $scale = 6)->comment('1 from curr. - to curr.');
             $table->timestamps();
             
             $table->index(['from', 'to']);

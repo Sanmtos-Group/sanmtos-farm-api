@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Country;
+use App\Models\CurrencyExchangeRate;
 use AshAllenDesign\LaravelExchangeRates\Classes\ExchangeRate;
 use AshAllenDesign\LaravelExchangeRates\Classes\Validation;
 
@@ -22,20 +23,25 @@ class UpdateExchangeRate extends Command
      *
      * @var string
      */
-    protected $description = 'Update all currency exchange rate against USD';
+    protected $description = 'Update all currency exchange rate';
+
+    /**
+     * The base currency.
+     *
+     * @var string
+     */
+    protected $from = 'USD';
+
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
+
         $countries = Country::all();
         $exchangeRates = app(ExchangeRate::class);
-
         $exchange_driver = config('laravel-exchange-rates.driver');
-
-       
-
         $supported_currencies = [];
         $unsupported_currencies = [];
 
@@ -44,15 +50,15 @@ class UpdateExchangeRate extends Command
             try {
 
                 Validation::validateCurrencyCode($country->currency_code);
-                $this->info($country->name.": ". $country->currency_code ." is supported" );
                 $supported_currencies[$country->id] = $country->currency_code;
 
 
             } catch (\Throwable $th) {
-                $this->warn($country->name.": ". $country->currency_code ." is supported" );
+                $unsupported_currencies[$country->id] = $country->currency_code;
+
+                $this->warn(count($unsupported_currencies).".".$country->name.": ". $country->currency_code ." is not supported" );
                 $this->error("Error Message: ".$th->getMessage());
 
-                $unsupported_currencies[$country->id] = $country->currency_code;
             }
             
         });
@@ -60,9 +66,27 @@ class UpdateExchangeRate extends Command
         try {
 
             $unique_supp_curs = array_unique($supported_currencies);
-            $result = $exchangeRates->exchangeRate('USD', $unique_supp_curs);
-            dd($result);
-            // update exchange rate in database using result
+            $result = $exchangeRates->exchangeRate($this->from, $unique_supp_curs);
+            
+            foreach ($result as $key => $value) 
+            {
+                $curr_exchng_rate = CurrencyExchangeRate::firstOrNew([
+                    'from' => $this->from,
+                    'to' => $key
+                ]);
+
+                $curr_exchng_rate->value = $value;
+                $curr_exchng_rate->save();
+
+                $this->info("1 ".$curr_exchng_rate->from ." - ".$curr_exchng_rate->to.' = '.$curr_exchng_rate->value );
+
+            }
+            $this->newLine();
+            $this->line('<------------------------SUMMARY------------------------>');
+            $this->line('Base currency = '.$this->from);
+            $this->line('Supported currency   = '.count($supported_currencies));
+            $this->line('Unspoported currency = '.count($unsupported_currencies));
+            $this->line('Total currency       = '.count($supported_currencies+ $unsupported_currencies));
 
         } catch (\Throwable $th) {
             //throw $th;
