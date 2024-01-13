@@ -260,7 +260,7 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::controller(RegisterNewUserController::class)->group(function() {
     Route::post('password-less',  'registerWithOnlyEmail')->name('password-less');
     Route::post('register',  'register')->name('register');
-    Route::get('account/verify/{token}', 'verifyAccount')->name('user.verify');
+    Route::post('account/verify', 'verifyAccount')->name('user.verify');
 });
 
 Route::controller(LoginController::class)->group(function() {

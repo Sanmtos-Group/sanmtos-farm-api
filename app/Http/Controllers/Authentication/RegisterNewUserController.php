@@ -63,6 +63,8 @@ class RegisterNewUserController extends Controller
             } else {
                 $message = "Your e-mail is already verified. You can now login.";
             }
+        }else{
+            $message = "invalid token.";
         }
 
         return response()->json([
