@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Authentication;
 
+use App\Http\Requests\Authentication\AccountVerificationRequest;
 use App\Models\User;
 use App\Models\Team;
 use App\Http\Controllers\Controller;
@@ -32,12 +33,12 @@ class RegisterNewUserController extends Controller
         ]);
 //        $this->createTeam($user->id);
 
-        $token = Str::random(64);
+        $token = $this->generateOtp($user->email);
 
-        UserConfirmation::create([
-            'user_id' => $user->id,
-            'token' => $token
-        ]);
+//        UserConfirmation::create([
+//            'user_id' => $user->id,
+//            'token' => $token
+//        ]);
 
         $notify = $user->notify(new NewUserVerification($token));
 
@@ -47,9 +48,10 @@ class RegisterNewUserController extends Controller
         return $user_resource;
     }
 
-    public function verifyAccount($token)
+    public function verifyAccount(AccountVerificationRequest $request)
     {
-        $verifyUser = UserConfirmation::where('token', $token)->first();
+        $token = $request->validated();
+        $verifyUser = VerificationCode::where('otp', $token['token'])->first();
 
         $message = 'Sorry your email cannot be identified.';
 
@@ -59,6 +61,7 @@ class RegisterNewUserController extends Controller
             if(!$user->is_email_verified) {
                 $verifyUser->user->is_email_verified = true;
                 $verifyUser->user->save();
+                $verifyUser->delete();
                 $message = "Your e-mail is verified. You can now login.";
             } else {
                 $message = "Your e-mail is already verified. You can now login.";
