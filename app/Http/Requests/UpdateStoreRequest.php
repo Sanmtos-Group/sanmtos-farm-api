@@ -24,6 +24,8 @@ class UpdateStoreRequest extends FormRequest
     {
         return [
             'name' => 'string|min:3|max:191|'.Rule::unique('stores')->ignore($this->store),
+            'email' => 'nullable|string|email|max:191',
+            'phone_number' => 'nullable|string|min:10|max:15',
             'description' => 'nullable|string|max:1000',
         ];
     }

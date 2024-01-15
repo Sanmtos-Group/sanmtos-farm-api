@@ -15,7 +15,10 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('name')->unique();
             $table->string('slug')->unique();
+            $table->string('email')->nullable();
+            $table->string('phone_number')->nullable();
             $table->text('description')->nullable();
+            $table->string('url')->nullable();
             $table->foreignUuid('user_id')->contrained('users')->cascadeOnUpdate()->cascadeOnDelete();              
             $table->timestamp('verified_at', $precision = 0)->nullable();
             $table->foreignUuid('verifier_id')->nullable()->contrained('users')->cascadeOnUpdate()->nullOnDelete();             

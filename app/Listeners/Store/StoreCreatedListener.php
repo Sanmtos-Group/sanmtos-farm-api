@@ -21,6 +21,8 @@ class StoreCreatedListener
      */
     public function handle(StoreCreated $event): void
     {
-        //
+        $store = $event->store;
+        $store->url = \config('sanmtos.base_url').'/stores/'.$store->slug;
+        $store->save();
     }
 }
