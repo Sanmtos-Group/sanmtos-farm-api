@@ -6,11 +6,14 @@ use App\Models\Address;
 use App\Models\User;
 use App\Models\Role;
 use App\Http\Resources\AddressResource;
+use App\Http\Resources\PreferenceResource;
 use App\Http\Resources\RoleResource;
 use App\Http\Resources\UserResource;
 use App\Http\Requests\UpdateAddressRequest;
+use App\Http\Requests\UpdatePreferenceRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Requests\StoreAddressRequest;
+use App\Http\Requests\StorePreferenceRequest;
 use Illuminate\Http\Request;
 class UserController extends Controller
 {
@@ -33,7 +36,7 @@ class UserController extends Controller
     public function profile()
     {
         $user_resource = new UserResource(auth()->user());
-        $user_resource->with['message'] = 'User profile retrieved successfully';
+        $user_resource->with['message'] = 'Profile retrieved successfully';
 
         return $user_resource;
     }
@@ -51,7 +54,7 @@ class UserController extends Controller
         $user->update($validated);
         
         $user_resource = new UserResource($user);
-        $user_resource->with['message'] = 'User profile updated successfully';
+        $user_resource->with['message'] = 'Profile updated successfully';
 
         return $user_resource;
     }
@@ -62,7 +65,7 @@ class UserController extends Controller
     public function indexAddress()
     {
         $adresses_resource = new AddressResource(auth()->user()->addresses);
-        $adresses_resource->with['message'] = 'User addresses retrieved successfully';
+        $adresses_resource->with['message'] = 'Addresses retrieved successfully';
 
         return $adresses_resource;
     }
@@ -84,7 +87,7 @@ class UserController extends Controller
 
         $user = $request->user();
         $adresses_resource = new AddressResource($user->addresses);
-        $adresses_resource->with['message'] = 'User addresses retrieved successfully';
+        $adresses_resource->with['message'] = 'Addresses retrieved successfully';
 
         return $adresses_resource;
     }
@@ -112,7 +115,26 @@ class UserController extends Controller
 
         $user = $request->user();
         $adresses_resource = new AddressResource($address);
-        $adresses_resource->with['message'] = 'User address updated successfully';
+        $adresses_resource->with['message'] = 'Address updated successfully';
+
+        return $adresses_resource;
+    }
+
+    /**
+     * Display a specified user's address
+     */
+    public function showAddress(Address $address)
+    {
+        // only the owner of the address can see the address
+        if(is_null(auth()->user()->addresses('id', $address->id)->first()))
+        {
+            return response()->json([
+                'message' => "This action is unauthorized.",
+            ], 403);
+        }
+
+        $adresses_resource = new AddressResource($address);
+        $adresses_resource->with['message'] = 'Address retrived successfully';
 
         return $adresses_resource;
     }
@@ -133,9 +155,43 @@ class UserController extends Controller
         $address->delete();
 
         $adresses_resource = new AddressResource(null);
-        $adresses_resource->with['message'] = 'User address deleted successfully';
+        $adresses_resource->with['message'] = 'Address deleted successfully';
 
         return $adresses_resource;
+    }
+
+     /**
+     * Display authenticated user currency preference
+     */
+    public function indexPreference()
+    {
+        $currency_preference_resource = new PreferenceResource(auth()->user()->preference);
+        $currency_preference_resource->with['message'] = 'Preference retrieved successfully';
+
+        return $currency_preference_resource;
+    }
+
+    /**
+     * Create or update user's preference 
+     */
+    public function upsertPreference(StorePreferenceRequest $request)
+    {
+        $user = auth()->user();
+        $validated = $request->validated();
+
+        if(is_null($preference = $user->preference))
+        {
+            $preference = $user->preference()->create($validated);
+        }
+        else {
+
+            $preference->updated($validated);
+        }
+
+        $preference_resource = new PreferenceResource($preference);
+        $preference_resource->with['message'] = 'Preference set successfully';
+
+        return $preference_resource;
     }
 
     /**

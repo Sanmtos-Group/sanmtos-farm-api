@@ -63,14 +63,17 @@ Route::middleware('auth:sanctum')->group(function () {
         });
     });
 
-    // User Address
-    Route::prefix('user-addresses')->group(function () {
+    Route::prefix('user')->group(function () {
         Route::name('user.')->group(function () {
             Route::controller(UserController::class)->group(function(){
-                Route::get('', 'indexAddress')->name('addresses');
-                Route::post('', 'storeAddress')->name('storeAddresses');
-                Route::match(['put', 'patch'],'{address}', 'updateAddress')->name('updateAddress');
-                Route::delete('{address}', 'deleteAddress')->name('deleteAddress');
+                Route::get('addresses', 'indexAddress')->name('addresses.index');
+                Route::post('addresses', 'storeAddress')->name('addresses.store');
+                Route::get('addresses/{address}', 'showAddress')->name('addresses.show');
+                Route::match(['put', 'patch'],'{address}', 'updateAddress')->name('addresses.update');
+                Route::delete('addresses/{address}', 'deleteAddress')->name('addresses.delete');
+
+                Route::get('preference', 'indexPreference')->name('preference.index');
+                Route::post('preference', 'upsertPreference')->name('preference.upsert');
             });
         });
     });
