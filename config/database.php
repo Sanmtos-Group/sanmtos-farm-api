@@ -148,4 +148,6 @@ return [
 
     ],
 
+    'engine' => 'InnoDB ROW_FORMAT=DYNAMIC', // for mysql db, added by Philip 18 Jan, 2023
+
 ];
