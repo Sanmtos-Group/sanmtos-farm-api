@@ -26,6 +26,8 @@ class StoreStoreRequest extends FormRequest
         return [
             'name' => 'required|string|max:191|unique:stores,name',
             'slug' => ['nullable', 'string','max:191', 'unique:stores,slug', new Slug],
+            'email' => 'nullable|string|email|max:191',
+            'phone_number' => 'nullable|string|min:10|max:15',
             'description' => 'nullable|string|max:1000',
             'user_id' => 'required|uuid|unique:stores,user_id|exists:users,id'
         ];

@@ -1,0 +1,26 @@
+<?php
+
+namespace Database\Factories;
+
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Preference>
+ */
+class PreferenceFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'language_code' => 'EN',
+            'currency_code' => 'USD',
+            'preferenceable_id' => fake()->uuid(),
+            'preferenceable_type' => 'App/Models/Faker'
+        ];
+    }
+}

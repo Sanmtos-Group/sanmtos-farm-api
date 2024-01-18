@@ -22,6 +22,7 @@ class StoreAddressRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'title' => 'string|min:15|in:Home Address,Office Address',
             'first_name' => 'nullable|string|min:3|max:191',
             'last_name' => 'nullable|string|min:3|max:191',
             'dialing_code' => 'nullable|string|min:1|max:4',

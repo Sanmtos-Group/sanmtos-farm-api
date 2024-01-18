@@ -83,7 +83,7 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $with = ['roles'];
+    protected $with = ['roles', 'preference'];
 
     /**
      * Get all of the model's addresses.
@@ -91,6 +91,14 @@ class User extends Authenticatable
     public function addresses() : MorphMany
     {
         return $this->morphMany(Address::class, 'addressable');
+    }
+
+    /**
+     * Get the post's image.
+     */
+    public function preference()
+    {
+        return $this->morphOne(Preference::class, 'preferenceable');
     }
 
     /**

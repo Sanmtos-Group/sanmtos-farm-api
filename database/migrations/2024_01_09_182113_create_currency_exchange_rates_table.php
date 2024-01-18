@@ -12,14 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('currency_exchange_rates', function (Blueprint $table) {
-
             $table->uuid('id')->primary();
             $table->string('from')->comment('currency');
             $table->string('to')->comment('currency');
             $table->unsignedDecimal('value', $precision = 19, $scale = 6)->comment('1 from curr. - to curr.');
             $table->timestamps();
             
-            $table->index(['from', 'to']);
+            // $table->index(['from', 'to']);
         });
     }
 

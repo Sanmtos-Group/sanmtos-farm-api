@@ -20,7 +20,10 @@ class StoreFactory extends Factory
         return [
             'name' => fake()->unique()->words(fake()->numberBetween(2,5), true), 
             // 'slug' => fake()->slug(),
+            'email' => fake()->safeEmail(),
+            'phone_number' => "0".fake()->randomElement(['7', '8','9']).fake()->randomElement(['0', '1']).fake()->randomNumber(8, true),
             'description' => fake()->realText(),
+            'url' => fake()->url(),
             'user_id' => User::factory()->create(), 
         ];
     }

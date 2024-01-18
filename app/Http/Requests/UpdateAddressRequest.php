@@ -22,6 +22,7 @@ class UpdateAddressRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'title' => 'string|in:Home Address,Office Address',
             'first_name' => 'nullable|string|min:3|max:191',
             'last_name' => 'nullable|string|min:3|max:191',
             'dialing_code' => 'nullable|string|min:1|max:4',
@@ -29,7 +30,7 @@ class UpdateAddressRequest extends FormRequest
             'address' => 'string|min:3|max:191',
             'zip_code' => 'nullable|string|max:10',
             'country_id' => 'uuid|exists:countries,id',
-            'state' => 'string|min:4|max:191',
+            'state' => 'string|min:3|max:191',
             'lga' => 'nullable|string|max:191',
             'is_preferred' => 'boolean',
         ];
