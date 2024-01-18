@@ -31,6 +31,7 @@ class Address extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'title',
         'first_name',
         'last_name' ,
         'dialing_code' ,

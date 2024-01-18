@@ -53,23 +53,17 @@ Route::middleware('auth:sanctum')->group(function () {
     // Logout route
     Route::post('logout', [LogoutController::class, 'logout'])->name('logout');
 
-    // User Profile
-    Route::prefix('user-profile')->group(function () {
-        Route::name('user.')->group(function () {
-            Route::controller(UserController::class)->group(function(){
-                Route::get('', 'profile')->name('profile');
-                Route::match(['put', 'patch'],'', 'updateProfile')->name('updateProfile');
-            });
-        });
-    });
-
     Route::prefix('user')->group(function () {
         Route::name('user.')->group(function () {
             Route::controller(UserController::class)->group(function(){
+                
+                Route::get('profile', 'profile')->name('profile.index');
+                Route::match(['put', 'patch'],'profile', 'updateProfile')->name('profile.update');
+
                 Route::get('addresses', 'indexAddress')->name('addresses.index');
                 Route::post('addresses', 'storeAddress')->name('addresses.store');
                 Route::get('addresses/{address}', 'showAddress')->name('addresses.show');
-                Route::match(['put', 'patch'],'{address}', 'updateAddress')->name('addresses.update');
+                Route::match(['put', 'patch'],'addresses/{address}', 'updateAddress')->name('addresses.update');
                 Route::delete('addresses/{address}', 'deleteAddress')->name('addresses.delete');
 
                 Route::get('preference', 'indexPreference')->name('preference.index');
