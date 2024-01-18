@@ -3,6 +3,7 @@
 use App\Actions\Fortify\CreateNewUser;
 use App\Http\Controllers\Authentication\LoginController;
 use App\Http\Controllers\Authentication\LogoutController;
+use App\Http\Controllers\Authentication\PasswordResetController;
 use App\Http\Controllers\Authentication\RegisterNewUserController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AttributeController;
@@ -260,12 +261,20 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::controller(RegisterNewUserController::class)->group(function() {
     Route::post('password-less',  'registerWithOnlyEmail')->name('password-less');
     Route::post('register',  'register')->name('register');
+    Route::put('resend','resend')->name('resend');
     Route::post('account/verify', 'verifyAccount')->name('user.verify');
 });
 
 Route::controller(LoginController::class)->group(function() {
     Route::post('login', 'login')->name('login');
     Route::post('login-via-otp',  'loginViaOTP')->name('login.viaOTP');
+});
+
+Route::controller(PasswordResetController::class)->group(function() {
+    Route::post('forgot-password',  'sendPasswordResetCode')->name('forgot-password');
+    Route::post('reset-password-token',  'verifyOtp')->name('reset-password-token');
+    Route::put('new-password', 'resetPassword')->name('new-password');
+    Route::put('resend-code','resendCode')->name('resend-code');
 });
 
 Route::get('search', [SearchController::class, 'search'])->name('search');

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Authentication;
 
 use App\Http\Requests\Authentication\AccountVerificationRequest;
+use App\Http\Requests\Authentication\ResendCodeRequest;
+use App\Http\Requests\Authentication\SendPasswordResetRequest;
 use App\Models\User;
 use App\Models\Team;
 use App\Http\Controllers\Controller;
@@ -96,7 +98,7 @@ class RegisterNewUserController extends Controller
 
             # Return With OTP Message
             return response()->json([
-                "message" => "Your OTP to login has been sent to your email, it will expire in the next 20 minutes"
+                "message" => "Your OTP to login has been sent to your email, it will expire in the next one hour"
             ], 201);
 
         }else {
@@ -116,9 +118,39 @@ class RegisterNewUserController extends Controller
 
             # Return With OTP Message
             return response()->json([
-                "message" => "Your OTP to login has been sent to your email, it will expire in the next 20 minutes"
+                "message" => "Your OTP to login has been sent to your email, it will expire in the next one hour"
             ], 201);
         }
+    }
+
+    public function resend(ResendCodeRequest $request){
+        $validate = $request->validated();
+        $verification_code = VerificationCode::where('otp', $validate['otp'])->first();
+
+        if(!is_null($verification_code) ){
+            $user = User::where('id', $verification_code->user_id)->first();
+
+            if (!is_null($user)) {
+                $otp = rand(123456, 999999);
+
+                $verification_code->update([
+                    'otp' => $otp,
+                    'expire_at' => Carbon::now()->addHours()
+                ]);
+
+                $user->notify(new SendPasswordResetRequest($otp)); //Here is a bug
+
+                return response()->json([
+                    "message" => "Code sent, it will expire in the next one hour"
+                ], 201);
+            }
+        }else{
+            return response()->json([
+                'message' => "Your email can not be verify, input a correct email in the forgot password page",
+            ], 200);
+        }
+
+        return "Error code";
     }
 
     public function generateOtp($email)
@@ -138,7 +170,7 @@ class RegisterNewUserController extends Controller
         return VerificationCode::create([
             'user_id' => $user->id,
             'otp' => rand(123456, 999999),
-            'expire_at' => Carbon::now()->addMinutes(20)
+            'expire_at' => Carbon::now()->addHours()
         ]);
     }
 
