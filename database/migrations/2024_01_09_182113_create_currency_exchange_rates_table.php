@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unsignedDecimal('value', $precision = 19, $scale = 6)->comment('1 from curr. - to curr.');
             $table->timestamps();
             
-            $table->index(['from', 'to']);
+            $table->index(['from', 'to'], 'unique_curr_ex_rate');
         });
     }
 

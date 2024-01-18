@@ -18,7 +18,7 @@ return new class extends Migration
             $table->uuidMorphs('preferenceable');
             $table->timestamps();
 
-            $table->index(['preferenceable_id', 'preferenceable_type']);
+            $table->index(['preferenceable_id', 'preferenceable_type'], 'unique_preferenceable');
         });
     }
 
