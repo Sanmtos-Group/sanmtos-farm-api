@@ -12,12 +12,16 @@ class PasswordResetNotification extends Notification
     use Queueable;
 
     /**
-     * Create a new notification instance.
+     * @property int
      */
-    protected $otp;
+    private $otp;
+
+    /**
+     * Create a new notification instance.
+     */    
     public function __construct($otp)
     {
-        $this->$otp = $otp;
+        $this->otp = $otp;
     }
 
     /**

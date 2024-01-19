@@ -21,6 +21,7 @@ class LoginController extends Controller
         if(Auth::attempt($validate) && $user)
         {
             $request->session()->regenerate();
+            
             return response()->json([
                 'access_token' => $user->createToken('api_token')->plainTextToken,
                 'data' => $user,

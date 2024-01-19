@@ -7,6 +7,7 @@ use App\Http\Requests\Authentication\PasswordResetCodeRequest;
 use App\Http\Requests\Authentication\PasswordResetRequest;
 use App\Http\Requests\Authentication\ResendCodeRequest;
 use App\Http\Requests\Authentication\SendPasswordResetRequest;
+use App\Notifications\PasswordResetNotification;
 use App\Models\User;
 use App\Models\VerificationCode;
 use Carbon\Carbon;
@@ -17,30 +18,22 @@ class PasswordResetController extends Controller
 {
     public function sendPasswordResetCode(SendPasswordResetRequest $request)
     {
-        $validate = $request->validated();
+        $validated = $request->validated();
 
-        $generate_code = new RegisterNewUserController();
+        $user = User::where('email', $validated['email'])->first();
+        $OTP = $user->generateOTP();
 
-        $user = User::where('email', $validate['email'])->first();
+        $user->notify(new PasswordResetNotification($OTP)); 
 
-        if (!is_null($user)){
-            $verification = $generate_code->generateOtp($user->email);
-            $user->notify(new SendPasswordResetRequest($verification->otp)); //Here is an issue
-            return response()->json([
-                "message" => "Your OTP to reset password has been sent to your email, it will expire in the next one hour"
-            ], 201);
-        }else{
-            $message = '';
-            return response()->json([
-                "message" => "Sorry your email cannot be identify."
-            ], 202);
-        }
+        return response()->json([
+            "message" => "Your OTP to reset password has been sent to your email, it will expire in the next one hour"
+        ], 201);       
     }
 
     public function verifyOtp(PasswordResetCodeRequest $request)
     {
-        $validate = $request->validated();
-        $verification_code = VerificationCode::where('otp', $validate['otp'])->first();
+        $validated = $request->validated();
+        $verification_code = VerificationCode::where('otp', $validated['otp'])->first();
 
         $now = now();
 
@@ -61,8 +54,8 @@ class PasswordResetController extends Controller
     }
 
     public function resendCode(ResendCodeRequest $request){
-        $validate = $request->validated();
-        $verification_code = VerificationCode::where('otp', $validate['otp'])->first();
+        $validated = $request->validated();
+        $verification_code = VerificationCode::where('otp', $validated['otp'])->first();
 
         if(!is_null($verification_code) ){
             $user = User::where('id', $verification_code->user_id)->first();
@@ -92,14 +85,14 @@ class PasswordResetController extends Controller
 
     public function resetPassword(PasswordResetRequest $request)
     {
-        $validate = $request->validated();
-        $code = VerificationCode::where('otp', $validate['otp'])->first();
+        $validated = $request->validated();
+        $code = VerificationCode::where('otp', $validated['otp'])->first();
 
         if (!is_null($code)){
             $user = User::where('id', $code->user_id)->first();
 
             $user->update([
-                "password" => Hash::make($validate['new_password'])
+                "password" => Hash::make($validated['new_password'])
             ]);
 
             $code->delete();

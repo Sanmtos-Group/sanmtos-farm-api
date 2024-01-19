@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Casts\Attribute as CastAttribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -144,6 +145,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the user verification codes 
+     * 
+     */
+    public function verificationCodes(): hasMany {
+        return $this->hasMany(VerificationCode::class);
+    }
+
+    /**
      * The roles that belong to the user.
      */
     public function roles(): BelongsToMany
@@ -280,5 +289,41 @@ class User extends Authenticatable
     public function couponUsages(): HasMany
     {
         return $this->hasMany(CouponUsage::class);
+    }
+
+
+    /**
+     * Generator OTP for the  user
+     * 
+     * @param App\Carbon\Carbon||null $expire_at 
+     * 
+     * @return int $OTP;
+     */
+    function generateOTP(Carbon $expire_at=null) : int
+    {
+        # Check if user have an existing OTP
+        $verification_code = VerificationCode::where('user_id', $this->id)->first();
+
+        $now = Carbon::now();
+
+        if(!is_null($verification_code))
+        {
+            if ($now->isBefore($verification_code->expire_at))
+            {
+                return $verification_code->otp;
+            }
+
+            // delete user all verification codes
+            $this->verificationCodes()->delete(); 
+        }
+
+        $expire_at = $expire_at?? $now->addHours();
+
+        $verification_code = $this->verificationCodes()->create([
+            'otp' => rand(123456, 999999),
+            'expire_at' => $expire_at
+        ]);
+
+        return $verification_code->otp;
     }
 }
