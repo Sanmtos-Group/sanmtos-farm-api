@@ -269,7 +269,8 @@ Route::controller(LoginController::class)->group(function() {
 
 Route::controller(PasswordResetController::class)->group(function() {
     Route::post('forgot-password',  'sendPasswordResetCode')->name('forgot-password');
-    Route::post('reset-password-token',  'verifyOtp')->name('reset-password-token');
+    // Route::post('reset-password-token',  'verifyOtp')->name('reset-password-token');
+    Route::post('verify-otp',  'verifyOTP')->name('verify-otp');
     Route::put('new-password', 'resetPassword')->name('new-password');
     Route::put('resend-code','resendCode')->name('resend-code');
 });

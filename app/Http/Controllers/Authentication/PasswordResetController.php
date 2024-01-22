@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Authentication;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Authentication\PasswordResetCodeRequest;
 use App\Http\Requests\Authentication\PasswordResetRequest;
-use App\Http\Requests\Authentication\ResendCodeRequest;
 use App\Http\Requests\Authentication\SendPasswordResetRequest;
+use App\Http\Requests\Authentication\OTPRequest;
 use App\Notifications\PasswordResetNotification;
 use App\Models\User;
 use App\Models\VerificationCode;
@@ -16,6 +15,9 @@ use Illuminate\Support\Facades\Hash;
 
 class PasswordResetController extends Controller
 {
+    /**
+     * Send Pass
+     */
     public function sendPasswordResetCode(SendPasswordResetRequest $request)
     {
         $validated = $request->validated();
@@ -26,82 +28,55 @@ class PasswordResetController extends Controller
         $user->notify(new PasswordResetNotification($OTP)); 
 
         return response()->json([
-            "message" => "Your OTP to reset password has been sent to your email, it will expire in the next one hour"
+            "Status" => "OK",
+            "message" => "A one-time password (OTP) for password reset has been sent to your email address. This OTP is valid for the next hour."
         ], 201);       
     }
 
-    public function verifyOtp(PasswordResetCodeRequest $request)
+    public function verifyOTP(OTPRequest $request)
     {
         $validated = $request->validated();
         $verification_code = VerificationCode::where('otp', $validated['otp'])->first();
 
-        $now = now();
-
-        if ($verification_code && $now->isAfter($verification_code->expire_at)){
-            return response()->json([
-                'message' => "The password reset code has expired",
-            ], 200);
-        }
-        elseif(!is_null($verification_code) ){
-            return response()->json([
-                'message' => "Success",
-            ], 200);
-        }else{
-            return response()->json([
-                'message' => "invalid token.",
-            ], 419);
-        }
+        return response()->json([
+            "data" => $verification_code->only('otp'),
+            "Status" => "OK",
+            "message" => "The one-time password (OTP) is valid"
+        ], 200);      
     }
 
-    public function resendCode(ResendCodeRequest $request){
+    public function resendCode(OTPRequest $request)
+    {
         $validated = $request->validated();
         $verification_code = VerificationCode::where('otp', $validated['otp'])->first();
+        $user = $verification_code->user;
 
-        if(!is_null($verification_code) ){
-            $user = User::where('id', $verification_code->user_id)->first();
+        $OTP = $user->generateOTP();
 
-            if (!is_null($user)) {
-                $otp = rand(123456, 999999);
+        $user->notify(new PasswordResetNotification($OTP)); 
 
-                $verification_code->update([
-                    'otp' => $otp,
-                    'expire_at' => Carbon::now()->addHours()
-                ]);
-
-                $user->notify(new SendPasswordResetRequest($otp));  //Here is a bug
-
-                return response()->json([
-                    "message" => "Code sent, it will expire in the next one hour"
-                ], 201);
-            }
-        }else{
-            return response()->json([
-                'message' => "Your email can not be verify, input a correct email in the forgot password page",
-            ], 200);
-        }
-
-        return "Error code";
+        return response()->json([
+            "Status" => "OK",
+            "message" => "A one-time password (OTP) for password reset has been sent to your email address. This OTP is valid for the next hour."
+        ], 201);   
     }
 
     public function resetPassword(PasswordResetRequest $request)
     {
         $validated = $request->validated();
-        $code = VerificationCode::where('otp', $validated['otp'])->first();
+        $verification_code = VerificationCode::where('otp', $validated['otp'])->first();
+        $user = $verification_code->user;
 
-        if (!is_null($code)){
-            $user = User::where('id', $code->user_id)->first();
+        $user->update([
+            "password" => Hash::make($validated['new_password'])
+        ]);
 
-            $user->update([
-                "password" => Hash::make($validated['new_password'])
-            ]);
+        $verification_code->delete();
 
-            $code->delete();
-
-            return response()->json([
-                "message" => "Password retrieved successfully"
-            ], 201);
-        }
-        return "Something went wrong";
+        return response()->json([
+            "Status" => "OK",
+            "message" => "Password reset successfully",
+        ], 201);
     }
 
 }

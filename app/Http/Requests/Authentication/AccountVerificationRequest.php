@@ -3,8 +3,7 @@
 namespace App\Http\Requests\Authentication;
 
 use Illuminate\Foundation\Http\FormRequest;
-
-class AccountVerificationRequest extends FormRequest
+class AccountVerificationRequest extends OTPRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +21,7 @@ class AccountVerificationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'token' => 'required|string|exists:verification_codes,otp',
+            'token' => (new parent)->rules()['otp'],
         ];
     }
 }

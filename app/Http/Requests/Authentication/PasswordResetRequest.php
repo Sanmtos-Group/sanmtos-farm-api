@@ -2,10 +2,11 @@
 
 namespace App\Http\Requests\Authentication;
 
-use Illuminate\Foundation\Http\FormRequest;
 use App\Actions\Fortify\PasswordValidationRules;
-
-class PasswordResetRequest extends FormRequest
+use App\Models\VerificationCode;
+use Carbon\Carbon;
+use Illuminate\Foundation\Http\FormRequest;
+class PasswordResetRequest extends OTPRequest
 {
     use PasswordValidationRules;
 
@@ -25,8 +26,9 @@ class PasswordResetRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "otp" => "required|min:6|max:6",
+            'otp' => (new parent)->rules()['otp'],
             "new_password" => $this->passwordRules(),
         ];
     }
+
 }

@@ -7,7 +7,7 @@ use App\Models\VerificationCode;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
-class LoginViaOTPRequest extends FormRequest
+class OTPRequest extends FormRequest
 {
     
     /**
@@ -27,6 +27,18 @@ class LoginViaOTPRequest extends FormRequest
     {
         return [
             'otp' => 'required|string|exists:verification_codes,otp',
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'otp.exists' => 'The one-time password (OTP) is invalid',
         ];
     }
 
@@ -53,7 +65,7 @@ class LoginViaOTPRequest extends FormRequest
             {
                 $verification_code->delete();
 
-                $validator->errors()->add('otp', 'Your OTP has expired. Please request a new OTP');
+                $validator->errors()->add('otp', 'Your one-time password (OTP) has expired. Please request a new OTP');
             }
           
         });
