@@ -73,7 +73,7 @@ Route::middleware('auth:sanctum')->group(function () {
         });
     });
 
-    Route::post('change-password', [PasswordResetController::class, 'changePassowrd'])->name('change-passowrd');
+    Route::put('change-password', [PasswordResetController::class, 'changePassword'])->name('change-passowrd');
     
 
     Route::apiResource('attributes', AttributeController::class)->only(['store', 'update', 'destroy']);

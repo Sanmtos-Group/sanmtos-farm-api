@@ -48,7 +48,7 @@ class ChangePasswordRequest extends FormRequest
             {
                 $validator->errors()->add('unauthenticated', 'Please login to change your password');
             }
-            elseif ($user->password !=  Hash::make($this->odl_password))
+            elseif (Hash::check($this->old_password, $user->password))
             {
 
                 $validator->errors()->add('old_password', 'Incorrect password');
