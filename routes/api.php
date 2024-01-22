@@ -57,7 +57,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('user')->group(function () {
         Route::name('user.')->group(function () {
             Route::controller(UserController::class)->group(function(){
-                
                 Route::get('profile', 'profile')->name('profile.index');
                 Route::match(['put', 'patch'],'profile', 'updateProfile')->name('profile.update');
 
@@ -69,9 +68,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
                 Route::get('preference', 'indexPreference')->name('preference.index');
                 Route::post('preference', 'upsertPreference')->name('preference.upsert');
+                Route::post('preference', 'upsertPreference')->name('preference.upsert');
             });
         });
     });
+
+    Route::post('change-password', [PasswordResetController::class, 'changePassowrd'])->name('change-passowrd');
+    
 
     Route::apiResource('attributes', AttributeController::class)->only(['store', 'update', 'destroy']);
     Route::prefix('attributes/{attribute}/')->group(function () {

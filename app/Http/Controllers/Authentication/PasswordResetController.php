@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Authentication;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Authentication\ChangePasswordRequest;
 use App\Http\Requests\Authentication\PasswordResetRequest;
 use App\Http\Requests\Authentication\SendPasswordResetRequest;
 use App\Http\Requests\Authentication\OTPRequest;
@@ -67,11 +68,24 @@ class PasswordResetController extends Controller
         $verification_code = VerificationCode::where('otp', $validated['otp'])->first();
         $user = $verification_code->user;
 
-        $user->update([
-            "password" => Hash::make($validated['new_password'])
-        ]);
+        $user->password =  Hash::make($validated['new_password']);
+        $user->save();
 
         $verification_code->delete();
+
+        return response()->json([
+            "Status" => "OK",
+            "message" => "Password reset successfully",
+        ], 201);
+    }
+
+    public function changePassword(ChangePasswordRequest $request) {
+        $validated = $request->validated();
+        $user = auth()->user();
+
+        $user->password =  Hash::make($validated['new_password']);
+        $user->save();
+
 
         return response()->json([
             "Status" => "OK",
