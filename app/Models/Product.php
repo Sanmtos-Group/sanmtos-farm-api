@@ -15,8 +15,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
 class Product extends Model
 {
     use HasAttributes;
@@ -104,5 +104,78 @@ class Product extends Model
     public function verifier(): BelongsTo
     {
         return $this->belongsTo(User::class, 'verifier_id');
+    }
+
+
+    /**
+     * Scope a query to only include users of a given type.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  mixed  $min
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeMinPrice($query, $min)
+    {
+        return $query->where('price','>=', $min);
+    }
+
+    /**
+     * Scope a query to only include users of a given type.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  mixed  $max
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeMaxPrice($query, $max)
+    {
+        return $query->where('price','<=',$max);
+    }
+
+    /**
+     * Scope a query to only include users of a given type.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  mixed  $min
+     * @param  mixed  $max
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopePriceBetween($query, $min, $max)
+    {
+        return $query->where('price','>=', $min)->where('price','<=',$max);
+    }
+
+    /**
+     * Scope a query to only include users of a given type.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  mix  $min
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeCategory($query, ...$values)
+    {
+        $query->withWhereHas('category', function($query) use($values){
+            $query->whereIn('id', $values);
+
+            foreach ($values as $key => $value) {
+                $query->orWhere('name','like',"%".$value."%")
+                ->orWhere('slug','like',"%".$value."%");
+            }
+                
+        });
+        
+        return $query; 
+    }
+
+    /**
+     * Scope a query to only include users of a given type.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  mix  $min
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeRecent($query)
+    {
+        $query->orderBy('created_at', 'desc');
+        return $query;
     }
 }

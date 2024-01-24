@@ -21,7 +21,9 @@ use App\Models\Promo;
 use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
+use Spatie\QueryBuilder\QueryBuilder;
 class ProductController extends Controller
 {
     /**
@@ -31,22 +33,38 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $per_page = is_numeric($request->per_page)? (int) $request->per_page : 15;
 
-        $order_by_name = $request->order_by_name == 'asc' || $request->order_by_name == 'desc'
-                        ? $request->order_by_name : null;
-
-        $order_by_price = $request->order_by_price == 'asc' || $request->order_by_price == 'desc'
-                        ? $request->order_by_price : null;
-
-        $products = Product::where('id', '<>', null);
-
-        $products = is_null($order_by_price)? $products : $products->orderBy('price', $order_by_price ) ;
-        $products = is_null($order_by_name)? $products : $products->orderBy('name', $order_by_name ) ;
-
-        $products = $products->paginate($per_page);
+        $products = QueryBuilder::for(Product::class)
+        ->defaultSort('created_at')
+        ->allowedSorts(
+            'name',
+            'price',
+            'weight',
+            'volume',
+            'discount',
+            AllowedSort::custom('recent', new \App\Models\Sorts\LatestSort()),
+            AllowedSort::custom('oldest', new \App\Models\Sorts\OldestSort()),
+        )
+        ->allowedFilters([
+            'name', 
+            'price', 
+            'created_at',
+            AllowedFilter::scope('min_price'),
+            AllowedFilter::scope('max_price'),
+            AllowedFilter::scope('price_between'),
+            AllowedFilter::scope('category'),
+            AllowedFilter::scope('recent'),
+        ])
+        ->allowedIncludes([
+            'store',
+            'category',
+            'likes'
+        ])
+        ->paginate()
+        ->appends(request()->query());
 
         $product_resource =  ProductResource::collection($products);
+
         $product_resource->with['status'] = "OK";
         $product_resource->with['message'] = 'Products retrived successfully';
 
