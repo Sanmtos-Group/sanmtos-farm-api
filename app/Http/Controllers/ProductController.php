@@ -53,6 +53,7 @@ class ProductController extends Controller
             AllowedFilter::scope('max_price'),
             AllowedFilter::scope('price_between'),
             AllowedFilter::scope('category'),
+            AllowedFilter::scope('store'),
             AllowedFilter::scope('recent'),
         ])
         ->allowedIncludes([

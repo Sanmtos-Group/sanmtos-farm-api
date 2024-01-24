@@ -144,11 +144,34 @@ class Product extends Model
         return $query->where('price','>=', $min)->where('price','<=',$max);
     }
 
+     /**
+     * Scope a query to only include users of a given type.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  mix  $values
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeStore($query, ...$values)
+    {
+        $query->withWhereHas('store', function($query) use($values){
+            $query->whereIn('id', $values);
+
+            foreach ($values as $key => $value) {
+                $query->orWhere('name','like',"%".$value."%")
+                ->orWhere('slug','like',"%".$value."%");
+            }
+                
+        });
+        
+        return $query; 
+    }
+
+
     /**
      * Scope a query to only include users of a given type.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  mix  $min
+     * @param  mix  $values
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeCategory($query, ...$values)
@@ -164,18 +187,5 @@ class Product extends Model
         });
         
         return $query; 
-    }
-
-    /**
-     * Scope a query to only include users of a given type.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  mix  $min
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeRecent($query)
-    {
-        $query->orderBy('created_at', 'desc');
-        return $query;
     }
 }
