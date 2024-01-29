@@ -21,7 +21,8 @@ return new class extends Migration
             $table->unsignedDecimal('price', $precision = 19, $scale = 2)->default(0);
             $table->foreignUuid('coupon_id')->nullable()->contrained('coupons')->cascadeOnUpdate()->cascadeOnDelete(); 
             $table->foreignUuid('promo_id')->nullable()->contrained('promos')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->integer('total_price')->default(0);
+            $table->unsignedDecimal('vat', $precision = 19, $scale = 2)->default(0); 
+            $table->unsignedDecimal('total_price', $precision = 19, $scale = 2); 
 
             $table->timestamp('ordered_at')->nullable();
             $table->timestamp('shipped_at')->nullable();

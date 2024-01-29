@@ -27,6 +27,7 @@ class Order extends Model
         'price', 
         'coupon_id',
         'promo_id',
+        'vat',
         'total_price',
         'status',
         'ordered_at',
