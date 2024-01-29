@@ -188,7 +188,7 @@ class EventServiceProvider extends ServiceProvider
      
         'Illuminate\Auth\Events\Login' => [
             // 'App\Listeners\LogSuccessfulLogin',
-            \App\Listeners\Cart\CartSyncToDatabaseOnLoginListener::class,
+            \App\Listeners\Cart\SyncCartToDatabaseListener::class,
         ],
      
         'Illuminate\Auth\Events\Failed' => [

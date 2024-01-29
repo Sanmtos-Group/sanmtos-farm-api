@@ -95,16 +95,24 @@ class CartController extends Controller
         $validated = $request->validated();
         
         $product = Product::find($validated['product_id']);
+        $cartable_options = [
+            'cartable_id'=> $product->id,
+            'cartable_type'=> $product::class,
+            'cartable_url' => route('api.products.show', $product),
+        ];
 
         if(auth()->user())
         {
-            $cart_item = auth()->user()->cartItems()->where('product_id', $product->id)->first();
+            $cart_item = auth()->user()->cartItems()->where('cartable_id', $product->id)->first();
+            
 
             if(is_null($cart_item)){
                 $cart_item = new Cart();
                 $cart_item->user_id = auth()->user()->id;
-                $cart_item->product_id = $product->id;
+                $cart_item->cartable_id = $product->id;
+                $cart_item->cartable_type = $product::class;
                 $cart_item->quantity = $validated['quantity'] ?? 1;
+                $cart_item->options = $cartable_options;
             }
             else {
                 $cart_item->quantity +=1;
@@ -115,7 +123,13 @@ class CartController extends Controller
             $cart_items = auth()->user()->cartItems;
         }
         else {
-            CartFacade::add($product->id, $product->name, $product->price, $validated['quantity']?? 1);
+            CartFacade::add(
+                $product->id, 
+                $product->name, 
+                $product->price, 
+                $validated['quantity']?? 1,
+                $options = $cartable_options
+            );
             $cart_items = CartFacade::content();
         }
 
@@ -132,7 +146,7 @@ class CartController extends Controller
     {
         if(auth()->user())
         {
-            $cart_item = auth()->user()->cartItems()->where('product_id', $item)->first();
+            $cart_item = auth()->user()->cartItems()->where('cartable_id', $item)->first();
             if(!is_null($cart_item))
             {
                 $cart_item->quantity  +=1;
@@ -158,7 +172,7 @@ class CartController extends Controller
     public function decrement($item)
     {
         if(auth()->user()){
-            $cart_item = auth()->user()->cartItems()->where('product_id', $item)->first();
+            $cart_item = auth()->user()->cartItems()->where('cartable_id', $item)->first();
 
             if(!is_null($cart_item))
             {
@@ -192,7 +206,8 @@ class CartController extends Controller
     {
         if(auth()->user())
         {
-            auth()->user()->cartItems()->where('product_id', $item)->delete();
+           auth()->user()->cartItems()->where('cartable_id', $item)->delete();
+
             $cart_items = auth()->user()->cartItems;
         }
         else {

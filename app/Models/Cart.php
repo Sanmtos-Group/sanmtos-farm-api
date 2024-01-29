@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Cart extends Model
 {
@@ -21,7 +22,8 @@ class Cart extends Model
      */
     protected $fillable = [
         'user_id',
-        'product_id',
+        'cartable_id',
+        'cartable_type',
         'quantity',
     ];
 
@@ -44,7 +46,17 @@ class Cart extends Model
     protected $hidden = [
         'user_id',
         'product',
+        'cartable_id',
+        'cartable_type'
     ];
+
+    /**
+     * Get the parent cartable model (product or orders).
+     */
+    public function cartable(): MorphTo
+    {
+        return $this->morphTo();
+    }
 
     /**
      * Determine  a cart item  image
@@ -52,7 +64,18 @@ class Cart extends Model
     protected function imageUrl(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->product->images()->first()->url ?? null,
+            get: fn () => $this->products()->first()->images()->first()->url ?? null,
+        );
+    } 
+
+     /**
+     * Determine  a cart item  options
+     */
+    protected function options(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => json_decode($value) ,
+            set: fn ($value) => json_encode($value) ,
         );
     } 
 
@@ -62,7 +85,7 @@ class Cart extends Model
     protected function price(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->product->price,
+            get: fn () => $this->products()->first()->price,
         );
     } 
 
@@ -72,15 +95,15 @@ class Cart extends Model
     protected function totalPrice(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->product->price * $this->quantity,
+            get: fn () => $this->products()->first()->price * $this->quantity,
         );
     }
     
     /**
      * Get the cart product.
      */
-    public function product(): BelongsTo 
+    public function products()
     {
-        return $this->belongsTo(Product::class);
+        return Product::where('id', $this->cartable_id);
     }
 }

@@ -283,8 +283,8 @@ class CheckoutController extends Controller
 
             $items->each(function($item) use (&$orderables){
                 $orderables[] = [
-                    'orderable_id' =>  $item->product->id,
-                    'orderable_type' =>  get_class($item->product),
+                    'orderable_id' =>  $item->cartable_id,
+                    'orderable_type' =>  $item->cartable_type,
                     'quantity' =>  $item->quantity,
                     'price' =>  $item->price,
                     'total_price' =>  $item->total_price
@@ -296,10 +296,11 @@ class CheckoutController extends Controller
             $payment = $order->payments()->create([
                 'user_id' => auth()->user()->id,
                 'amount' => $order->total_price,
-                'payment_gateway_id' => $summary['payment_gateway_id'],
+                'gateway_id' => $summary['payment_gateway_id'],
             ]);
 
             $payment_handler = new PaymentHandler();
+
             $gateway = $payment_handler->initializePaymentGateway($payment->gateway->name);
             $payment->gateway_checkout_url = $gateway->pay($payment)->url ;
             $payment->save();

@@ -3,11 +3,11 @@
 namespace App\Listeners\Cart;
 
 use Illuminate\Auth\Events\Login;
+use App\Facades\CartFacade;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
-use App\Facades\CartFacade;
 
-class CartSyncToDatabaseOnLoginListener
+class SyncCartToDatabaseListener
 {
     /**
      * Create the event listener.
