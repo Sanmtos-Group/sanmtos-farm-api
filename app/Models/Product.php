@@ -62,7 +62,8 @@ class Product extends Model
      *
      * @var array
      */
-     protected $appends = ['is_liked'];
+     protected $appends = [];
+     
 
     /**
      * The relationships that should always be loaded.
@@ -106,6 +107,7 @@ class Product extends Model
         return $this->belongsTo(User::class, 'verifier_id');
     }
 
+    
 
     /**
      * Scope a query to only include users of a given type.
