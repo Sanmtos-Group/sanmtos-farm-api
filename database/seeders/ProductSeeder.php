@@ -15,12 +15,34 @@ class ProductSeeder extends Seeder
      */
     public function run(): void
     {
-        Product::factory()
-        ->count(100)
-        ->hasImages(1)
-        ->hasLikes(3)
-        ->hasPromos(1)
-        // ->hasCoupons(1)
-        ->create();
+        $product_factory = Product::factory()
+        ->count(100);
+
+        if(method_exists(Product::class, 'images'))
+        {
+            $product_factory->hasImages(1);
+        }
+
+        if(method_exists(Product::class, 'likes'))
+        {
+            $product_factory->hasLikes(3);
+        }
+
+        if(method_exists(Product::class, 'ratings'))
+        {
+            $product_factory->hasRatings(4);
+        }
+        
+        if(method_exists(Product::class, 'promos'))
+        {
+            $product_factory->hasPromos(1);
+        }
+
+        if(method_exists(Product::class, 'coupons'))
+        {
+            // $product_factory->hasCoupons(1);
+        }
+  
+        $product_factory->create();
     }
 }

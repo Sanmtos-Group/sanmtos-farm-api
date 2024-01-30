@@ -170,6 +170,29 @@ class EventServiceProvider extends ServiceProvider
         ],
 
         /**
+         *  Rating Events and listeners;
+         */
+        \App\Events\Rating\RatingCreated::class => [
+            \App\Listeners\Rating\RatingCreatedListener::class,
+        ],
+
+        \App\Events\Rating\RatingDeleted::class => [
+            \App\Listeners\Rating\RatingDeletedListener::class,
+        ],
+
+        \App\Events\Rating\RatingRestored::class => [
+            \App\Listeners\Rating\RatingRestoredListener::class,
+        ],
+
+        \App\Events\Rating\RatingUpdated::class => [
+            \App\Listeners\Rating\RatingUpdatedListener::class,
+        ],
+
+        \App\Events\Rating\RatingTrashed::class => [
+            \App\Listeners\Rating\RatingTrashedListener::class,
+        ],
+
+        /**
          * Authentication Process Events 
          * Map listeners of your choice 
          */

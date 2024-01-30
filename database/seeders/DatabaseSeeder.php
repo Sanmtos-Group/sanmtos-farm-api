@@ -38,6 +38,8 @@ class DatabaseSeeder extends Seeder
             // PaymentSeeder::class,
             OrderSeeder::class,
             CurrencyExchangeRateSeeder::class,
+            LikeSeeder::class,
+            RatingSeeder::class,
         ]);
     }
 }

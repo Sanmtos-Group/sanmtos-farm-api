@@ -2,17 +2,17 @@
 
 namespace Database\Seeders;
 
-use App\Models\Like;
+use App\Models\Rating;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class LikeSeeder extends Seeder
+class RatingSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Like::factory()->count(1)->create();
+        Rating::factory()->count(1)->create();
     }
 }

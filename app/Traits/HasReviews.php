@@ -2,6 +2,7 @@
 namespace App\Traits; 
 
 use App\Models\Like; 
+use App\Models\Rating; 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 trait HasReviews {
@@ -43,6 +44,44 @@ trait HasReviews {
             get: fn ($value) => $this->likes()->count(),
         );
     } 
+
+    /**
+     * Get all the ratings for the product.
+     */
+    public function ratings()
+    {
+        return $this->morphMany(Rating::class, 'ratingable');
+    }
+
+    /**
+     * Get the models's average rating.
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
+     */
+    protected function averageRating(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $this->ratings()->sum('stars')/ ($this->ratings()->count() > 0 ? $this->ratings()->count() : 1),
+        );
+    }
+
+     /**
+     * Get the models's most recent rating.
+     */
+    public function latestRating()
+    {
+        return $this->hasOne(Rating::class)->latestOfMany();
+    }
+
+
+    /**
+     * Get the models's oldest rating.
+     */
+    public function oldestRating()
+    {
+        return $this->morphOne(Rating::class, 'ratingable')->oldestOfMany();
+    }
+
     
     /**
      * Boot the HasReviews trait for a model.
@@ -65,6 +104,7 @@ trait HasReviews {
             $model->append([
                 'is_liked',
                 'total_likes',
+                'average_rating'
                 // Add other attributes you want to append automatically
             ]);
         });
