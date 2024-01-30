@@ -109,18 +109,31 @@ Route::middleware('auth:sanctum')->group(function () {
                  * <-----  PRODUCT LIKES  ----->
                  *
                 */
-                // view product likes
-                Route::get('{product}/likes', [ProductController::class, 'indexLikes'])->name('likes.index');
-                // like a product
-                Route::post('{product}/likes', [ProductController::class, 'createLikes'])->name('likes.create');
-                // undo a product like
-                Route::delete('{product}/likes', [ProductController::class, 'destroyLikes'])->name('likes.destroy');
-                // undo all product likes
-                Route::delete('{product}/likes/all', [ProductController::class, 'destroyAllLikes'])->name('likes.destroy.all');
+                    // view product likes
+                    Route::get('{product}/likes', [ProductController::class, 'indexLikes'])->name('likes.index');
+                    // like a product
+                    Route::post('{product}/likes', [ProductController::class, 'createLikes'])->name('likes.create');
+                    // undo a product like
+                    Route::delete('{product}/likes', [ProductController::class, 'destroyLikes'])->name('likes.destroy');
+                    // undo all product likes
+                    Route::delete('{product}/likes/all', [ProductController::class, 'destroyAllLikes'])->name('likes.destroy.all');
                 /**
                  * <------ END OF PRODUCT LIKES ----->
                  *
                 */
+
+                //<------ PRODUCT RATING ------>
+                    // view product ratings
+                    Route::get('{product}/ratings', [ProductController::class, 'indexRatings'])->name('ratings.index');
+                    // rate a product
+                    Route::post('{product}/ratings', [ProductController::class, 'createRatings'])->name('ratings.create');
+                    // update product rating
+                    Route::match(['put','patch'], '{product}/ratings', [ProductController::class, 'updateRatings'])->name('ratings.update');
+                     // destroy product rating
+                     Route::delete('{product}/ratings', [ProductController::class, 'destroyRatings'])->name('ratings.destroy');
+                    // delete all product ratings
+                    Route::delete('{product}/ratings/all', [ProductController::class, 'destroyAllRatings'])->name('ratings.destroy.all');
+                //<------ END OF PRODUCT RATINGS ----->
             });
         });
     });

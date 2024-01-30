@@ -23,7 +23,7 @@ trait HasReviews {
         return $this->hasOne(Like::class)->latestOfMany();
     }
 
-     /**
+    /**
      * Determine if the current user has liked the likeable
      */
     protected function isLiked(): Attribute
@@ -82,6 +82,16 @@ trait HasReviews {
         return $this->morphOne(Rating::class, 'ratingable')->oldestOfMany();
     }
 
+    /**
+     * Determine if the current user has liked the likeable
+     */
+    protected function isRated(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => is_null(auth()->user()) ? false: (is_null($this->ratings()->where('user_id', auth()->user()->id)->first()) ? false: true),
+        );
+    }
+
     
     /**
      * Boot the HasReviews trait for a model.
@@ -104,7 +114,8 @@ trait HasReviews {
             $model->append([
                 'is_liked',
                 'total_likes',
-                'average_rating'
+                'average_rating',
+                'is_rated',
                 // Add other attributes you want to append automatically
             ]);
         });

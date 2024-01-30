@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Traits\HasCoupons;
 use App\Traits\HasImages;
 use App\Traits\HasPromos;
-
+use App\Traits\HasReviews;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -23,6 +23,7 @@ class Store extends Model
     use HasFactory;
     use HasImages;
     use HasPromos;
+    use HasReviews;
     use HasUuids;
     use Sluggable;
     use SoftDeletes;

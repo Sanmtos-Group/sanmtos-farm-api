@@ -22,7 +22,8 @@ class StoreRatingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'stars' => 'required|min:1|max:5',
+            'comment' => 'nullable|string|min:2|max:1000'
         ];
     }
 }

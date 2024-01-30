@@ -14,6 +14,7 @@ use App\Http\Resources\CouponResource;
 use App\Http\Resources\LikeResource;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\PromoResource;
+use App\Http\Resources\RatingResource;
 use App\Models\Coupon;
 use App\Models\Image;
 use App\Models\Product;
@@ -414,6 +415,97 @@ class ProductController extends Controller
         $like_resource = new LikeResource(null);
         $like_resource->with['status'] = "OK";
         $like_resource->with['message'] = "Product's likes undo successfully";
+    }
+
+
+    /**
+     *  Display list of the specified product ratings
+     */
+    public function indexRatings(Product $product, Request $request){
+
+        $per_page = is_numeric($request->per_page)? (int) $request->per_page : 15;
+        
+        $product_ratings = $product->ratings()->paginate($per_page);
+
+        $product_ratings_resource =  RatingResource::collection($product_ratings);
+        $product_ratings_resource->with['status'] = "OK";
+        $product_ratings_resource->with['message'] = "Product's ratings list retrieved successfully";
+
+        return $product_ratings_resource;
+    }
+
+    /**
+     *  Rate the specified product
+     */
+    public function createRatings(\App\Http\Requests\StoreRatingRequest $request, Product $product){
+
+        $rating = $product->ratings()->where('user_id', auth()->user()->id?? null)->first();
+        $validated = $request->validated();
+
+        if(is_null($rating))
+        {
+            $validated ['user_id'] = auth()->user()->id ?? null;
+            $rating = $product->ratings()->create($validated);
+        }
+        else {
+            $product->ratings()->update($validated);
+            $rating->refresh();
+        }
+
+        $rating_resource = new RatingResource($rating);
+        $rating_resource->with['status'] = 200;
+        $rating_resource->with['message'] = $product->name."'s rated successfully";
+        
+        return $rating_resource;
+    }
+
+    /**
+     *  update rating on the specified product
+     */
+    public function updateRatings(UpdateRatingRequest $request, Product $product){
+      
+        $rating = $product->ratings()->where('user_id', auth()->user()->id?? null)->first();
+
+        $validated = $request->validated();
+
+        if(!is_null($rating))
+        {
+            $product->ratings()->update($validated);
+            $rating->refresh();
+        }
+        
+        $rating_resource = new RatingResource($rating);
+        $rating_resource->with['status'] = 200;
+        $rating_resource->with['message'] = $product->name."'s rating updated successfully";
+        
+        return $rating_resource;
+    }
+
+    /**
+     *  delete rating of the specified product
+     */
+    public function destroyRatings(Product $product){
+
+        $product->ratings()->where('user_id', auth()->user()->id?? null)->delete();
+
+        $rating_resource = new RatingResource(null);
+        $rating_resource->with['status'] = 200;
+        $rating_resource->with['message'] = $product->name."'s rating deleted successfully";
+        
+        return $rating_resource;
+    }
+
+    /**
+     *  delete all ratings of the specified product
+     */
+    public function destroyAllRatings(Product $product){
+        $product->ratings()->delete();
+
+        $rating_resource = new RatingResource(null);
+        $rating_resource->with['status'] = 200;
+        $rating_resource->with['message'] = $product->name."'s rating deleted successfully";
+        
+        return $rating_resource;
     }
 
 }
