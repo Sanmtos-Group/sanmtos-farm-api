@@ -19,3 +19,5 @@ yarn-error.log
 /.idea
 /.vscode
 todolist.txt
+localhost.crt
+localhost.key
