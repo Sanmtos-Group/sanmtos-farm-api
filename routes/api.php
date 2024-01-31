@@ -224,11 +224,14 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::apiResource('payments', PaymentController::class );
+   
     Route::controller(PaymentController::class)->group(function () {
-       Route::post('payments', 'makePayment')->name('payments');
-       Route::get('payment-verify', 'handleGatewayCallback')->name('payment.verify');
-       Route::get('payment-transaction', 'getAllTransactions')->name('payment.transaction');
-       Route::get('payment-customer-detail', 'getAllCustomersTransacted')->name('payment.customer.details');
+        Route::post('payments/callback', 'callback')->name('payments.callback');
+        Route::post('payments/webhook', 'webhook')->name('payments.webhook');
+        // Route::post('payments', 'makePayment')->name('payments');
+        // Route::get('payment-verify', 'handleGatewayCallback')->name('payment.verify');
+        // Route::get('payment-transaction', 'getAllTransactions')->name('payment.transaction');
+        // Route::get('payment-customer-detail', 'getAllCustomersTransacted')->name('payment.customer.details');
     });
 
 

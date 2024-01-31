@@ -124,6 +124,36 @@ class PaymentController extends Controller
         return paystack()->getAuthorizationUrl($data)->redirectNow();
     }
 
+    /***
+     * Handle Payment callback 
+     */
+
+    public function callback(Request $request){
+        $payload = $request->all();
+
+        // Process the webhook data
+
+        return response()->json([
+            "data" => $payload,
+            "message" => 'paystack callback testing'
+        ], 200);
+    }
+
+    /***
+     * Handle Payment webhook 
+     */
+
+     public function webhook(Request $request){
+        $payload = $request->all();
+
+        // Process the webhook data
+
+        return response()->json([
+            "data" => $payload,
+            "message" => 'paystack webhook testing'
+        ], 200);
+    }
+
     /**
      * Obtain Paystack payment information
      * @return \Illuminate\Http\JsonResponse
