@@ -26,12 +26,12 @@ class PasswordResetController extends Controller
         $user = User::where('email', $validated['email'])->first();
         $OTP = $user->generateOTP();
 
-        $user->notify(new PasswordResetNotification($OTP)); 
+        $user->notify(new PasswordResetNotification($OTP));
 
         return response()->json([
             "Status" => "OK",
             "message" => "A one-time password (OTP) for password reset has been sent to your email address. This OTP is valid for the next hour."
-        ], 201);       
+        ], 201);
     }
 
     public function verifyOTP(OTPRequest $request)
@@ -43,23 +43,22 @@ class PasswordResetController extends Controller
             "data" => $verification_code->only('otp'),
             "Status" => "OK",
             "message" => "The one-time password (OTP) is valid"
-        ], 200);      
+        ], 200);
     }
 
     public function resendCode(OTPRequest $request)
     {
         $validated = $request->validated();
-        $verification_code = VerificationCode::where('otp', $validated['otp'])->first();
-        $user = $verification_code->user;
+        $user = User::where('email', $validated['email'])->first();
 
         $OTP = $user->generateOTP();
 
-        $user->notify(new PasswordResetNotification($OTP)); 
+        $user->notify(new PasswordResetNotification($OTP));
 
         return response()->json([
             "Status" => "OK",
             "message" => "A one-time password (OTP) for password reset has been sent to your email address. This OTP is valid for the next hour."
-        ], 201);   
+        ], 201);
     }
 
     public function resetPassword(PasswordResetRequest $request)

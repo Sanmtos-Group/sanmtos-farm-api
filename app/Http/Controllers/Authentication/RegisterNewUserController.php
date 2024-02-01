@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Authentication;
 
 use App\Http\Requests\Authentication\AccountVerificationRequest;
+use App\Http\Requests\Authentication\OTPRequest;
 use App\Http\Requests\Authentication\ResendCodeRequest;
 use App\Http\Requests\Authentication\SendPasswordResetRequest;
 use App\Models\User;
@@ -123,25 +124,22 @@ class RegisterNewUserController extends Controller
         }
     }
 
-    public function resend(ResendCodeRequest $request){
+    public function resend(OTPRequest $request){
         $validate = $request->validated();
-        $verification_code = VerificationCode::where('otp', $validate['otp'])->first();
+        $user = User::where('email', $validate['email'])->first();
 
-        if(!is_null($verification_code) ){
-            $user = User::where('id', $verification_code->user_id)->first();
+        if(!is_null($user) ){
+            $verification_code = VerificationCode::where('user_id', $user->id)->first();
 
-            if (!is_null($user)) {
-                $otp = rand(123456, 999999);
+            if (!is_null($verification_code)) {
+                $verification_code->delete();
 
-                $verification_code->update([
-                    'otp' => $otp,
-                    'expire_at' => Carbon::now()->addHours()
-                ]);
+                $OTP = $this->generateOtp($user->email);
 
-                $user->notify(new SendPasswordResetRequest($otp)); //Here is a bug
+                $user->notify(new SendLoginOtpCode($OTP));
 
                 return response()->json([
-                    "message" => "Code sent, it will expire in the next one hour"
+                    "message" => "Code sent, it will expire in the next hour"
                 ], 201);
             }
         }else{

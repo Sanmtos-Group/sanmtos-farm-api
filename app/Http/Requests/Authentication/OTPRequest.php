@@ -9,7 +9,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class OTPRequest extends FormRequest
 {
-    
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -26,7 +26,7 @@ class OTPRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'otp' => 'required|string|exists:verification_codes,otp',
+            'email' => 'required|string|exists:users,email',
         ];
     }
 
@@ -44,7 +44,7 @@ class OTPRequest extends FormRequest
 
     /**
      * Configure the validator instance.
-     * 
+     *
      * @param  \Illuminate\Validation\Validator  $validator
      * @return void
      */
@@ -52,10 +52,10 @@ class OTPRequest extends FormRequest
     {
 
         $validator->after(function ($validator) {
-            
+
             $verification_code = VerificationCode::where('otp', $this->otp)->first();
 
-            if(is_null($verification_code)) 
+            if(is_null($verification_code))
             {
                 return;
             }
@@ -67,7 +67,7 @@ class OTPRequest extends FormRequest
 
                 $validator->errors()->add('otp', 'Your one-time password (OTP) has expired. Please request a new OTP');
             }
-          
+
         });
     }
 }
