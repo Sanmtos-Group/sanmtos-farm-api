@@ -26,7 +26,7 @@ class ProductFactory extends Factory
             'weight' => fake()->randomNumber(2),
             'volume'  => fake()->randomNumber(2),
             'price' => $price = fake()->randomFloat(0, 1), // random floats of 2 decimal place of min 1.00
-            'currency' => fake()->currencyCode(),
+            'currency' => 'NGN', //fake()->currencyCode(),
             'regular_price' => $regular_price = $price + fake()->randomFloat(0, 1),
             'discount' => round(($regular_price - $price)/ $regular_price * 100, 2) , // fake()->numberBetween(0, 100),
             'category_id' => Category::inRandomOrder()->first()?? Category::factory()->create(),

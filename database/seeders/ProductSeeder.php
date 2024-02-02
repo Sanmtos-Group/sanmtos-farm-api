@@ -16,7 +16,7 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         Product::factory()
-        ->count(100)
+        ->forStore()
         ->hasImages(1)
         ->hasLikes(3)
         ->hasRatings(4)
