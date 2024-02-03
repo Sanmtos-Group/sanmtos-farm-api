@@ -1,4 +1,7 @@
-*
+# Ignore everything in the storage/app directory
+/*
+
+# Except these specific files and directories
 !public/
-!sanmtos_sample_products
+!sanmtos_sample_products/
 !.gitignore
