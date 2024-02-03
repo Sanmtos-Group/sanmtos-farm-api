@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Authentication;
 
 use App\Http\Requests\Authentication\AccountVerificationRequest;
-use App\Http\Requests\Authentication\OTPRequest;
+use App\Http\Requests\Authentication\SendOTPRequest;
 use App\Http\Requests\Authentication\ResendCodeRequest;
 use App\Http\Requests\Authentication\SendPasswordResetRequest;
 use App\Models\User;
@@ -34,16 +34,10 @@ class RegisterNewUserController extends Controller
             "phone_number" => $validation['phone_number'],
             "password" => Hash::make($validation['password'])
         ]);
-//        $this->createTeam($user->id);
+        // $this->createTeam($user->id);
 
-        $token = $this->generateOtp($user->email);
-
-//        UserConfirmation::create([
-//            'user_id' => $user->id,
-//            'token' => $token
-//        ]);
-
-        $notify = $user->notify(new NewUserVerification($token));
+        // $token = $user->generateOTP();
+        // $notify = $user->notify(new NewUserVerification($token));
 
         $user_resource = new UserResource($user);
         $user_resource->with['message'] = 'User registered successfully. Email verification have been sent to your email';
@@ -53,29 +47,22 @@ class RegisterNewUserController extends Controller
 
     public function verifyAccount(AccountVerificationRequest $request)
     {
-        $token = $request->validated();
-        $verifyUser = VerificationCode::where('otp', $token['token'])->first();
+        $validated = $request->validated();
 
-        $message = 'Sorry your email cannot be identified.';
+        $verification_code = VerificationCode::where('otp', $validated['otp'])->first();
+        $user = $verification_code->user;
 
-        if(!is_null($verifyUser) ){
-            $user = $verifyUser->user;
+        $user->is_email_verified = true;
+        $user->email_verified_at = now();
+        $user->save();
 
-            if(!$user->is_email_verified) {
-                $verifyUser->user->is_email_verified = true;
-                $verifyUser->user->save();
-                $verifyUser->delete();
-                $message = "Your e-mail is verified. You can now login.";
-            } else {
-                $message = "Your e-mail is already verified. You can now login.";
-            }
-        }else{
-            $message = "invalid token.";
-        }
+        $verification_code->delete();
 
         return response()->json([
-            'message' => $message,
+            'status' => "OK",
+            'message' => "Your e-mail is already verified. You can now login.",
         ], 200);
+
     }
 
     public function registerWithOnlyPhoneNumber(Request $request){
@@ -93,7 +80,7 @@ class RegisterNewUserController extends Controller
 
         if ($user){
             # Generate An OTP
-            $verificationCode = $this->generateOtp($user->email);
+            $verificationCode = $user->generateOTP();
 
             $user->notify(new SendLoginOtpCode($verificationCode->otp));
 
@@ -112,7 +99,7 @@ class RegisterNewUserController extends Controller
             $user = User::create($validate);
 
             # Generate An OTP
-            $verificationCode = $this->generateOtp($user->email);
+            $verificationCode = $user->generateOTP();
 
             # Send Mail
             $user->notify(new SendLoginOtpCode($verificationCode->otp));
@@ -124,52 +111,20 @@ class RegisterNewUserController extends Controller
         }
     }
 
-    public function resend(OTPRequest $request){
+    public function resend(SendOTPRequest $request)
+    {
         $validate = $request->validated();
         $user = User::where('email', $validate['email'])->first();
 
-        if(!is_null($user) ){
-            $verification_code = VerificationCode::where('user_id', $user->id)->first();
+        $user->verificationCodes()->delete();
+        $OTP = $user->generateOTP();
 
-            if (!is_null($verification_code)) {
-                $verification_code->delete();
+        $user->notify(new SendLoginOtpCode($OTP));
 
-                $OTP = $this->generateOtp($user->email);
-
-                $user->notify(new SendLoginOtpCode($OTP));
-
-                return response()->json([
-                    "message" => "Code sent, it will expire in the next hour"
-                ], 201);
-            }
-        }else{
-            return response()->json([
-                'message' => "Your email can not be verify, input a correct email in the forgot password page",
-            ], 200);
-        }
-
-        return "Error code";
-    }
-
-    public function generateOtp($email)
-    {
-        $user = User::where('email', $email)->first();
-
-        # User Does not Have Any Existing OTP
-        $verificationCode = VerificationCode::where('user_id', $user->uuid)->latest()->first();
-
-        $now = Carbon::now();
-
-        if($verificationCode && $now->isBefore($verificationCode->expire_at)){
-            return $verificationCode;
-        }
-
-        # Create a New OTP
-        return VerificationCode::create([
-            'user_id' => $user->id,
-            'otp' => rand(123456, 999999),
-            'expire_at' => Carbon::now()->addHours()
-        ]);
+        return response()->json([
+            "Status"=> "OK",
+            "message" => "A one-time password (OTP) has been sent to your email address. This OTP is valid for the next hour."
+        ], 201);
     }
 
     /**

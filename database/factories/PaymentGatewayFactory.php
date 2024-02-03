@@ -28,7 +28,7 @@ class PaymentGatewayFactory extends Factory
             'secret_key' => fake()->bothify('#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#'),
             'merchant_email' => $email,
             'is_active' => true,
-            'is_default' => $name =='paystack'? true : false,
+            'is_default' => strtolower($name) =='paystack'? true : false,
         ];
     }
 }

@@ -7,7 +7,7 @@ use App\Models\VerificationCode;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
-class OTPRequest extends FormRequest
+class VerifyOTPRequest extends FormRequest
 {
 
     /**
@@ -26,7 +26,7 @@ class OTPRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|string|exists:users,email',
+            'otp' => 'required|string|exists:verification_codes,otp',
         ];
     }
 
@@ -55,13 +55,8 @@ class OTPRequest extends FormRequest
 
             $verification_code = VerificationCode::where('otp', $this->otp)->first();
 
-            if(is_null($verification_code))
-            {
-                return;
-            }
-
             $now = Carbon::now();
-            if($verification_code && $now->isAfter($verification_code->expire_at))
+            if(!is_null($verification_code) && $now->isAfter($verification_code->expire_at))
             {
                 $verification_code->delete();
 

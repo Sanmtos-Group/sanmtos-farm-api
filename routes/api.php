@@ -323,8 +323,8 @@ Route::apiResource('permissions', PermissionController::class)->only(['index', '
 
 
 Route::controller(PaymentController::class)->group(function () {
-    Route::post('payments/callback', 'callback')->name('payments.callback');
-    Route::post('payments/webhook', 'webhook')->name('payments.webhook');
+    Route::get('payments/callback', 'callback')->name('payments.callback');
+    Route::get('payments/webhook', 'webhook')->name('payments.webhook');
     // Route::post('payments', 'makePayment')->name('payments');
     // Route::get('payment-verify', 'handleGatewayCallback')->name('payment.verify');
     // Route::get('payment-transaction', 'getAllTransactions')->name('payment.transaction');

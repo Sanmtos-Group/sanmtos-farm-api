@@ -6,7 +6,7 @@ use App\Actions\Fortify\PasswordValidationRules;
 use App\Models\VerificationCode;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
-class PasswordResetRequest extends OTPRequest
+class PasswordResetRequest extends FormRequest
 {
     use PasswordValidationRules;
 
@@ -26,8 +26,20 @@ class PasswordResetRequest extends OTPRequest
     public function rules(): array
     {
         return [
-            'otp' => (new parent)->rules()['otp'],
+            'otp' => 'required|string|exists:verification_codes,otp',
             "new_password" => $this->passwordRules(),
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'otp.exists' => 'The one-time password (OTP) is invalid',
         ];
     }
 

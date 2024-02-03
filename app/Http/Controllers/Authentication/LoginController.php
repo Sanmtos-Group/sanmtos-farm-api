@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Authentication;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Authentication\LoginRequest;
-use App\Http\Requests\Authentication\OTPRequest;
+use App\Http\Requests\Authentication\VerifyOTPRequest;
 use App\Models\User;
 use App\Models\VerificationCode;
 use Carbon\Carbon;
@@ -40,9 +40,9 @@ class LoginController extends Controller
      * Login a user via OTP
      * 
      * @method POST
-     * @param App\Http\Requests\Authentication\LoginViaOTPRequest $request 
+     * @param App\Http\Requests\Authentication\LoginViaVerifyOTPRequest $request 
      */
-    public function loginViaOTP(OTPRequest $request)
+    public function loginViaOTP(VerifyOTPRequest $request)
     {
         $validated = $request->validated();
         $verification_code = VerificationCode::where('otp', $validated['otp'])->first();

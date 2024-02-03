@@ -4,7 +4,7 @@ namespace App\Http\Requests\Authentication;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SendPasswordResetRequest extends FormRequest
+class SendOTPRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,6 +23,18 @@ class SendPasswordResetRequest extends FormRequest
     {
         return [
             "email" => "required|email|exists:users,email"
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'email.exists' => 'The email address does not exist in our record',
         ];
     }
 }

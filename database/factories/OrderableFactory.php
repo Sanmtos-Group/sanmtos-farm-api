@@ -1,7 +1,7 @@
 <?php
 
 namespace Database\Factories;
-
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -14,10 +14,14 @@ class OrderableFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition(): array
+    public function definition()
     {
         return [
-            //
+            'orderable_id' => $product = Product::inRandomOrder()->first()?? Product::factory()->create(),
+            'orderable_type' => Product::class,
+            'quantity' => $quantity =  random_int(1,10),
+            'price' =>  $product->price,
+            'total_price' => $quantity * $product->price ,
         ];
     }
 }
