@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->nullable()->contrained('users')->cascadeOnUpdate()->nullOnDelete();
+            $table->foreignUuid('user_id')->contrained('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->unsignedDecimal('amount', $precision = 19, $scale = 2);
             $table->uuidMorphs('paymentable'); // the item paid for e.g orders, subscriptions etc. 
 
-            $table->foreignUuid('gateway_id')->nullable()->contrained('payment_gateways')->cascadeOnUpdate()->nullOnDelete(); // gateway e.g paystack, flutterwave, 
+            $table->foreignUuid('gateway_id')->contrained('payment_gateways')->cascadeOnUpdate()->cascadeOnDelete(); // gateway e.g paystack, flutterwave, 
             $table->string('method')->nullable(); // method/channel e.g card, transfer, ussd
             $table->string('currency')->nullable(); // e.g NGN, USD
             $table->ipAddress('ip_address')->nullable();

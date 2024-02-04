@@ -67,4 +67,8 @@ class Payment extends Model
         return $this->morphTo();
     }
 
+    public static function genTranxRef(){
+        return 'sf-'.date('dmY-Hms').'-'.(Payment::count()+1);
+    }
+
 }

@@ -296,15 +296,16 @@ class CheckoutController extends Controller
             $payment = $order->payments()->create([
                 'user_id' => auth()->user()->id,
                 'amount' => $order->total_price,
+                'transaction_reference' =>  Payment::genTranxRef(),
                 'gateway_id' => $summary['payment_gateway_id'],
+
             ]);
 
             $payment_handler = new PaymentHandler();
 
-            $gateway = $payment_handler->initializePaymentGateway($payment->gateway->name);
-            $payment->gateway_checkout_url = $gateway->pay($payment)->url ;
-            $payment->save();
-
+            $payment_gateway_handler = $payment_handler->initializePaymentGateway($payment->gateway->name);
+            $payment_url = $payment_gateway_handler->pay($payment) ;
+            
             DB::commit();
 
             session()->forget(CheckoutService::DEFAULT_INSTANCE);
@@ -313,7 +314,7 @@ class CheckoutController extends Controller
             return response()->json([
                 "data" => [
                     'payment_id' => $payment->id,
-                    'payment_url' => $payment->gateway_checkout_url 
+                    'payment_url' => $payment_url 
                 ],
                 "message" => "Proceed to pay via ".$payment->gateway->name
             ], 200);

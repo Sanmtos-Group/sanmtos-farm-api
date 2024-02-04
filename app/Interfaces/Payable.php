@@ -3,6 +3,7 @@
 namespace App\Interfaces;
 
 use App\Models\Payment;
+use Illuminate\Http\Request;
 interface Payable {
     
     /**
@@ -17,6 +18,6 @@ interface Payable {
      * 
      * @param App\Models\Payment $payment;
      */
-    public function verify(Payment $payment);
+    public function verify(Request $request, Payment $payment);
 
 }
