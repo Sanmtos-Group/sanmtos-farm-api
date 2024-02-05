@@ -36,8 +36,8 @@ class RegisterNewUserController extends Controller
         ]);
         // $this->createTeam($user->id);
 
-        // $token = $user->generateOTP();
-        // $notify = $user->notify(new NewUserVerification($token));
+        $OTP = $user->generateOTP();
+         $notify = $user->notify(new NewUserVerification($OTP));
 
         $user_resource = new UserResource($user);
         $user_resource->with['message'] = 'User registered successfully. Email verification have been sent to your email';
