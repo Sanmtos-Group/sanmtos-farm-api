@@ -80,9 +80,9 @@ class RegisterNewUserController extends Controller
 
         if ($user){
             # Generate An OTP
-            $verificationCode = $user->generateOTP();
+            $OTP= $user->generateOTP();
 
-            $user->notify(new SendLoginOtpCode($verificationCode->otp));
+            $user->notify(new SendLoginOtpCode($OTP));
 
             # Return With OTP Message
             return response()->json([
@@ -99,10 +99,10 @@ class RegisterNewUserController extends Controller
             $user = User::create($validate);
 
             # Generate An OTP
-            $verificationCode = $user->generateOTP();
+            $OTP = $user->generateOTP();
 
             # Send Mail
-            $user->notify(new SendLoginOtpCode($verificationCode->otp));
+            $user->notify(new SendLoginOtpCode($OTP));
 
             # Return With OTP Message
             return response()->json([
