@@ -26,6 +26,7 @@ class Payment extends Model
     protected $fillable = [
         'user_id', 
         'amount',
+        'transaction_reference',
         'paymentable_id',
         'paymentable_type',
         'gateway_id',
@@ -68,7 +69,7 @@ class Payment extends Model
     }
 
     public static function genTranxRef(){
-        return 'sf-'.date('dmY-Hms').'-'.(Payment::count()+1);
+        return 'sf-'.date('dmY-His'). '-' . microtime(true) . '-'.(Payment::count()+1);
     }
 
 }

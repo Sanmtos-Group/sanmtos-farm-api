@@ -9,6 +9,7 @@ use App\Http\Resources\PaymentResource;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
@@ -155,57 +156,65 @@ class PaymentController extends Controller
 
      public function webhook(Request $request){
 
-        if(!$reuqest->has('HTTP_X_PAYSTACK_SIGNATURE'))
-        {
-            exit();
-        }
+        $HTTP_X_PAYSTACK_SIGNATURE = 'x-paystack-signature';
 
-                // validate event do all at once to avoid timing attack
-        if($request->header('HTTP_X_PAYSTACK_SIGNATURE') !== hash_hmac('sha512', $request->all(), config('paystack.secretKey')))
+        //Process post payment with paystack signature header
+        if($request->hasHeader($HTTP_X_PAYSTACK_SIGNATURE))
         {
+           
+            // validate event do all at once to avoid timing attack
+            if($request->header($HTTP_X_PAYSTACK_SIGNATURE) !== hash_hmac('sha512', $request->getContent(), config('paystack.secretKey')))
+            {
+                // send nofication of false attempt
+                exit();
+            }
+                        
+            $transaction_reference = 'nothing';
+
+            /**
+             * Checking for paystack possible transaction reference number
+             * 
+             */
+            $data = json_decode(json_encode($request->data));
+
+            if(isset($data->trxref))
+            {
+                $transaction_reference = $data->trxref;
+            }
+
+            elseif(isset($data->reference))
+            {
+                $transaction_reference = $data->reference;
+            }
+            // end cheking for paystack
+
+            $payment = Payment::where('transaction_reference', $transaction_reference)->first();
+
+            if(is_null($payment))
+            {
+                // notify admin of the transaction reference not found via email
+               throw new Exception('No transaction reference '.$transaction_reference. ' found', 1);
+            }
+
+            http_response_code(200);
+
+            if($request->event === 'charge.success')
+            {
+                $payment_handler = new PaymentHandler();
+                $payment_gateway_handler = $payment_handler->initializePaymentGateway($payment->gateway->name);
+    
+                $qucleaery_parameters = $request->query();
+                $query_parameters['trxref'] = $transaction_reference;
+                $request->query->replace($query_parameters);
+    
+                $is_verified = $payment_gateway_handler->verify($request, $payment);
+            }
+        
             exit();
         }
+        
+        // send notification of unregconized attempt
 
         http_response_code(200);
-        header('Content-Type: application/json'); // Set content type if needed
-
-        $transaction_reference = null;
-
-        /**
-         * Checking for paystack possible transaction reference number
-         * 
-         */
-        if($request->trxref)
-        {
-            $transaction_reference = $request->trxref;
-        }
-
-        elseif($request->reference)
-        {
-            $transaction_reference = $request->reference;
-        }
-        // end cheking for paystack
-
-        $payment = Payment::where('transaction_reference', $transaction_reference)->first();
-
-        if(!is_null($payment))
-        {
-            $payment->transaction_status = 'failed';
-            $payment->save();
-
-            exit();
-        }
-
-        if($request->event == 'charge.success')
-        {
-            $payment_handler = new PaymentHandler();
-            $payment_gateway_handler = $payment_handler->initializePaymentGateway($payment->gateway->name);
-    
-            $is_verified= $payment_gateway_handler->verify($request, $payment);
-    
-            $payment->refresh();
-        }
-
-        exit();
     }
 }

@@ -30,10 +30,11 @@ class PaystackGateway implements Payable
              *  
              */
 
-            if(empty($payment->transaction_reference))
+            if(is_null($payment->transaction_reference) || empty($payment->transaction_reference))
             {
                 $payment->transaction_reference =  Payment::genTranxRef();
             }
+
             $data = array(
                 "amount" => $payment->amount,
                 "reference" => $payment->transaction_reference,
@@ -56,11 +57,12 @@ class PaystackGateway implements Payable
      * Verify the payment
      * 
      * @implements App\Interfaces\Payable\verify
-     * @param Illuminate\Http\Request $request
+     * @param Illuminate\Http\Request|array<int,string> $request
      * @param App\Models\Payment $payment
      */
-    public function verify(Request $request, Payment $payment){
+    public function verify($request, Payment $payment){
        
+
         $response = Paystack::getPaymentData();
         $response = json_decode(json_encode($response));
 
