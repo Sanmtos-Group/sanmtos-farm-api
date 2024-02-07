@@ -203,7 +203,7 @@ class PaymentController extends Controller
                 $payment_handler = new PaymentHandler();
                 $payment_gateway_handler = $payment_handler->initializePaymentGateway($payment->gateway->name);
     
-                $qucleaery_parameters = $request->query();
+                $query_parameters = $request->query();
                 $query_parameters['trxref'] = $transaction_reference;
                 $request->query->replace($query_parameters);
     
