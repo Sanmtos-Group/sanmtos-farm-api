@@ -169,7 +169,7 @@ class PaymentController extends Controller
                 exit();
             }
                         
-            $transaction_reference = 'nothing';
+            $transaction_reference = null;
 
             /**
              * Checking for paystack possible transaction reference number
