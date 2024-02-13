@@ -39,7 +39,7 @@ class Category extends Model
     protected $appends = ['image'];
 
     /**
-     * Determine product image
+     * Determine category image
      */
     protected function image(): Attribute
     {
