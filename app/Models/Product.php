@@ -53,8 +53,10 @@ class Product extends Model
         'weight',
         'volume',
         'price',
-        'currency',
         'regular_price',
+        'currency',
+        'quantity',
+        'status',
         'category_id',
         'store_id',
     ];

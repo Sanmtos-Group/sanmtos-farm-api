@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-
+use Illuminate\Support\Str;
 class Payment extends Model
 {
     use HasFactory;
@@ -69,7 +69,7 @@ class Payment extends Model
     }
 
     public static function genTranxRef(){
-        return 'sf-'.date('dmY-His'). '-' . microtime(true) . '-'.(Payment::count()+1);
+        return 'sf'.Str::of(Str::uuid())->replace("-","");
     }
 
 }

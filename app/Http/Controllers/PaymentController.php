@@ -143,10 +143,9 @@ class PaymentController extends Controller
             ], 422);
         }
 
-
         return response()->json([
             "data" => $payment,
-            "message" => 'Payment verified successful'
+            "message" => 'Payment verified successfully'
         ], 200);
     }
 

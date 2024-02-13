@@ -70,4 +70,16 @@ class Order extends Model
         return $this->morphMany(Payment::class, 'paymentable');
     }
 
+    public static function genNumber()
+    {
+        $prefix = 'sf';
+        $today = date('dmY');
+        $time = date('His');
+
+        $day_number = Order::where('number', 'like', '%'.$prefix.$today.'%')->count();
+        $overall_number = Order::count()+1;
+        
+        return $prefix.$today.$time.'dn'.$day_number.'ov'.$overall_number;
+    }
+
 }

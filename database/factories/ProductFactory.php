@@ -28,7 +28,9 @@ class ProductFactory extends Factory
             'price' => $price = fake()->randomFloat(0, 1), // random floats of 2 decimal place of min 1.00
             'currency' => 'NGN', //fake()->currencyCode(),
             'regular_price' => $regular_price = $price + fake()->randomFloat(0, 1),
-            'discount' => round(($regular_price - $price)/ $regular_price * 100, 2) , // fake()->numberBetween(0, 100),
+            'discount' => round(($regular_price - $price)/ $regular_price * 100, 2) ,
+            'quantity' => fake()->numberBetween(1,100),
+            'status' => 'in stock',
             'category_id' => Category::inRandomOrder()->first()?? Category::factory()->create(),
             'store_id' => Store::inRandomOrder()->first()?? Store::factory()->create(),
             'verified_at' => $is_verified = fake()->boolean() ? now(): null,

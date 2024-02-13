@@ -29,6 +29,7 @@ class StoreProductRequest extends FormRequest
             'volume' => 'numeric|min:0.00',
             'price' => 'required|numeric|min:0.01',
             'currency' => 'required|string',
+            'quantity' => 'integer|min:1',
             // 'regular_price' => 'required|numeric|min:0.01',
             // 'discount' => 'integer|min:0|max:100',
             'category_id' => 'required|uuid|exists:categories,id',
