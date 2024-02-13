@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use Cviebrock\EloquentSluggable\Sluggable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Cviebrock\EloquentSluggable\Sluggable;
 
 class Category extends Model
 {
@@ -29,6 +30,23 @@ class Category extends Model
         'slug',
         'parent_category_id'
     ];
+
+     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['image'];
+
+    /**
+     * Determine product image
+     */
+    protected function image(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->products()->inRandomOrder()->first()?->toArray()['images'][0]?? null
+        );
+    }
 
     /**
      * Get the sub categories for the category.
