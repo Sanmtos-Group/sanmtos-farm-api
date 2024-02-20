@@ -26,8 +26,8 @@ class ChangePasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'old_password' => 'required|string',
-            "new_password" => $this->passwordRules(),
+            'password' => 'required|string',
+            'new_password' => $this->passwordRules(),
         ];
     }
 
@@ -48,10 +48,10 @@ class ChangePasswordRequest extends FormRequest
             {
                 $validator->errors()->add('unauthenticated', 'Please login to change your password');
             }
-            elseif (Hash::check($this->old_password, $user->password))
+            elseif (Hash::check($this->password, $user->password))
             {
 
-                $validator->errors()->add('old_password', 'Incorrect password');
+                $validator->errors()->add('password', 'Incorrect password');
 
             }
           
