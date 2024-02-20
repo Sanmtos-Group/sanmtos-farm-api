@@ -15,6 +15,8 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Http\Requests\StoreAddressRequest;
 use App\Http\Requests\StorePreferenceRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
 class UserController extends Controller
 {
 
@@ -52,9 +54,43 @@ class UserController extends Controller
 
         $user = auth()->user();
         $user->update($validated);
+
+        if(isset($validated['email']))
+        {
+            $user->is_email_verified = false;
+            $user->email_verified_at = null;
+        }
         
         $user_resource = new UserResource($user);
         $user_resource->with['message'] = 'Profile updated successfully';
+
+        return $user_resource;
+    }
+
+      /**
+     * Update authenticated user profile pic
+     * 
+     * @method PUT || PATCH
+     */
+    public function updateProfilePhoto(Request $request)
+    {
+        $user = auth()->user();
+
+        Validator::make($request->all(), [
+            'photo' => ['nullable', 'mimes:jpg,jpeg,png', 'max:1024'],
+        ])->validateWithBag('updateProfileInformation');
+
+        $user_resource = new UserResource($user);
+
+        if (isset($request->photo)) {
+            $user->updateProfilePhoto($request->photo);
+            $user->refresh();
+            $user_resource->with['message'] = 'Profile photo updated successfully';
+        }
+        else {
+            $user_resource->with['message'] = 'No new photo supplied, profile photo unchange';
+        }
+
 
         return $user_resource;
     }

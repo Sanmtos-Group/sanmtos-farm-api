@@ -45,7 +45,7 @@ class User extends Authenticatable
         'dialing_code',
         'phone_number',
         'email',
-        'password',
+        // 'password',
     ];
 
     /**
@@ -75,8 +75,8 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $appends = [
-        // 'profile_photo_url',
-        // 'owns_a_store',
+        'profile_photo_url',
+        'owns_a_store',
     ];
 
     /**

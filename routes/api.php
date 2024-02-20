@@ -69,6 +69,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::controller(UserController::class)->group(function(){
                 Route::get('profile', 'profile')->name('profile.index');
                 Route::match(['put', 'patch'],'profile', 'updateProfile')->name('profile.update');
+                Route::post('profile-photo', 'updateProfilePhoto')->name('profile-photo.update');
 
                 Route::get('addresses', 'indexAddress')->name('addresses.index');
                 Route::post('addresses', 'storeAddress')->name('addresses.store');
