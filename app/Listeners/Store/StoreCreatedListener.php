@@ -23,6 +23,7 @@ class StoreCreatedListener
     {
         $store = $event->store;
         $store->url = \config('sanmtos.base_url').'/stores/'.$store->slug;
+        $store->owner->assignRole('store-admin');
         $store->save();
     }
 }

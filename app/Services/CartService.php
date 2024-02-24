@@ -128,6 +128,24 @@ class CartService {
         $this->refreshWithDatabaseInfo();
         return is_null($this->session->get(self::DEFAULT_INSTANCE)) ? collect([]) : $this->session->get(self::DEFAULT_INSTANCE);
     }
+    
+    /**
+     * Returns the content of the cart in array.
+     *
+     * @return array
+     */
+    public function contentArray(): array
+    {
+        $items = [];
+        $cart_items = $this->content();
+
+        $cart_items->map(function  ($item, $key) use(&$items) {
+            $items [] = $item;
+        });
+
+        return $items;
+    }
+
 
     /**
      * Returns total price of the items in the cart.
@@ -210,6 +228,7 @@ class CartService {
         $this->refreshWithDatabaseInfo();
         return $this->session->has(self::DEFAULT_INSTANCE) ? $this->session->get(self::DEFAULT_INSTANCE) : collect([]);
     }
+  
 
     /**
      * Creates a new cart item from given inputs.

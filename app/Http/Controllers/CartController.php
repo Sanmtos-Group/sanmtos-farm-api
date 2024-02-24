@@ -78,8 +78,8 @@ class CartController extends Controller
     public function items()
     {     
 
-        $cart_items = auth()->user() ? auth()->user()->cartItems :  CartFacade::content();
-
+        $cart_items = auth()->user() ? auth()->user()->cartItems :  CartFacade::contentArray();
+      
         $cart_resource =  new CartResource($cart_items);
         $cart_resource->with['message'] = 'Cart items retrived successfully';
         
@@ -130,7 +130,7 @@ class CartController extends Controller
                 $validated['quantity']?? 1,
                 $options = $cartable_options
             );
-            $cart_items = CartFacade::content();
+            $cart_items = CartFacade::contentArray();
         }
 
         $cart_resource =  new CartResource($cart_items);
@@ -157,7 +157,7 @@ class CartController extends Controller
         }
         else {
             CartFacade::update($item, 'plus');
-            $cart_items = CartFacade::content();
+            $cart_items = CartFacade::contentArray();
         }
 
         $cart_resource =  new CartResource($cart_items);
@@ -190,7 +190,7 @@ class CartController extends Controller
         }
         else {
             CartFacade::update($item, 'minus');
-            $cart_items = CartFacade::content();
+            $cart_items = CartFacade::contentArray();
         }
 
         $cart_resource =  new CartResource($cart_items);
@@ -212,7 +212,7 @@ class CartController extends Controller
         }
         else {
             CartFacade::remove($item);
-            $cart_items = CartFacade::content();
+            $cart_items = CartFacade::contentArray();
         }
 
         $cart_resource =  new CartResource($cart_items);
@@ -233,7 +233,7 @@ class CartController extends Controller
     
         CartFacade::clear();
 
-        $cart_items = auth()->user() ? auth()->user()->cartItems :  CartFacade::content();
+        $cart_items = auth()->user() ? auth()->user()->cartItems :  CartFacade::contentArray();
 
         $cart_resource =  new CartResource($cart_items);
         $cart_resource->with['message'] = 'Cart items cleared successfully';

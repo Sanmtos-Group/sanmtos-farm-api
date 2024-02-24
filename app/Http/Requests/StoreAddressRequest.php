@@ -22,7 +22,7 @@ class StoreAddressRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'string|min:15|in:Home Address,Office Address',
+            'title' => 'string|in:Home Address,Office Address',
             'first_name' => 'nullable|string|min:3|max:191',
             'last_name' => 'nullable|string|min:3|max:191',
             'dialing_code' => 'nullable|string|min:1|max:4',
@@ -35,4 +35,15 @@ class StoreAddressRequest extends FormRequest
             'is_preferred' => 'boolean',
         ];
     }
+
+    /**
+     * 
+     */
+
+     public function messages(): array
+     {
+        return [
+            'title.in' => 'Invalid title selected. title must be "Home Address" or "Office Address"',
+        ];
+     }
 }

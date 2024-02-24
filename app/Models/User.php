@@ -45,7 +45,7 @@ class User extends Authenticatable
         'dialing_code',
         'phone_number',
         'email',
-        // 'password',
+        'password',
     ];
 
     /**
@@ -85,6 +85,16 @@ class User extends Authenticatable
      * @var array
      */
     protected $with = ['roles', 'preference'];
+
+    /**
+     * Determine if a user owns a store
+     */
+    protected function name(): CastAttribute
+    {
+        return CastAttribute::make(
+            get: fn () => $this->first_name.' '.$this->last_name,
+        );
+    }
 
     /**
      * Get all of the model's addresses.
@@ -148,7 +158,8 @@ class User extends Authenticatable
      * Get the user verification codes 
      * 
      */
-    public function verificationCodes(): hasMany {
+    public function verificationCodes(): hasMany 
+    {
         return $this->hasMany(VerificationCode::class);
     }
 
@@ -158,6 +169,60 @@ class User extends Authenticatable
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class)->using(RoleUser::class);
+    }
+
+    /**
+     * Assign roles to user 
+     */
+
+    public function assignRole($role)
+    {
+        if($this->hasRole($role))
+        {
+           return true;
+        }
+
+        if(!is_null($the_role=$this->findRole($role))){
+            $this->roles()->attach($the_role->id);
+            return true;
+        }
+
+        $new_role = Role::create(['name' => $role]);
+        if(is_null($new_role))
+        {
+            return false;
+        }
+        
+        $this->roles()->attach($new_role->id);
+
+        return true;
+
+    }
+
+    /**
+     * @param \App\Models\Role || null
+     * 
+     * @return \App\Models\Role || null
+     */
+    public function findRole($role) : ?Role
+    {
+        $role_type = gettype($role);
+
+        switch ($role_type) {
+            case 'string':
+                if(Str::isUuid($role))
+                    return Role::find($role);
+                else
+                    return Role::where('id', $role)->orWhere('name',$role)->first();
+                break;
+            case 'object':
+                return get_class($role) == 'App\Models\Role'? Role::where('id', $role->id)->first() :null;
+                break;
+            default:
+                return null;
+                break;
+        }
+        return null;
     }
 
     /**
