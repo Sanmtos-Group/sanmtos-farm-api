@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -37,6 +38,15 @@ class Order extends Model
         'failure_reason'
     ];
 
+     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array<int, string>
+     */
+    protected $appends = [
+        'is_paid',
+    ];
+
 
     /**
      * Get the user that owns the order.
@@ -62,12 +72,22 @@ class Order extends Model
         return $this->hasMany(Orderable::class);
     }
 
-     /**
+    /**
      * Get all of the model's payments.
      */
-    public function payments() : MorphMany
+    public function payment() : MorphOne
     {
-        return $this->morphMany(Payment::class, 'paymentable');
+        return $this->morphOne(Payment::class, 'paymentable');
+    }
+
+      /**
+     *  meta attribute
+     */
+    protected function isPaid(): Attribute
+    {
+        return Attribute::make(
+            get: fn ()=> !is_null($this->payment) && !is_null($this->payment->paid_at?? null) && !is_null($this->payment->verified_at ?? null),
+        );
     }
 
     public static function genNumber()

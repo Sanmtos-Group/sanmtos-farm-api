@@ -87,7 +87,7 @@ class User extends Authenticatable
     protected $with = ['roles', 'preference'];
 
     /**
-     * Determine if a user owns a store
+     * User name attribute
      */
     protected function name(): CastAttribute
     {
@@ -115,7 +115,7 @@ class User extends Authenticatable
     /**
      * Get all of the model's addresses.
      */
-    public function order() : HasMany
+    public function orders() : HasMany
     {
         return $this->hasMany(Order::class);
     }

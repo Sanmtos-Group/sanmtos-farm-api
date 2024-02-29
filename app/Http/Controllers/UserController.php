@@ -6,6 +6,7 @@ use App\Models\Address;
 use App\Models\User;
 use App\Models\Role;
 use App\Http\Resources\AddressResource;
+use App\Http\Resources\OrderResource;
 use App\Http\Resources\PreferenceResource;
 use App\Http\Resources\RoleResource;
 use App\Http\Resources\UserResource;
@@ -16,7 +17,9 @@ use App\Http\Requests\StoreAddressRequest;
 use App\Http\Requests\StorePreferenceRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
+use Spatie\QueryBuilder\QueryBuilder;
 class UserController extends Controller
 {
 
@@ -196,7 +199,7 @@ class UserController extends Controller
         return $adresses_resource;
     }
 
-     /**
+    /**
      * Display authenticated user currency preference
      */
     public function indexPreference()
@@ -259,6 +262,45 @@ class UserController extends Controller
         return $user_resource;
 
     }
+
+    /**
+     * Display authenticated user orders
+     */
+    public function indexOrders()
+    {
+        $user = auth()->user();
+
+        $orders = QueryBuilder::for(\App\Models\Order::class)
+        ->defaultSort('created_at')
+        ->allowedSorts(
+            'price',
+            'total_price',
+            'status',
+            AllowedSort::custom('recent', new \App\Models\Sorts\LatestSort()),
+            AllowedSort::custom('oldest', new \App\Models\Sorts\OldestSort()),
+        )
+        ->allowedFilters([
+            AllowedFilter::exact('user_id')->default($user->id),
+            AllowedFilter::exact('status'),
+            AllowedFilter::exact('is_paid'),
+            AllowedFilter::exact('ordered_at')->ignore(null),
+        ])
+        ->allowedIncludes([
+            'user',
+            'payment',
+            'orderables',
+        ])
+        ->paginate()
+        ->appends(request()->query());
+
+        $order_resource =  OrderResource::collection($orders);
+
+        $order_resource->with['status'] = "OK";
+        $order_resource->with['message'] = 'Orders retrived successfully';
+
+        return $order_resource;
+    }
+
 
     /**
      * Store a newly created resource in storage.

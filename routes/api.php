@@ -80,6 +80,9 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::get('preference', 'indexPreference')->name('preference.index');
                 Route::post('preference', 'upsertPreference')->name('preference.upsert');
                 Route::post('preference', 'upsertPreference')->name('preference.upsert');
+
+                Route::get('orders', 'indexOrders')->name('orders.index');
+
             });
         });
     });
