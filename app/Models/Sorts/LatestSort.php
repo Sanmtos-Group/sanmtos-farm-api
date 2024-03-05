@@ -7,9 +7,9 @@ class LatestSort implements \Spatie\QueryBuilder\Sorts\Sort
 {
     public function __invoke(Builder $query, bool $descending, string $property)
     {
-        $direction = $descending ? 'ASC' : 'DESC';
-        $property = $property?? 'created_at';
+        $direction = $descending ? 'DESC' : 'ASC';
 
-        $query->orderBy($property, 'DESC');
+        // $query->orderBy($property, $direction);
+        $query->orderBy('created_at', 'DESC');
     }
 }

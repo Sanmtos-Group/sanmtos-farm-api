@@ -356,7 +356,6 @@ class User extends Authenticatable
         return $this->hasMany(CouponUsage::class);
     }
 
-
     /**
      * Generator OTP for the  user
      * 
@@ -367,7 +366,7 @@ class User extends Authenticatable
     function generateOTP(Carbon $expire_at=null) : int
     {
         # Check if user have an existing OTP
-        $verification_code = VerificationCode::where('user_id', $this->id)->first();
+        $verification_code = $this->verificationCodes()->first();
 
         $now = Carbon::now();
 

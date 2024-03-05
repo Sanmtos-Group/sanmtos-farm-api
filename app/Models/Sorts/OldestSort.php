@@ -9,6 +9,7 @@ class OldestSort implements \Spatie\QueryBuilder\Sorts\Sort
     {
         $direction = $descending ? 'DESC' : 'ASC';
 
-        $query->orderBy("created_at", 'ASC');
+        // $query->orderBy($property, $direction);
+        $query->orderBy('created_at', 'ASC');
     }
 }
