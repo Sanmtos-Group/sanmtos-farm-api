@@ -271,7 +271,7 @@ class UserController extends Controller
         $user = auth()->user();
 
         $orders = QueryBuilder::for(\App\Models\Order::class)
-        ->defaultSort('created_at')
+        ->defaultSort('-created_at')
         ->allowedSorts(
             'price',
             'total_price',
@@ -286,7 +286,6 @@ class UserController extends Controller
             AllowedFilter::exact('ordered_at')->ignore(null),
         ])
         ->allowedIncludes([
-            'user',
             'payment',
             'orderables',
         ])

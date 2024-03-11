@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\CloudinaryService;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Casts\Attribute as CastAttribute;
@@ -12,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -94,6 +96,86 @@ class User extends Authenticatable
         return CastAttribute::make(
             get: fn () => $this->first_name.' '.$this->last_name,
         );
+    }
+
+    /** Update the user's profile photo.
+     * @override Laravel\Jetstream\HasProfilePhoto public function updateProfilePhote(UploadedFile $photo)
+     * 
+     * @param  \Illuminate\Http\UploadedFile  $photo
+     * @return void
+     */
+    public function updateProfilePhoto(UploadedFile $photo)
+    {
+
+        tap($this->profile_photo_path, function ($previous) use ($photo) {
+            // $this->forceFill([
+            //     'profile_photo_path' => $photo->storePublicly(
+            //         'profile-photos', ['disk' => $this->profilePhotoDisk()]
+            //     ),
+            // ])->save();
+
+            $options = [
+                'overlayImageURL' => null, //
+                'thumbnail' => true, //true or false
+                'dimensions' => null, // null or ['width'=>700, 'height'=>700]
+                'roundCorners' => 0,
+            ];
+
+            // upload to cloudinary
+            $uploaded_photo = CloudinaryService::uploadImage($photo, $folder='profile-photos/', $options);
+            
+            $this->forceFill([
+                'profile_photo_path' =>  $uploaded_photo->getSecurePath()
+            ])->save();
+
+            if ($previous) 
+            {
+                // Storage::disk($this->profilePhotoDisk())->delete($previous);
+                CloudinaryService::destroy($previous);
+            }
+        });
+    }
+
+    /**
+     * Delete the user's profile photo.
+     * @override Laravel\Jetstream\HasProfilePhoto public function deleteProfilePhoto()
+     * 
+     * @return void
+     */
+    public function deleteProfilePhoto()
+    {
+
+        if (! Features::managesProfilePhotos()) 
+        {
+            return;
+        }
+
+        if (is_null($this->profile_photo_path)) 
+        {
+            return;
+        }
+
+        // Storage::disk($this->profilePhotoDisk())->delete($this->profile_photo_path);
+        CloudinaryService::destroy($this->profile_photo_path);
+
+
+        $this->forceFill([
+            'profile_photo_path' => null,
+        ])->save();
+    }
+
+     /**
+     * Get the URL to the user's profile photo.
+     * @override Laravel\Jetstream\HasProfilePhoto public function getProfilePhotoUrlAttribute()
+     * 
+     * @return string
+     */
+    public function getProfilePhotoUrlAttribute()
+    {
+        return $this->profile_photo_path
+                    // ? Storage::disk($this->profilePhotoDisk())->url($this->profile_photo_path)
+                    ? $this->profile_photo_path
+                    : $this->defaultProfilePhotoUrl();
     }
 
     /**

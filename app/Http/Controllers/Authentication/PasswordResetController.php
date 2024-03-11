@@ -82,6 +82,7 @@ class PasswordResetController extends Controller
         $validated = $request->validated();
         $user = auth()->user();
 
+
         $user->password =  Hash::make($validated['new_password']);
         $user->save();
 
