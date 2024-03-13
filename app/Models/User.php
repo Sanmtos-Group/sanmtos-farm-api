@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Services\CloudinaryService;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Casts\Attribute as CastAttribute;
+use Illuminate\Database\Eloquent\Casts\Attribute as Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -91,9 +91,9 @@ class User extends Authenticatable
     /**
      * User name attribute
      */
-    protected function name(): CastAttribute
+    protected function name(): Attribute
     {
-        return CastAttribute::make(
+        return Attribute::make(
             get: fn () => $this->first_name.' '.$this->last_name,
         );
     }
@@ -163,20 +163,25 @@ class User extends Authenticatable
             'profile_photo_path' => null,
         ])->save();
     }
+    
 
-     /**
+    /**
      * Get the URL to the user's profile photo.
-     * @override Laravel\Jetstream\HasProfilePhoto public function getProfilePhotoUrlAttribute()
-     * 
-     * @return string
+     *
+     *  @override Laravel\Jetstream\HasProfilePhoto public function profilePhotoUrl()
+     *
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute
      */
-    public function getProfilePhotoUrlAttribute()
+    public function profilePhotoUrl(): Attribute
     {
-        return $this->profile_photo_path
+        return Attribute::get(function (): string {
+            return $this->profile_photo_path
                     // ? Storage::disk($this->profilePhotoDisk())->url($this->profile_photo_path)
-                    ? $this->profile_photo_path
+                    ?  $this->profile_photo_path
                     : $this->defaultProfilePhotoUrl();
+        });
     }
+
 
     /**
      * Get all of the model's addresses.
@@ -213,9 +218,9 @@ class User extends Authenticatable
     /**
      * Determine if a user owns a store
      */
-    protected function ownsAStore(): CastAttribute
+    protected function ownsAStore(): Attribute
     {
-        return CastAttribute::make(
+        return Attribute::make(
             get: fn () => !empty($this->store),
         );
     }

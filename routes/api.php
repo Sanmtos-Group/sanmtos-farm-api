@@ -216,6 +216,17 @@ Route::middleware('auth:sanctum')->group(function () {
 
     });
 
+    Route::prefix('store')->group(function () {
+        Route::name('store.')->group(function () {
+            Route::controller(StoreController::class)->group(function(){
+                // Route::get('address', 'indexAddress')->name('address.index');
+                Route::post('address', 'storeAddress')->name('address.store');
+                Route::get('address', 'showAddress')->name('address.show');
+                Route::match(['put', 'patch'],'address', 'updateAddress')->name('address.update');
+            });
+        });
+    });
+
     Route::apiResource('stores', StoreController::class)->only(['store', 'update', 'destroy']);
     Route::prefix('stores/{store}')->group(function () {
         Route::name('stores.')->group(function () {
@@ -272,6 +283,8 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
 });
+
+// End of Auth Routes
 
 /**
  *  <----- The Public Routes ----->

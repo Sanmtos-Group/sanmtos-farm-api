@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Store extends Model
@@ -75,7 +76,7 @@ class Store extends Model
      *
      * @var array
      */
-    protected $with = ['images'];
+    protected $with = ['images', 'address'];
 
     /**
      * Return the sluggable configuration array for this model.
@@ -89,6 +90,14 @@ class Store extends Model
                 'source' => 'name'
             ]
         ];
+    }
+
+    /**
+     * Get all of the model's addresses.
+     */
+    public function address() : MorphOne
+    {
+        return $this->morphOne(Address::class, 'addressable');
     }
 
     /**
@@ -156,4 +165,6 @@ class Store extends Model
         return $this->inCoupons()->where('is_cancelled', false)
         ->where('valid_until','>', today());
     }
+
+    
 }

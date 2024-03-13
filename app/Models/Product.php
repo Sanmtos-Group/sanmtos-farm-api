@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;/*  */
 use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Database\Eloquent\SoftDeletes;
 class Product extends Model
@@ -66,7 +67,7 @@ class Product extends Model
      *
      * @var array
      */
-     protected $appends = [];
+     protected $appends = ['country'];
      
 
     /**
@@ -76,7 +77,7 @@ class Product extends Model
      */
     protected $with = ['images', 'activePromo'];
 
-     /**
+    /**
      * Determine product discount
      */
     protected function discount(): CastAttribute
@@ -93,6 +94,17 @@ class Product extends Model
     public function store(): BelongsTo
     {
         return $this->belongsTo(Store::class);
+    }
+
+
+    /**
+     * Determine product discount
+     */
+    protected function country(): CastAttribute
+    {
+        return CastAttribute::make(
+            get: fn () =>  $this->store->address->country?? null
+        );
     }
 
     /**

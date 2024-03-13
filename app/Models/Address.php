@@ -48,11 +48,23 @@ class Address extends Model
     ];
 
     /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = ['country'];
+
+    /**
      * The attributes that should be hidden in arrays.
      *
      * @var array
      */
-    protected $hidden = ['addressable_id', 'addressable_type'];
+    protected $hidden = [
+        'first_name',
+        'last_name' ,
+        'addressable_id', 
+        'addressable_type'
+    ];
 
     /**
      * Get the parent addressable model (user or store).
