@@ -39,9 +39,10 @@ class SendLoginOtpCode extends Notification implements ShouldQueue
         return (new MailMessage)
             ->subject('OTP')
             ->greeting('Hello!')
-            ->line('SANMTOS FARM OTP Code.')
-            ->line("Please use the OTP code: {$this->otp} to complete your transaction.")
-            ->line('Thank you for using our application!');
+            ->line('Sanmtos OTP Code.')
+            ->line("Kindly use the OTP code to complete your transaction.")
+            ->line("{$this->otp}")
+            ->line('Welcome you to the no 1 Africa biggest market');
     }
 
     /**
