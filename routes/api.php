@@ -15,6 +15,7 @@ use App\Http\Controllers\CouponController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\NotificationPreferenceController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentGatewayController;
 use App\Http\Controllers\PermissionController;
@@ -79,7 +80,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
                 Route::get('preference', 'indexPreference')->name('preference.index');
                 Route::post('preference', 'upsertPreference')->name('preference.upsert');
-                Route::post('preference', 'upsertPreference')->name('preference.upsert');
+
+                Route::get('notification-preferences', 'indexNotificationPreference')->name('notification-preference.index');
+                Route::get('notification-preferences/{notificationPreference}', 'showNotificationPreference')->name('notification-preference.show');
+                Route::post('notification-preferences', 'subscribeNotificationPreference')->name('notification-preference.subscribe');
+                Route::delete('notification-preferences', 'unsubscribeNotificationPreference')->name('notification-preference.subscribe');
 
                 Route::get('orders', 'indexOrders')->name('orders.index');
 
@@ -345,6 +350,7 @@ Route::prefix('coupons/{coupon}/')->group(function () {
 Route::apiResource('categories', CategoryController::class )->only(['index', 'show']);
 Route::apiResource('countries', CountryController::class)->only(['index', 'show']);
 Route::apiResource('images', ImageController::class)->only(['index', 'show']);
+Route::apiResource('notification-preferences', NotificationPreferenceController::class)->only(['index', 'show']);
 Route::apiResource('payment-gateways', PaymentGatewayController::class)->only(['index', 'show']);
 Route::apiResource('permissions', PermissionController::class)->only(['index', 'show']);
 

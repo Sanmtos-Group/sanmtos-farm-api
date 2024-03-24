@@ -192,11 +192,20 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the post's image.
+     * Get the user country, currecy's image.
      */
     public function preference()
     {
         return $this->morphOne(Preference::class, 'preferenceable');
+    }
+
+    /**
+     * The notifications preferences that belongs to the user (vendor).
+     */
+    public function notificationPreferences()
+    {
+        return $this->belongsToMany(NotificationPreference::class)->using(NotificationPreferenceUser::class);
+
     }
 
     /**

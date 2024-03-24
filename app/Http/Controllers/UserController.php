@@ -6,6 +6,7 @@ use App\Models\Address;
 use App\Models\User;
 use App\Models\Role;
 use App\Http\Resources\AddressResource;
+use App\Http\Resources\NotificationPreferenceResource;
 use App\Http\Resources\OrderResource;
 use App\Http\Resources\PreferenceResource;
 use App\Http\Resources\RoleResource;
@@ -232,6 +233,76 @@ class UserController extends Controller
 
         return $preference_resource;
     }
+
+
+     /**
+     * Display authenticated user notification preference
+     */
+    public function indexNotificationPreference()
+    {
+        $notification_preference_resource = new NotificationPreferenceResource(auth()->user()->notification_preferences);
+        $notification_preference_resource->with['message'] = 'Notification preference retrieved successfully';
+
+        return $notification_preference_resource;
+    }
+
+    /**
+     * subscribe user's to a notification preference 
+     */
+    public function subscribeNotificationPreference(Request $request)
+    {
+        $user = auth()->user();
+
+        $validated = $request->validate([
+            'notification_preference_id' => 'uuid|exists:notification_preferences,id',
+            'notification_preference_ids' => 'array',
+            'notification_preference_ids.*' => 'uuid|exists:notification_preferences,id',
+
+        ]);
+
+        $notify_pre =  array_merge(
+                            $validated['notification_preference_ids'] ?? [], 
+                            array_key_exists('notification_preference_id',$validated)? [$validated['notification_preference_id']] : []
+                        );
+
+        $user->notificationPreferences()->syncWithoutDetaching($notify_pre);
+               
+        $notification_preference_resource = new NotificationPreferenceResource($user->notificationPreferences);
+        $notification_preference_resource->with['message'] = 'Notification preferences subscribed successfully';
+
+        return $notification_preference_resource;
+    }
+
+
+    /**
+     * unsubscribe user's to a notification preference 
+     */
+    public function unsubscribeNotificationPreference(Request $request)
+    {
+        $user = auth()->user();
+
+        $validated = $request->validate([
+            'notification_preference_id' => 'uuid|exists:notification_preferences,id',
+            'notification_preference_ids' => 'array',
+            'notification_preference_ids.*' => 'uuid|exists:notification_preferences,id',
+
+        ]);
+
+
+        $notify_pre =  array_merge(
+                            $validated['notification_preference_ids'] ?? [], 
+                            array_key_exists('notification_preference_id',$validated)? [$validated['notification_preference_id']] : []
+                        );
+
+        $user->notificationPreferences()->detach($notify_pre);
+
+               
+        $notification_preference_resource = new NotificationPreferenceResource($user->notificationPreferences);
+        $notification_preference_resource->with['message'] = 'Notification preferences unsubscribed successfully';
+
+        return $notification_preference_resource;
+    }
+
 
     /**
      * Display a listing users that are staff.

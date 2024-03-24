@@ -40,6 +40,7 @@ class DatabaseSeeder extends Seeder
             CurrencyExchangeRateSeeder::class,
             LikeSeeder::class,
             RatingSeeder::class,
+            NotificationPreferenceSeeder::class,
         ]);
     }
 }
