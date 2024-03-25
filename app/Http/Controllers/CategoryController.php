@@ -72,8 +72,9 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Category $category)
+    public function show($category)
     {
+        $category = Category::where('id', $category)->orWhere('slug', $category)->firstOrFail();
         return new CategoryResource($category);
 
     }
@@ -89,9 +90,12 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCategoryRequest $request, Category $category)
+    public function update(UpdateCategoryRequest $request, $category)
     {
         $request->validated();
+
+        $category = Category::where('id', $category)->orWhere('slug', $category)->firstOrFail();
+
 
         $insert = [
             "name" => $request->name,
