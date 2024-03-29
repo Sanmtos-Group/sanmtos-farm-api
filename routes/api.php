@@ -13,6 +13,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\CountryController;
+use App\Http\Controllers\DiscountTypeController;
 use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\NotificationPreferenceController;
@@ -349,6 +350,7 @@ Route::prefix('coupons/{coupon}/')->group(function () {
 
 Route::apiResource('categories', CategoryController::class )->only(['index', 'show']);
 Route::apiResource('countries', CountryController::class)->only(['index', 'show']);
+Route::apiResource('discount-types', DiscountTypeController::class)->only(['index', 'show']);
 Route::apiResource('images', ImageController::class)->only(['index', 'show']);
 Route::apiResource('notification-preferences', NotificationPreferenceController::class)->only(['index', 'show']);
 Route::apiResource('payment-gateways', PaymentGatewayController::class)->only(['index', 'show']);
