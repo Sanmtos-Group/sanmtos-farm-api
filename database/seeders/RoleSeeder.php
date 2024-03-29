@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Role;
-use App\TestData\TestRole;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -14,11 +13,32 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        if(Role::all()->count() <= 0){
-            TestRole::populateDB();
-        }
-        else {
-            Role::factory()->count(5)->create();
-        }
+         /**
+         * @var array $roles
+         */
+        $roles = [
+            [ 
+                'name'=>'super-admin',
+                'store_id'=>null    
+            ],
+            [ 
+                'name'=>'admin',
+                'store_id'=>null    
+            ],
+            [ 
+                'name'=>'sanmtos-salesperson',
+                'store_id'=>null    
+            ],
+            [ 
+                'name'=>'store-admin',
+                'store_id'=>null    
+            ],
+        ];
+
+        Role::upsert(
+            $roles, 
+            uniqueBy:['name', 'store_id'],
+            update:['name', 'store_id'],
+        );
     }
 }
