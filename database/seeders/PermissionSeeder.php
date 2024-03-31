@@ -14,11 +14,47 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        if(Permission::all()->count() <= 0){
-            TestPermission::populateDB();
-        }
-        else {
-            Permission::factory()->count(5)->create();
-        }
+        /**
+         * @var array $permissions
+         */
+        $permissions = [
+            ['name'=>'create store'],
+            ['name'=>'read store'],
+            ['name'=>'update store'],
+            ['name'=>'delete store'],
+            ['name'=>'verify store'],
+
+            ['name'=>'create product'],
+            ['name'=>'read product'],
+            ['name'=>'update product'],
+            ['name'=>'delete product'],
+
+            ['name'=>'create role'],
+            ['name'=>'read role'],
+            ['name'=>'update role'],
+            ['name'=>'delete role'],
+            ['name'=>'assign role'],
+            ['name'=>'remove role'],
+                
+            ['name'=>'create permission'],
+            ['name'=>'read permission'],
+            ['name'=>'update permission'],
+            ['name'=>'delete permission'],
+            ['name'=>'grant permission'],
+            ['name'=>'revoke permission'],
+            ['name'=>'sync permission'],
+
+            ['name'=>'create promo'],
+            ['name'=>'read promo'],
+            ['name'=>'update promo'],
+            ['name'=>'delete promo'],
+            ['name'=>'cancel promo'],
+        ];
+        
+        Permission::upsert(
+            $permissions, 
+            uniqueBy:['name'],
+            update:['name'],
+        );
     }
 }
