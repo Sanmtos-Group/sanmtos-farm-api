@@ -176,8 +176,10 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::controller(CouponController::class)->group(function (){
                 Route::match(['put', 'patch'], '{coupon}/cancel', 'cancel')->name('cancel');
                 Route::match(['put', 'patch'], '{coupon}/continue', 'continue')->name('continue');
-                Route::post('{coupon}/products', 'attachProducts')->name('products.attach');
-                Route::delete('{coupon}/products', 'detachProducts')->name('products.detach');
+                Route::post('{coupon}/applicable-products', 'attachApplicableProducts')->name('applicable_products.attach');
+                Route::delete('{coupon}/applicable-products', 'detachApplicableProducts')->name('applicable_products.detach');
+                Route::post('{coupon}/applicable-categories', 'attachApplicableCategories')->name('applicable_categories.attach');
+                Route::delete('{coupon}/applicable-categories', 'detachApplicableCategories')->name('applicable_categories.detach');
             });
         });
     });

@@ -149,6 +149,13 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
+        if(request()->has('include'))
+        {
+            foreach (explode(',', request()->include) as $key => $value) {
+               $product->{$value};
+            }
+        }
+
         $product_resource = new ProductResource($product);
         $product_resource->with['message'] = 'Product retrieved successfully';
 

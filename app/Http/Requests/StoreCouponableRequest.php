@@ -23,12 +23,14 @@ class StoreCouponableRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'coupon_id' => 'uuid|exists:coupons,id',
-            'couponable_id' => 'uuid',
-
+    
             'product_ids' =>'array',
             'product_ids.*' => 'uuid|exists:products,id', 
             'product_id' => 'uuid|exists:products,id',
+
+            'category_ids' =>'array',
+            'category_ids.*' => 'uuid|exists:categories,id', 
+            'category_id' => 'uuid|exists:categories,id',
         ];
     }
 }

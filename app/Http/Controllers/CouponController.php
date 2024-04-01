@@ -11,6 +11,9 @@ use App\Models\Coupon;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
+use Spatie\QueryBuilder\QueryBuilder;
 class CouponController extends Controller
 {
     public function __construct(){
@@ -22,24 +25,52 @@ class CouponController extends Controller
      */
     public function index(Request $request)
     {
-        $per_page = is_numeric($request->per_page)? (int) $request->per_page : 15;
 
-        $order_by_code = $request->order_by_code == 'asc' || $request->order_by_code == 'desc'
-        ? $request->order_by_code : null;
-
-        $order_by_name = $request->order_by_name == 'asc' || $request->order_by_name == 'desc'
-                        ? $request->order_by_name : null;
-
-        $order_by_created_at = $request->order_by_created_at == 'asc' || $request->order_by_created_at == 'desc'
-                        ? $request->order_by_created_at : null;
-
-        $coupons = Coupon::where('id', '<>', null);
-
-        $coupons = is_null($order_by_code)? $coupons : $coupons->orderBy('code', $order_by_code ) ;
-        $coupons = is_null($order_by_name)? $coupons : $coupons->orderBy('name', $order_by_name ) ;
-        $coupons = is_null($order_by_created_at)? $coupons : $coupons->orderBy('name', $order_by_created_at ) ;
-
-        $coupons = $coupons->paginate($per_page);
+        $coupons = QueryBuilder::for(Coupon::class)
+        ->defaultSort('created_at')
+        ->allowedSorts(
+            'code',
+            'discount',
+            'description',
+            'discount_type_id',
+            'discount',
+            'created_at',
+            'updated_at',
+            AllowedSort::custom('recent', new \App\Models\Sorts\LatestSort()),
+            AllowedSort::custom('oldest', new \App\Models\Sorts\OldestSort()),
+        )
+        ->allowedFilters([
+            'code',
+            'discount',
+            'description',
+            'discount_type_id',
+            'discount',
+            'requires_min_purchase',
+            'min_purchase_price',
+            'is_for_first_purchase_only',
+            'max_usage',
+            'unlimited_usage',
+            'expiration_date',
+            'cancelled_at',
+            'store_id',
+            'created_at',
+            'updated_at',
+            AllowedFilter::scope('store'),
+            AllowedFilter::scope('discount_types'),
+            AllowedFilter::scope('recipients'),
+            AllowedFilter::scope('applicable_products'),
+            AllowedFilter::scope('applicable_categories'),
+        ])
+        ->allowedIncludes([
+            'store',
+            'recipients',
+            'discountType',
+            'applicableProducts',
+            'applicableCategories',
+            'usages'
+        ])
+        ->paginate()
+        ->appends(request()->query());
 
         $coupon_resource =  CouponResource::collection($coupons);
         $coupon_resource->with['status'] = "OK";
@@ -62,8 +93,44 @@ class CouponController extends Controller
     public function store(StoreCouponRequest $request)
     {
         $validated = $request->validated();
-
         $coupon = Coupon::create($validated);
+
+      
+        $recipients = [];
+        // clean recipient ids for syncing 
+        foreach ($validated['recipient_ids']?? [] as $key=>$user_id) 
+        {
+            $recipients [$user_id] = [
+                // Other pivot table attributes if needed
+                'id' => Str::uuid()->toString(), // Generate UUID for the pivot ID
+            ];
+        }
+        $coupon->recipients()->syncWithoutDetaching($recipients);
+        $coupon->recipients;  
+        
+        $applicable_products = [];
+        // clean applicable product ids for syncing 
+        foreach ($validated['applicable_product_ids']?? [] as $key=>$product_id) 
+        {
+            $applicable_products [$product_id] = [
+                // Other pivot table attributes if needed
+                'id' => Str::uuid()->toString(), // Generate UUID for the pivot ID
+            ];
+        }
+        $coupon->applicableProducts()->syncWithoutDetaching($applicable_products);
+        $coupon->applicableProducts; 
+
+        $applicable_categories = [];
+        // clean applicable category ids for syncing 
+        foreach ($validated['applicable_category_ids']?? [] as $key=>$category_id) 
+        {
+            $applicable_categories [$category_id] = [
+                // Other pivot table attributes if needed
+                'id' => Str::uuid()->toString(), // Generate UUID for the pivot ID
+            ];
+        }
+        $coupon->applicableCategories()->syncWithoutDetaching($applicable_categories);
+        $coupon->applicableCategories; 
 
         $coupon_resource = new CouponResource($coupon);
         $coupon_resource->with['message'] = 'Coupon created successfully';
@@ -76,6 +143,13 @@ class CouponController extends Controller
      */
     public function show(Coupon $coupon)
     {
+        if(request()->has('include'))
+        {
+            foreach (explode(',', request()->include) as $key => $value) {
+               $coupon->{$value};
+            }
+        }
+
         $coupons = new CouponResource($coupon);
         $coupons->with['message'] = "Coupon retrieved successfully.";
 
@@ -121,7 +195,7 @@ class CouponController extends Controller
      * @param App\Models\Coupon $coupon
     */
     public function continue(Coupon $coupon){
-        $coupon->is_cancelled = false;
+        $coupon->cancelled_at = null;
         $coupon->save();
 
         $coupon_resource = new CouponResource($coupon);
@@ -137,7 +211,7 @@ class CouponController extends Controller
      */
 
     public function cancel(Coupon $coupon){
-        $coupon->is_cancelled = true;
+        $coupon->cancelled_at = now();
         $coupon->save();
 
         $coupon_resource = new CouponResource($coupon);
@@ -146,74 +220,56 @@ class CouponController extends Controller
         return $coupon_resource;
     }
 
-    /**
-     * Get all products attached to the coupon
-     *
-     * @param App\Models\Coupon $coupon
-     * @return App\Http\Resources\ProductResource $product_resource
-     */
-    public function productsIndex(Coupon $coupon)
-    {
-        $product_resource = new ProductResource($coupon->products);
-
-        $product_resource->with['message'] = 'Coupon attached products retrieved successfully';
-        return $product_resource;
-    }
-
      /**
-     * Attached products to coupon
+     * Add to coupon applicable products
      *
      * @param App\Models\Coupon $coupon
      * @param App\Http\Requests\StoreCouponableRequest $request
      * @return ProductResource $product_resource
      */
-    public function attachProducts(Coupon $coupon, StoreCouponableRequest $request )
+    public function attachApplicableProducts(Coupon $coupon, StoreCouponableRequest $request )
     {
         $validated = $request->validated();
 
         // attach by multiple product ids
        if(array_key_exists('product_ids', $validated))
        {
-            foreach($validated['product_ids'] as $id){
+            
+            $product_ids = $coupon->store->products()->whereIn('id', $validated['product_ids'])->pluck('id');
 
-                $product = Product::find($id);
-
-                // check if the product is of the same store as the coupon
-                if($product->store_id === $coupon->store_id)
-                {
-                    // $coupon->products()->syncWithoutDetaching($product);
-                    $coupon->products()->syncWithoutDetaching([
-                        $product->id => [
-                            // Other pivot table attributes if needed
-                            'id' => Str::uuid()->toString(), // Generate UUID for the pivot ID
-                        ]
-                    ]);
-                }
+            $applicable_products = [];
+            // clean applicable product ids for syncing 
+            foreach ($product_ids?? [] as $key=>$product_id) 
+            {
+                $applicable_products [$product_id] = [
+                    // Other pivot table attributes if needed
+                    'id' => Str::uuid()->toString(), // Generate UUID for the pivot ID
+                ];
             }
+
+            $coupon->applicableProducts()->syncWithoutDetaching($applicable_products);
+            $coupon->applicableProducts; 
        }
         // attach by single product id
        elseif(array_key_exists('product_id', $validated))
        {
-            $product = Product::find($validated['product_id']);
+            $product_id = $coupon->store->products()->where('id', $validated['product_id'])->pluck('id')->first();
 
-            // check if the product is of the same store as the coupon
-            if($product->store_id === $coupon->store_id)
-            {
-                // $coupon->products()->syncWithoutDetaching($product);
-                $coupon->products()->syncWithoutDetaching([
-                    $product->id => [
-                        // Other pivot table attributes if needed
-                        'id' => Str::uuid()->toString(), // Generate UUID for the pivot ID
-                    ]
-                ]);
-            }
+            $coupon->applicableProducts()->syncWithoutDetaching([
+                $product_id => [
+                    // Other pivot table attributes if needed
+                    'id' => Str::uuid()->toString(), // Generate UUID for the pivot ID
+                ]
+            ]);
+
+            
        }
 
-
-        $product_resource = new ProductResource($coupon->products);
-
-        $product_resource->with['message'] = 'Product(s) attached to coupon succesfully';
-        return $product_resource;
+        $coupon->applicableProducts; 
+        
+        $coupon_resource = new CouponResource($coupon);
+        $coupon_resource->with['message'] = 'Product(s) attached to coupon succesfully';
+        return $coupon_resource;
     }
 
     /**
@@ -223,25 +279,97 @@ class CouponController extends Controller
      * @param Illuminatie\Http\Request $request
      * @return App\Http\Resources\ProductResource $product_resource
      */
-    public function detachProducts(Coupon $coupon, Request $request )
+    public function detachApplicableProducts(Coupon $coupon, Request $request )
     {
-
-
         // detach by multiple product ids
-       if($request->has('product_ids'))
+        if($request->has('product_ids'))
+        {
+            $coupon->applicableProducts()->detach($request->product_ids);
+        }
+            // detach by single product id
+        else if($request->has('product_id'))
+        {
+            $coupon->applicableProducts()->detach($request->product_id);
+        }
+
+        $coupon->applicableProducts; 
+        
+        $coupon_resource = new CouponResource($coupon);
+        $coupon_resource->with['message'] = 'Product(s) detached from coupon succesfully';
+        return $coupon_resource;
+    }
+
+
+    /**
+     * Add to coupon applicable categories
+     *
+     * @param App\Models\Coupon $coupon
+     * @param App\Http\Requests\StoreCouponableRequest $request
+     * @return CouponResource $coupon_resource
+     */
+    public function attachApplicableCategories(Coupon $coupon, StoreCouponableRequest $request )
+    {
+        $validated = $request->validated();
+
+        // attach by multiple category ids
+       if(array_key_exists('category_ids', $validated))
        {
-            $coupon->products()->detach($request->product_id);
+            $applicable_categories = [];
+            // clean applicable category ids for syncing 
+            foreach ($validated['category_ids']?? [] as $key=>$category_id) 
+            {
+                $applicable_categories [$category_id] = [
+                    // Other pivot table attributes if needed
+                    'id' => Str::uuid()->toString(), // Generate UUID for the pivot ID
+                ];
+            }
+
+            $coupon->applicableCategories()->syncWithoutDetaching($applicable_categories);
+            $coupon->applicableCategories; 
        }
-        // detach by single product id
-       else if($request->has('product_id'))
+        // attach by single category id
+       elseif(array_key_exists('category_id', $validated))
        {
-            $coupon->products()->detach($request->product_id);
+            $coupon->applicableCategories()->syncWithoutDetaching([
+                $validated['category_id'] => [
+                    // Other pivot table attributes if needed
+                    'id' => Str::uuid()->toString(), // Generate UUID for the pivot ID
+                ]
+            ]);
+            
        }
 
+        $coupon->applicableCategories; 
+        
+        $coupon_resource = new CouponResource($coupon);
+        $coupon_resource->with['message'] = 'Category(ies) attached to coupon succesfully';
+        return $coupon_resource;
+    }
 
-        $product_resource = new ProductResource($coupon->products);
+    /**
+     * Dettached categories to coupon
+     *
+     * @param App\Models\Coupon $coupon
+     * @param Illuminatie\Http\Request $request
+     * @return App\Http\Resources\ProductResource $product_resource
+     */
+    public function detachApplicableCategories(Coupon $coupon, Request $request )
+    {
+        // detach by multiple category ids
+        if($request->has('category_ids'))
+        {
+            $coupon->applicableCategories()->detach($request->category_ids);
+        }
+            // detach by single category id
+        else if($request->has('category_id'))
+        {
+            $coupon->applicableCategories()->detach($request->category_id);
+        }
 
-        $product_resource->with['message'] = 'Product(s) detached from coupon succesfully';
-        return $product_resource;
+        $coupon->applicableCategories; 
+        
+        $coupon_resource = new CouponResource($coupon);
+        $coupon_resource->with['message'] = 'Category(ies) detached from coupon succesfully';
+        return $coupon_resource;
     }
 }

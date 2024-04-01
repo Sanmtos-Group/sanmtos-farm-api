@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -31,23 +32,19 @@ class Coupon extends Model
      */
     protected $fillable = [
         'code',
+        'description',
+        'discount_type_id',
         'discount',
-        'is_bulk_applicable',
-        'number_of_items',
-        'valid_until',
+        'requires_min_purchase',
+        'min_purchase_price',
+        'is_for_first_purchase_only',
+        'max_usage',
+        'unlimited_usage',
+        'expiration_date',
+        'cancelled_at',
         'store_id',
-        'user_id',
     ];
     
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'is_cancelled' => 'boolean',
-    ];
 
     /**
      * The accessors to append to the model's array form.
@@ -55,8 +52,10 @@ class Coupon extends Model
      * @var array<int, string>
      */
     protected $appends = [
-        'is_valid',
+        'is_valid', 
     ];
+
+    
 
      /**
      * Determine if a coupon is valid
@@ -64,15 +63,13 @@ class Coupon extends Model
     protected function isValid(): Attribute
     {
         return Attribute::make(
-            get: fn () => !($this->is_cancelled) 
-                && $this->valid_until >= today() 
-                && is_null($this->user_id)? true : $this->user_id == auth()->user()->id
-                && is_null($this->usages()->where('user_id', auth()->user()->id)->first())
+            get: fn () => is_null($this->cancelled_at) 
+                && $this->expiration_date >= today() 
         );
     }
 
     /**
-     * Get the belonging store of the coupon.
+     * Get the store that owns the coupon
      */
     public function store(): BelongsTo
     {
@@ -80,28 +77,151 @@ class Coupon extends Model
     }
 
     /**
-     * Get the recipient of the coupon.
+     * Scope a query to only include users of a given type.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  mix  $values
+     * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function user(): BelongsTo
+    public function scopeStore($query, ...$values)
     {
-        return $this->belongsTo(User::class);
+        $query->withWhereHas('store', function($query) use($values){
+            $query->whereIn('id', $values);
+
+            foreach ($values as $key => $value) {
+                $query->orWhere('name','like',"%".$value."%")
+                ->orWhere('slug','like',"%".$value."%");
+            }
+                
+        });
+        
+        return $query; 
+    }
+
+
+    /**
+     * Get the discount type that owns the coupon
+     */
+    public function discountType(): BelongsTo
+    {
+        return $this->belongsTo(DiscountType::class);
     }
 
     /**
-     * Get all of the products that are assigned this coupon.
+     * Scope the coupon by the discount type 
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  mix  $values
+     * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function products(): MorphToMany
+    public function scopeDiscountType(Builder $query, ...$values)
+    {
+        $query->whereHas('discountType', function(Builder $query) use($values)
+        {
+            $query->whereIn('discount_types.id', $values);
+            foreach ($values as $key => $value) 
+            {
+                $query->orWhere('discount_types.name','like',"%".$value."%")
+                ->orWhere('discount_types.description','like',"%".$value."%")
+                ->orWhere('users.code','like',"%".$value."%");
+            }
+        });
+       
+        return $query; 
+    }
+
+    /**
+     * Get the recipients of the coupon.
+     */
+    public function recipients(): MorphToMany
+    {
+        return $this->morphedByMany(User::class, 'couponable');
+    }
+
+    /**
+     * Scope the coupon by the recipients 
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  mix  $values
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeRecipients(Builder $query, ...$values)
+    {
+        $query->whereHas('recipients', function(Builder $query) use($values)
+        {
+            $query->whereIn('users.id', $values);
+            foreach ($values as $key => $value) 
+            {
+                $query->orWhere('users.first_name','like',"%".$value."%")
+                ->orWhere('users.last_name','like',"%".$value."%")
+                ->orWhere('users.email','like',"%".$value."%")
+                ->orWhere('users.phone_number','like',"%".$value."%")
+                ->orWhere('users.gender','like',"%".$value."%");
+            }
+        });
+       
+        return $query; 
+    }
+
+     /**
+     * Get all applicable products of the coupon.
+     */
+    public function applicableProducts(): MorphToMany
     {
         return $this->morphedByMany(Product::class, 'couponable');
     }
- 
-    /**
-     * Get all of the stores that are assigned this coupon.
+
+     /**
+     * Scope the coupon by the recipients 
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  mix  $values
+     * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function stores(): MorphToMany
+    public function scopeApplicableProducts(Builder $query, ...$values)
     {
-        return $this->morphedByMany(Store::class, 'couponable');
+        $query->whereHas('applicableProducts', function(Builder $query) use($values)
+        {
+            $query->whereIn('products.id', $values);
+            foreach ($values as $key => $value) 
+            {
+                $query->orWhere('products.name','like',"%".$value."%");
+            }
+        });
+       
+        return $query; 
     }
+
+
+     /**
+     * Get all applicable products of the coupon.
+     */
+    public function applicableCategories(): MorphToMany
+    {
+        return $this->morphedByMany(Category::class, 'couponable');
+    }
+
+     /**
+     * Scope the coupon by the recipients 
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  mix  $values
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeApplicableCategories(Builder $query, ...$values)
+    {
+        $query->whereHas('applicableCategories', function(Builder $query) use($values)
+        {
+            $query->whereIn('categories.id', $values);
+            foreach ($values as $key => $value) 
+            {
+                $query->orWhere('categories.name','like',"%".$value."%");
+            }
+        });
+       
+        return $query; 
+    }
+
 
     /**
      * Get the usages of the coupon.

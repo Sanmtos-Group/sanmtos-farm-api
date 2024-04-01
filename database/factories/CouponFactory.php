@@ -2,8 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Enums\DiscountTypeEnums;
+use App\Models\DiscountType;
 use App\Models\Store;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,14 +20,19 @@ class CouponFactory extends Factory
     public function definition(): array
     {
         return [
+
             'code' => fake()->unique()->bothify('??-##-??'),
+            'description' => fake()->realText(),
+            'discount_type_id' =>  DiscountType::where('code', DiscountTypeEnums::PercentageOff->value)->first()->id ?? null,
             'discount' => fake()->numberBetween(1, 100),
-            'is_bulk_applicable' => $is_bulk_applicable = fake()->boolean(),
-            'number_of_items' => $is_bulk_applicable? fake()->numberBetween(1,10) : 1,
-            'valid_until' => fake()->dateTimeBetween('+1 week', '+5 month')->format('Y-m-d H:i:s'),
-            'is_cancelled' => fake()->boolean(),
-            'store_id' => Store::inRandomOrder()->first()?? Store::factory()->create(), 
-            'user_id' => fake()->boolean ? User::inRandomOrder()->first()?? User::factory()->create() : null,
+            'requires_min_purchase' => $requires_min_purchase = fake()->boolean(),
+            'min_purchase_price' => $requires_min_purchase? fake()->numberBetween(1,10) : 0,
+            'is_for_first_purchase_only' => fake()->boolean(),
+            'max_usage' => true,
+            'unlimited_usage' => false,
+            'expiration_date' => now()->addDays(fake()->numberBetween(7))->format('Y-m-d H:i:s'),
+            'cancelled_at' => null,
+            'store_id' => null, 
         ];
     }
 }
