@@ -360,7 +360,7 @@ class CouponController extends Controller
         {
             $coupon->applicableCategories()->detach($request->category_ids);
         }
-            // detach by single category id
+        // detach by single category id
         else if($request->has('category_id'))
         {
             $coupon->applicableCategories()->detach($request->category_id);
