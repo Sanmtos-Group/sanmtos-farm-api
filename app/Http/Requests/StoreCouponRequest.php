@@ -31,8 +31,8 @@ class StoreCouponRequest extends FormRequest
             'requires_min_purchase' => 'sometimes|boolean',
             'min_purchase_price' => 'required_if:requires_min_purchase,true|exclude_unless:requires_min_purchase,true|numeric|gt:0',
             'for_first_purchase_only' => 'sometimes|boolean',
-            'max_usage' => 'sometimes|integer|gt:0',
-            'unlimted_usuage' => 'sometimes|boolean',
+            // 'max_usage' => 'sometimes|integer|gt:0',
+            // 'unlimited_usuage' => 'sometimes|boolean',
             'expiration_date' => 'required|date|after:'.now(),
             'store_id' => 'nullable|uuid|exists:stores,id',
 
