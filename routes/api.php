@@ -120,7 +120,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('products')->group(function () {
         Route::name('products.')->group(function () {
             Route::controller(ProductController::class)->group(function (){
-                Route::match(['put', 'patch'], '{product}/revoke-verification', 'revokeVerification')->name('revoke_verification');
+                Route::match(['put', 'patch'], '{product}/revoke-verification', 'revokeVerification')->name('revoke-verification');
                 Route::match(['put', 'patch'], '{product}/verify', 'verify')->name('verify');
                 Route::post('{product}/promos', 'promosStore')->name('promos.store');
                 Route::post('{product}/coupons', 'couponsStore')->name('coupons.store');
@@ -176,10 +176,12 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::controller(CouponController::class)->group(function (){
                 Route::match(['put', 'patch'], '{coupon}/cancel', 'cancel')->name('cancel');
                 Route::match(['put', 'patch'], '{coupon}/continue', 'continue')->name('continue');
-                Route::post('{coupon}/applicable-products', 'attachApplicableProducts')->name('applicable_products.attach');
-                Route::delete('{coupon}/applicable-products', 'detachApplicableProducts')->name('applicable_products.detach');
-                Route::post('{coupon}/applicable-categories', 'attachApplicableCategories')->name('applicable_categories.attach');
-                Route::delete('{coupon}/applicable-categories', 'detachApplicableCategories')->name('applicable_categories.detach');
+                Route::post('{coupon}/recipients', 'attachRecipients')->name('recipients.attach');
+                Route::delete('{coupon}/recipients', 'detachRecipients')->name('recipients.detach');
+                Route::post('{coupon}/applicable-products', 'attachApplicableProducts')->name('applicable-products.attach');
+                Route::delete('{coupon}/applicable-products', 'detachApplicableProducts')->name('applicable-products.detach');
+                Route::post('{coupon}/applicable-categories', 'attachApplicableCategories')->name('applicable-categories.attach');
+                Route::delete('{coupon}/applicable-categories', 'detachApplicableCategories')->name('applicable-categories.detach');
             });
         });
     });
@@ -189,9 +191,9 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::controller(CheckoutController::class)->group(function (){
                 Route::get('', 'index' )->name('checkout.index');
                 Route::get('summary', 'index' )->name('checkout.summary');
-                Route::match(['put', 'patch'], 'delivery-address/{address}', 'upsertDeliveryAddress' )->name('checkout.devliveryAddress.upsert');
+                Route::match(['put', 'patch'], 'delivery-address/{address}', 'upsertDeliveryAddress' )->name('checkout.devlivery-address.upsert');
                 Route::match(['put', 'patch'], 'coupon', 'addCoupon' )->name('checkout.coupon.add');
-                Route::match(['put', 'patch'], 'payment-gateway/{payment_gateway}', 'upsertPaymentGateway' )->name('checkout.paymentGateway.upsert');
+                Route::match(['put', 'patch'], 'payment-gateway/{payment_gateway}', 'upsertPaymentGateway' )->name('checkout.payment-gateway.upsert');
                 Route::post( 'confirm-order', 'confirmOrder')->name('confirmOrder');
                 // Route::post('{coupon}/products', 'attachProducts')->name('products.attach');
                 // Route::delete('{coupon}/products', 'detachProducts')->name('products.detach');

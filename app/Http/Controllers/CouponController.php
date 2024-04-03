@@ -220,6 +220,76 @@ class CouponController extends Controller
         return $coupon_resource;
     }
 
+    /**
+     * Add to coupon recipients
+     *
+     * @param App\Models\Coupon $coupon
+     * @param App\Http\Requests\StoreCouponableRequest $request
+     * @return ProductResource $product_resource
+     */
+    public function attachRecipients(Coupon $coupon, StoreCouponableRequest $request )
+    {
+        $validated = $request->validated();
+
+        // attach by multiple product ids
+       if(array_key_exists('recipient_ids', $validated))
+       {
+            $recipient_users = [];
+            // clean applicable product ids for syncing 
+            foreach ($validated['recipient_ids']?? [] as $key=>$user_id) 
+            {
+                $recipient_users [$user_id] = [
+                    // Other pivot table attributes if needed
+                    'id' => Str::uuid()->toString(), // Generate UUID for the pivot ID
+                ];
+            }
+
+            $coupon->recipients()->syncWithoutDetaching($recipient_users);
+            $coupon->recipients; 
+       }
+        // attach by single product id
+       elseif(array_key_exists('recipient_id', $validated))
+       {
+            $coupon->recipients()->syncWithoutDetaching([
+                $validated['recipient_id'] => [
+                    // Other pivot table attributes if needed
+                    'id' => Str::uuid()->toString(), // Generate UUID for the pivot ID
+                ]
+            ]);
+
+            
+       }
+
+        $coupon->recipients; 
+        
+        $coupon_resource = new CouponResource($coupon);
+        $coupon_resource->with['message'] = 'Recipients(s) attached to coupon succesfully';
+        return $coupon_resource;
+    }
+
+     /**
+     * Detached recipients from coupon
+     *
+     * @param App\Models\Coupon $coupon
+     * @param Illuminatie\Http\Request $request
+     * @return App\Http\Resources\ProductResource $product_resource
+     */
+    public function detachRecipients(Coupon $coupon, Request $request )
+    {
+        // detach by multiple product ids
+        if($request->has('recipient_ids') || $request->has('recipient_id'))
+        {
+            $coupon->recipients()->detach($request->recipient_ids);
+            $coupon->recipients()->detach($request->recipient_id);
+        }
+         
+        $coupon->recipients; 
+        
+        $coupon_resource = new CouponResource($coupon);
+        $coupon_resource->with['message'] = 'Recipient(s) detached from coupon succesfully';
+        return $coupon_resource;
+    }
+
      /**
      * Add to coupon applicable products
      *
@@ -273,7 +343,7 @@ class CouponController extends Controller
     }
 
     /**
-     * Dettached products to coupon
+     * Detached products to coupon
      *
      * @param App\Models\Coupon $coupon
      * @param Illuminatie\Http\Request $request
@@ -347,7 +417,7 @@ class CouponController extends Controller
     }
 
     /**
-     * Dettached categories to coupon
+     * Detached categories to coupon
      *
      * @param App\Models\Coupon $coupon
      * @param Illuminatie\Http\Request $request

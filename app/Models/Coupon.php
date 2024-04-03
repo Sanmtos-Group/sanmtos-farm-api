@@ -38,13 +38,22 @@ class Coupon extends Model
         'requires_min_purchase',
         'min_purchase_price',
         'is_for_first_purchase_only',
-        'max_usage',
-        'unlimited_usage',
+        // 'max_usage',
+        // 'unlimited_usage',
         'expiration_date',
         'cancelled_at',
         'store_id',
     ];
-    
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'max_usage',
+        'unlimited_usage',
+    ];
 
     /**
      * The accessors to append to the model's array form.
