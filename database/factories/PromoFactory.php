@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Enums\DiscountTypeEnums;
+use App\Models\DiscountType;
 use App\Models\Store;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,14 +20,17 @@ class PromoFactory extends Factory
     public function definition(): array
     {
         return [
-            'code' => fake()->unique()->bothify('???-####'),
-            'name' => fake()->words(fake()->numberBetween(1, 3), true),
-            'description' => fake()->sentence(),
+            'name' => fake()->randomElement(['Black Friday Promo!!!', 'Discount Delight Day Promo!!', 'Loyal Luxuries']),
+            'description' => fake()->realText(),
+            'discount_type_id' =>  DiscountType::where('code', DiscountTypeEnums::PercentageOff->value)->first()->id ?? null,
             'discount' => fake()->numberBetween(1, 100),
-            'start_datetime' => fake()->dateTimeBetween('now', '+1 week')->format('Y-m-d H:i:s'),
-            'end_datetime' => fake()->dateTimeBetween('+1 week', '+2 month')->format('Y-m-d H:i:s'),
-            'is_cancelled' => fake()->boolean(),
-            'store_id' => Store::inRandomOrder()->first()?? Store::factory()->create(),                      
+            'free_delivery' => fake()->boolean(),
+            'free_advert' => fake()->boolean(),
+            'start_datetime' => ($is_unlimited = fake()->boolean()) ? null :  fake()->dateTimeBetween('now', '+1 week')->format('Y-m-d H:i:s'),
+            'end_datetime' => $is_unlimited ? null :  fake()->dateTimeBetween('+3 week', '+2 month')->format('Y-m-d H:i:s'),
+            'is_unlimited' => $is_unlimited,
+            'cancelled_at' => null,
+            'store_id' => Store::inRandomOrder()->first()?? Store::factory()->create(),
         ];
     }
 }

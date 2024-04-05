@@ -13,13 +13,16 @@ return new class extends Migration
     {
         Schema::create('promos', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('code');
-            $table->string('name')->nullable();
+            $table->string('name');
             $table->text('description')->nullable();
-            $table->unsignedDecimal('discount', $precision = 5, $scale = 2);
+            $table->unsignedDecimal('discount',  $precision = 19, $scale = 2)->default(0);
+            $table->foreignUuid('discount_type_id')->nullable()->contrained('coupon_types')->cascadeOnUpdate()->nullOnDelete();
+            $table->boolean('free_delivery')->default(false);
+            $table->boolean('free_advert')->default(false);
             $table->timestamp('start_datetime')->nullable();
             $table->timestamp('end_datetime')->nullable();
-            $table->boolean('is_cancelled')->default(false);
+            $table->boolean('is_unlimited')->default(false);
+            $table->timestamp('cancelled_at')->nullable();
             $table->foreignUuid('store_id')->nullable()->contrained('stores')->cascadeOnUpdate()->casecadeOnDelete();
 
             $table->timestamps();

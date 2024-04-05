@@ -5,11 +5,8 @@ namespace Database\Seeders;
 use App\Enums\DiscountTypeEnums;
 use App\Models\DiscountType;
 use App\Models\Coupon;
-
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-
-
 class CouponSeeder extends Seeder
 {
     /**

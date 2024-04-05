@@ -20,7 +20,6 @@ class CouponFactory extends Factory
     public function definition(): array
     {
         return [
-
             'code' => fake()->unique()->bothify('??-##-??'),
             'description' => fake()->realText(),
             'discount_type_id' =>  DiscountType::where('code', DiscountTypeEnums::PercentageOff->value)->first()->id ?? null,
@@ -32,7 +31,7 @@ class CouponFactory extends Factory
             'unlimited_usage' => false,
             'expiration_date' => now()->addDays(fake()->numberBetween(7))->format('Y-m-d H:i:s'),
             'cancelled_at' => null,
-            'store_id' => null, 
+            'store_id' => Store::inRandomOrder()->first()?? Store::factory()->create(),
         ];
     }
 }

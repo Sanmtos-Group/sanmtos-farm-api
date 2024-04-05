@@ -164,8 +164,12 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::controller(PromoController::class)->group(function (){
                 Route::match(['put', 'patch'], '{promo}/cancel', 'cancel')->name('cancel');
                 Route::match(['put', 'patch'], '{promo}/continue', 'continue')->name('continue');
-                Route::post('{promo}/products', 'attachProducts')->name('products.attach');
-                Route::delete('{promo}/products', 'detachProducts')->name('products.detach');
+                Route::post('{promo}/recipients', 'attachRecipients')->name('recipients.attach');
+                Route::delete('{promo}/recipients', 'detachRecipients')->name('recipients.detach');
+                Route::post('{promo}/applicable-products', 'attachApplicableProducts')->name('applicable-products.attach');
+                Route::delete('{promo}/applicable-products', 'detachApplicableProducts')->name('applicable-products.detach');
+                Route::post('{promo}/applicable-categories', 'attachApplicableCategories')->name('applicable-categories.attach');
+                Route::delete('{promo}/applicable-categories', 'detachApplicableCategories')->name('applicable-categories.detach');
             });
         });
     });

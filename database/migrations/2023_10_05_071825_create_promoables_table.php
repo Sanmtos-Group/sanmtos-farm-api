@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignUuid('promo_id')->contrained('promos')->cascadeOnUpdate()->cascadeOnDelete();
             $table->uuidMorphs('promoable');
             $table->timestamps();
-
+            
             $table->index(['promo_id', 'promoable_id']);
         });
     }

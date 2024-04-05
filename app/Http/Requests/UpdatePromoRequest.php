@@ -23,12 +23,17 @@ class UpdatePromoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code' => 'string|min:1|max:8|'.Rule::unique('promos')->ignore($this->promo),
-            'name' => 'nullable|string|max:191',
+            'name' => 'sometimes|required|string|max:191',
             'description' => 'nullable|string|max:1000',
-            'discount' => 'numeric|min:0.01|max:100',
-            'start_datetime' => 'date',
-            'end_datetime' => 'date|after_or_equal:start_datetime',
+            'discount' => 'sometimes|required|numeric|max:99999999',
+            'discount_type_id' => 'sometimes|required|uuid|exists:discount_types,id',
+            'free_delivery' => 'sometimes|boolean',
+            'free_advert' => 'sometimes|boolean',
+            'is_unlimited' => 'sometimes|boolean',
+            'start_datetime' => 'sometimes|required_if:is_unlimited,0,null|date|after_or_equal:'.now(),
+            'end_datetime' => 'sometimes|required_if:is_unlimited,0,null|date|after:start_datetime',
+            'store_id' => 'nullable|uuid|exists:stores,id',
+            'image' =>'sometimes|required|image|mimes:jpeg,png,jpg,gif|max:2048', #2mb
         ];
     }
 }

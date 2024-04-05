@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('code')->unique();
             $table->string('description')->nullable();
             $table->foreignUuid('discount_type_id')->nullable()->contrained('coupon_types')->cascadeOnUpdate()->nullOnDelete();
-            $table->unsignedDecimal('discount');
+            $table->unsignedDecimal('discount',  $precision = 19, $scale = 2)->default(0);
             $table->boolean('requires_min_purchase')->default(false);
             $table->unsignedDecimal('min_purchase_price',  $precision = 19, $scale = 2)->default(0);
             $table->boolean('is_for_first_purchase_only')->default(false);

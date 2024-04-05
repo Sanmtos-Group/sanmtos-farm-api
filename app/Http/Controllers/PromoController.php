@@ -10,6 +10,10 @@ use App\Http\Requests\UpdatePromoRequest;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\PromoResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
+use Spatie\QueryBuilder\QueryBuilder;
 class PromoController extends Controller
 {
     /**
@@ -26,28 +30,53 @@ class PromoController extends Controller
     public function index(Request $request)
     {
 
-        $per_page = is_numeric($request->per_page)? (int) $request->per_page : 15;
-
-        $order_by_code = $request->order_by_code == 'asc' || $request->order_by_code == 'desc'
-        ? $request->order_by_code : null;
-
-        $order_by_name = $request->order_by_name == 'asc' || $request->order_by_name == 'desc'
-                        ? $request->order_by_name : null;
-
-        $order_by_created_at = $request->order_by_created_at == 'asc' || $request->order_by_created_at == 'desc'
-                        ? $request->order_by_created_at : null;
-        
-        $promos = Promo::where('id', '<>', null);
-
-        $promos = is_null($order_by_code)? $promos : $promos->orderBy('code', $order_by_code ) ;
-        $promos = is_null($order_by_name)? $promos : $promos->orderBy('name', $order_by_name ) ;
-        $promos = is_null($order_by_created_at)? $promos : $promos->orderBy('name', $order_by_created_at ) ;
-
-        $promos = $promos->paginate($per_page); 
+        $promos = QueryBuilder::for(Promo::class)
+        ->defaultSort('created_at')
+        ->allowedSorts(
+            'name',
+            'description',
+            'discount',
+            'start_datetime',
+            'end_datetime',
+            'is_unlimited',
+            'created_at',
+            'updated_at',
+            AllowedSort::custom('recent', new \App\Models\Sorts\LatestSort()),
+            AllowedSort::custom('oldest', new \App\Models\Sorts\OldestSort()),
+        )
+        ->allowedFilters([
+            'name',
+            'description',
+            'discount',
+            'discount_type_id',
+            'free_delivery',
+            'free_advert',
+            'start_datetime',
+            'end_datetime',
+            'is_unlimited',
+            'store_id',
+            'created_at',
+            'updated_at',
+            AllowedFilter::scope('store'),
+            AllowedFilter::scope('discount_types'),
+            AllowedFilter::scope('recipients'),
+            AllowedFilter::scope('applicable_products'),
+            AllowedFilter::scope('applicable_categories'),
+        ])
+        ->allowedIncludes([
+            'store',
+            'recipients',
+            'discountType',
+            'applicableProducts',
+            'applicableCategories',
+            'usages'
+        ])
+        ->paginate()
+        ->appends(request()->query());
 
         $promo_resource =  PromoResource::collection($promos);
         $promo_resource->with['status'] = "OK";
-        $promo_resource->with['message'] = 'Promos retrived successfully';
+        $promo_resource->with['message'] = 'Promos retrieved successfully';
 
         return $promo_resource;
     }
@@ -68,22 +97,65 @@ class PromoController extends Controller
         $validated = $request->validated();
         $promo = Promo::create($validated);
 
+      
+        $recipients = [];
+        // clean recipient ids for syncing 
+        foreach ($validated['recipient_ids']?? [] as $key=>$user_id) 
+        {
+            $recipients [$user_id] = [
+                // Other pivot table attributes if needed
+                'id' => Str::uuid()->toString(), // Generate UUID for the pivot ID
+            ];
+        }
+        $promo->recipients()->syncWithoutDetaching($recipients);
+        $promo->recipients;  
+        
+        $applicable_products = [];
+        // clean applicable product ids for syncing 
+        foreach ($validated['applicable_product_ids']?? [] as $key=>$product_id) 
+        {
+            $applicable_products [$product_id] = [
+                // Other pivot table attributes if needed
+                'id' => Str::uuid()->toString(), // Generate UUID for the pivot ID
+            ];
+        }
+        $promo->applicableProducts()->syncWithoutDetaching($applicable_products);
+        $promo->applicableProducts; 
+
+        $applicable_categories = [];
+        // clean applicable category ids for syncing 
+        foreach ($validated['applicable_category_ids']?? [] as $key=>$category_id) 
+        {
+            $applicable_categories [$category_id] = [
+                // Other pivot table attributes if needed
+                'id' => Str::uuid()->toString(), // Generate UUID for the pivot ID
+            ];
+        }
+        $promo->applicableCategories()->syncWithoutDetaching($applicable_categories);
+        $promo->applicableCategories; 
+
         $promo_resource = new PromoResource($promo);
         $promo_resource->with['message'] = 'Promo created successfully';
 
         return $promo_resource;
     }
 
-    /**
+   /**
      * Display the specified resource.
      */
     public function show(Promo $promo)
     {
+        if(request()->has('include'))
+        {
+            foreach (explode(',', request()->include) as $key => $value) {
+               $promo->{$value};
+            }
+        }
 
-        $promo_resource = new PromoResource($promo);
-        $promo_resource->with['message'] = 'Promo retrived successfully';
+        $promo = new PromoResource($promo);
+        $promos->with['message'] = "Promo retrieved successfully.";
 
-        return $promo_resource;
+        return $promos;
     }
 
     /**
@@ -146,89 +218,225 @@ class PromoController extends Controller
     }
 
     /**
-     * Get all products attached to the promo
-     * 
-     * @param App\Models\Promo $promo
-     * @return App\Http\Resources\ProductResource $product_resource
-     */
-    public function productsIndex(Promo $promo)
-    {
-        $product_resource = new ProductResource($promo->products);
-
-        $product_resource->with['message'] = 'Promo attached products retrieved succesfully';
-        return $product_resource;
-    }
-
-    /**
-     * Attached products to promo
-     * 
+     * Add to promo recipients
+     *
      * @param App\Models\Promo $promo
      * @param App\Http\Requests\StorePromoableRequest $request
+     * @return ProductResource $product_resource
+     */
+    public function attachRecipients(Promo $promo, StorePromoableRequest $request )
+    {
+        $validated = $request->validated();
+
+        // attach by multiple product ids
+       if(array_key_exists('recipient_ids', $validated))
+       {
+            $recipient_users = [];
+            // clean applicable product ids for syncing 
+            foreach ($validated['recipient_ids']?? [] as $key=>$user_id) 
+            {
+                $recipient_users [$user_id] = [
+                    // Other pivot table attributes if needed
+                    'id' => Str::uuid()->toString(), // Generate UUID for the pivot ID
+                ];
+            }
+
+            $promo->recipients()->syncWithoutDetaching($recipient_users);
+            $promo->recipients; 
+       }
+        // attach by single product id
+       elseif(array_key_exists('recipient_id', $validated))
+       {
+            $promo->recipients()->syncWithoutDetaching([
+                $validated['recipient_id'] => [
+                    // Other pivot table attributes if needed
+                    'id' => Str::uuid()->toString(), // Generate UUID for the pivot ID
+                ]
+            ]);
+
+            
+       }
+
+        $promo->recipients; 
+        
+        $promo_resource = new PromoResource($promo);
+        $promo_resource->with['message'] = 'Recipients(s) attached to promo succesfully';
+        return $promo_resource;
+    }
+
+     /**
+     * Detached recipients from promo
+     *
+     * @param App\Models\Promo $promo
+     * @param Illuminatie\Http\Request $request
      * @return App\Http\Resources\ProductResource $product_resource
      */
-    public function attachProducts(Promo $promo, StorePromoableRequest $request)
+    public function detachRecipients(Promo $promo, Request $request )
+    {
+        // detach by multiple product ids
+        if($request->has('recipient_ids') || $request->has('recipient_id'))
+        {
+            $promo->recipients()->detach($request->recipient_ids);
+            $promo->recipients()->detach($request->recipient_id);
+        }
+         
+        $promo->recipients; 
+        
+        $promo_resource = new PromoResource($promo);
+        $promo_resource->with['message'] = 'Recipient(s) detached from promo succesfully';
+        return $promo_resource;
+    }
+
+     /**
+     * Add to promo applicable products
+     *
+     * @param App\Models\Promo $promo
+     * @param App\Http\Requests\StorePromoableRequest $request
+     * @return ProductResource $product_resource
+     */
+    public function attachApplicableProducts(Promo $promo, StorePromoableRequest $request )
     {
         $validated = $request->validated();
 
         // attach by multiple product ids
        if(array_key_exists('product_ids', $validated))
        {
-            foreach($validated['product_ids'] as $id){
+            
+            $product_ids = $promo->store->products()->whereIn('id', $validated['product_ids'])->pluck('id');
 
-                $product = Product::find($id);
+            $applicable_products = [];
+            // clean applicable product ids for syncing 
+            foreach ($product_ids?? [] as $key=>$product_id) 
+            {
+                $applicable_products [$product_id] = [
+                    // Other pivot table attributes if needed
+                    'id' => Str::uuid()->toString(), // Generate UUID for the pivot ID
+                ];
+            }
 
-                // check if the product is of the same store as the promo
-                if($product->store_id === $promo->store_id)
-                {
-                    $promo->products()->syncWithoutDetaching($product); 
-                }  
-            }     
+            $promo->applicableProducts()->syncWithoutDetaching($applicable_products);
+            $promo->applicableProducts; 
        }
         // attach by single product id
        elseif(array_key_exists('product_id', $validated))
        {
-            $product = Product::find($validated['product_id']);
+            $product_id = $promo->store->products()->where('id', $validated['product_id'])->pluck('id')->first();
 
-            // check if the product is of the same store as the promo
-            if($product->store_id === $promo->store_id)
-            {
-                $promo->products()->syncWithoutDetaching($product); 
-            }      
+            $promo->applicableProducts()->syncWithoutDetaching([
+                $product_id => [
+                    // Other pivot table attributes if needed
+                    'id' => Str::uuid()->toString(), // Generate UUID for the pivot ID
+                ]
+            ]);
+
+            
        }
 
-
-        $product_resource = new ProductResource($promo->products);
-
-        $product_resource->with['message'] = 'Product(s) attached to promo succesfully';
-        return $product_resource;
+        $promo->applicableProducts; 
+        
+        $promo_resource = new PromoResource($promo);
+        $promo_resource->with['message'] = 'Product(s) attached to promo succesfully';
+        return $promo_resource;
     }
 
     /**
-     * Dettached products to promo
-     * 
+     * Detached products to promo
+     *
      * @param App\Models\Promo $promo
      * @param Illuminatie\Http\Request $request
      * @return App\Http\Resources\ProductResource $product_resource
      */
-    public function detachProducts(Promo $promo, Request $request )
+    public function detachApplicableProducts(Promo $promo, Request $request )
     {
-      
-
         // detach by multiple product ids
-       if($request->has('product_ids'))
+        if($request->has('product_ids'))
+        {
+            $promo->applicableProducts()->detach($request->product_ids);
+        }
+            // detach by single product id
+        else if($request->has('product_id'))
+        {
+            $promo->applicableProducts()->detach($request->product_id);
+        }
+
+        $promo->applicableProducts; 
+        
+        $promo_resource = new PromoResource($promo);
+        $promo_resource->with['message'] = 'Product(s) detached from promo succesfully';
+        return $promo_resource;
+    }
+
+
+    /**
+     * Add to promo applicable categories
+     *
+     * @param App\Models\Promo $promo
+     * @param App\Http\Requests\StorePromoableRequest $request
+     * @return PromoResource $promo_resource
+     */
+    public function attachApplicableCategories(Promo $promo, StorePromoableRequest $request )
+    {
+        $validated = $request->validated();
+
+        // attach by multiple category ids
+       if(array_key_exists('category_ids', $validated))
        {
-            $promo->products()->detach($request->product_id); 
+            $applicable_categories = [];
+            // clean applicable category ids for syncing 
+            foreach ($validated['category_ids']?? [] as $key=>$category_id) 
+            {
+                $applicable_categories [$category_id] = [
+                    // Other pivot table attributes if needed
+                    'id' => Str::uuid()->toString(), // Generate UUID for the pivot ID
+                ];
+            }
+
+            $promo->applicableCategories()->syncWithoutDetaching($applicable_categories);
+            $promo->applicableCategories; 
        }
-        // detach by single product id
-       else if($request->has('product_id'))
+        // attach by single category id
+       elseif(array_key_exists('category_id', $validated))
        {
-            $promo->products()->detach($request->product_id);   
+            $promo->applicableCategories()->syncWithoutDetaching([
+                $validated['category_id'] => [
+                    // Other pivot table attributes if needed
+                    'id' => Str::uuid()->toString(), // Generate UUID for the pivot ID
+                ]
+            ]);
+            
        }
 
+        $promo->applicableCategories; 
+        
+        $promo_resource = new PromoResource($promo);
+        $promo_resource->with['message'] = 'Category(ies) attached to promo succesfully';
+        return $promo_resource;
+    }
 
-        $product_resource = new ProductResource($promo->products);
+    /**
+     * Detached categories to promo
+     *
+     * @param App\Models\Promo $promo
+     * @param Illuminatie\Http\Request $request
+     * @return App\Http\Resources\ProductResource $product_resource
+     */
+    public function detachApplicableCategories(Promo $promo, Request $request )
+    {
+        // detach by multiple category ids
+        if($request->has('category_ids'))
+        {
+            $promo->applicableCategories()->detach($request->category_ids);
+        }
+        // detach by single category id
+        else if($request->has('category_id'))
+        {
+            $promo->applicableCategories()->detach($request->category_id);
+        }
 
-        $product_resource->with['message'] = 'Product(s) detached from promo succesfully';
-        return $product_resource;
+        $promo->applicableCategories; 
+        
+        $promo_resource = new PromoResource($promo);
+        $promo_resource->with['message'] = 'Category(ies) detached from promo succesfully';
+        return $promo_resource;
     }
 }
