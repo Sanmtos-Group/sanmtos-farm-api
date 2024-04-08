@@ -14,10 +14,18 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        /**
-         * @var array $permissions
-         */
-        $permissions = [
+        if(Permission::count() <=0)
+        {
+            Permission::upsert(
+                $this->defaultPermissions(), 
+                uniqueBy:['name'],
+                update:['name'],
+            );
+        }
+    }
+
+    public function defaultPermissions() {
+        return [
             ['name'=>'create store'],
             ['name'=>'read store'],
             ['name'=>'update store'],
@@ -50,11 +58,5 @@ class PermissionSeeder extends Seeder
             ['name'=>'delete promo'],
             ['name'=>'cancel promo'],
         ];
-        
-        Permission::upsert(
-            $permissions, 
-            uniqueBy:['name'],
-            update:['name'],
-        );
     }
 }
