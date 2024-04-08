@@ -30,6 +30,7 @@ class PromoFactory extends Factory
             'end_datetime' => $is_unlimited ? null :  fake()->dateTimeBetween('+3 week', '+2 month')->format('Y-m-d H:i:s'),
             'is_unlimited' => $is_unlimited,
             'cancelled_at' => null,
+            'cancellation_reason' => null,
             'store_id' => Store::inRandomOrder()->first()?? Store::factory()->create(),
         ];
     }

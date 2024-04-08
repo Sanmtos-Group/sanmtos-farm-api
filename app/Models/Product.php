@@ -67,7 +67,9 @@ class Product extends Model
      *
      * @var array
      */
-     protected $appends = ['country'];
+     protected $appends = [
+        // 'country'
+    ];
      
 
     /**

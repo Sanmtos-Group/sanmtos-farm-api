@@ -19,9 +19,9 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
         $this->call([
+            CountrySeeder::class,
             PermissionSeeder::class,
             RoleSeeder::class,
-            CountrySeeder::class,
             AttributeSeeder::class,
             CategorySeeder::class,
             PlanSeeder::class,
@@ -39,8 +39,8 @@ class DatabaseSeeder extends Seeder
             // PaymentSeeder::class,
             OrderSeeder::class,
             CurrencyExchangeRateSeeder::class,
-            LikeSeeder::class,
-            RatingSeeder::class,
+            // LikeSeeder::class,
+            // RatingSeeder::class,
             NotificationPreferenceSeeder::class,
         ]);
     }

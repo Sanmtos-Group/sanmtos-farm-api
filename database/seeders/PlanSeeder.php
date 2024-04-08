@@ -14,16 +14,28 @@ class PlanSeeder extends Seeder
      */
     public function run(): void
     {
-        $silver = Plan::create([
-            'name'             => 'silver',
-            'periodicity_type' => PeriodicityType::Month,
-            'periodicity'      => 1,
-        ]);
+        if(Plan::count() <=0 )
+        {
+            Plan::upsert(
+                $this->defaultPlans(), 
+                uniqueBy:['name'],
+                update: (new Plan)->getFillable(),
+            );
+        }
+    }
 
-        $gold = Plan::create([
-            'name'             => 'gold',
-            'periodicity_type' => PeriodicityType::Month,
-            'periodicity'      => 1,
-        ]);
+    public function defaultPlans(){
+        return [
+            [
+                'name'             => 'silver',
+                'periodicity_type' => PeriodicityType::Month,
+                'periodicity'      => 1,
+            ],
+            [
+                'name'             => 'gold',
+                'periodicity_type' => PeriodicityType::Month,
+                'periodicity'      => 1,
+            ]
+        ];
     }
 }

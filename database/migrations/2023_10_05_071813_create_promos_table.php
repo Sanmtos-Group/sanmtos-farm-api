@@ -23,6 +23,7 @@ return new class extends Migration
             $table->timestamp('end_datetime')->nullable();
             $table->boolean('is_unlimited')->default(false);
             $table->timestamp('cancelled_at')->nullable();
+            $table->timestamp('cancellation_reason')->nullable();
             $table->foreignUuid('store_id')->nullable()->contrained('stores')->cascadeOnUpdate()->casecadeOnDelete();
 
             $table->timestamps();

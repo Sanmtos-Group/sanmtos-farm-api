@@ -2,12 +2,13 @@
 
 namespace Database\Seeders;
 
+
+use App\Models\Category;
 use App\Models\Image;
-use App\Models\Promo;
+use App\Models\Product;
+use App\Models\Role;
 use App\Models\Store;
 use App\Models\User;
-use App\Models\Category;
-use App\Models\Product;
 use App\Services\CloudinaryService;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -22,7 +23,7 @@ class StoreSeeder extends Seeder
     public function run(): void
     {
 
-        $sanmtos_email = 'sanmtosfarms@gmail.com';
+        $sanmtos_email = 'store-admin@sanmtos.com';
         $sanmtos_vendor = User::where('email', $sanmtos_email)->first();
 
         if(is_null($sanmtos_vendor))
@@ -30,6 +31,17 @@ class StoreSeeder extends Seeder
             $sanmtos_vendor = User::factory()->create([
                 'email' => $sanmtos_email,
             ]);
+
+             // create admin role if not exist
+            $admin_role = Role::firstOrCreate([
+                'name' => 'admin',
+                'store_id'=> null
+            ]);
+
+            //assign admin role  to admin user
+            if(empty($sanmtos_vendor->roles()->where('role_id', $admin_role->id)->first())){
+                $sanmtos_vendor->roles()->attach($admin_role->id);
+            }
         }
        
         

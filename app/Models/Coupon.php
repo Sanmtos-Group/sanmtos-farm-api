@@ -41,7 +41,7 @@ class Coupon extends Model
         // 'max_usage',
         // 'unlimited_usage',
         'expiration_date',
-        'cancelled_at',
+        // 'cancelled_at',
         'store_id',
     ];
 
@@ -202,7 +202,7 @@ class Coupon extends Model
     }
 
 
-     /**
+    /**
      * Get all applicable products of the coupon.
      */
     public function applicableCategories(): MorphToMany

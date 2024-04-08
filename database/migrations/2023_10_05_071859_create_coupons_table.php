@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('coupons', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('code')->unique();
-            $table->string('description')->nullable();
+            $table->text('description')->nullable();
             $table->foreignUuid('discount_type_id')->nullable()->contrained('coupon_types')->cascadeOnUpdate()->nullOnDelete();
             $table->unsignedDecimal('discount',  $precision = 19, $scale = 2)->default(0);
             $table->boolean('requires_min_purchase')->default(false);
@@ -24,6 +24,7 @@ return new class extends Migration
             $table->boolean('unlimited_usage')->default(false);
             $table->timestamp('expiration_date');
             $table->timestamp('cancelled_at')->nullable();
+            $table->text('cancellation_reason')->nullable();
             $table->foreignUuid('store_id')->nullable()->contrained('stores')->cascadeOnUpdate()->nullOnDelete();            
             $table->timestamps();
             $table->softDeletes();

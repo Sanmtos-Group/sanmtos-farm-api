@@ -14,16 +14,30 @@ class FeatureSeeder extends Seeder
      */
     public function run()
     {
-        $deployMinutes = Feature::create([
-            'consumable'       => true,
-            'name'             => 'deploy-minutes',
-            'periodicity_type' => PeriodicityType::Month,
-            'periodicity'      => 1,
-        ]);
+        if(Feature::count() <= 0)
+        {
+            Feature::upsert(
+                $this->defaultFeatures(), 
+                uniqueBy:['name'],
+                update: (new Feature)->getFillable(),
+            );
+        }
+    }
 
-        $customDomain = Feature::create([
-            'consumable' => false,
-            'name'       => 'custom-domain',
-        ]);
+    public function defaultFeatures(){
+        return [
+            [
+                'consumable'       => true,
+                'name'             => 'deploy-minutes',
+                'periodicity_type' => PeriodicityType::Month,
+                'periodicity'      => 1,
+            ],
+            [
+                'consumable' => false,
+                'name'       => 'custom-domain',
+                'periodicity_type' => null,
+                'periodicity'      => null,
+            ]
+        ];
     }
 }

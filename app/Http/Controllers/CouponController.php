@@ -195,6 +195,7 @@ class CouponController extends Controller
     */
     public function continue(Coupon $coupon){
         $coupon->cancelled_at = null;
+        $coupon->cancellation_reason = null;
         $coupon->save();
 
         $coupon_resource = new CouponResource($coupon);

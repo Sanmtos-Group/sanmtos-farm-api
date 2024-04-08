@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Promo;
+use App\Models\Image;
 use App\Http\Requests\StorePromoRequest;
 use App\Http\Requests\StorePromoableRequest;
 use App\Http\Requests\UpdatePromoRequest;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\PromoResource;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -134,6 +136,36 @@ class PromoController extends Controller
         $promo->applicableCategories()->syncWithoutDetaching($applicable_categories);
         $promo->applicableCategories; 
 
+
+        // save promo image
+        if($request->hasFile('image'))
+        {
+            $image=$request->file('image');
+
+            // $path = Storage::disk('public')->putFile('images', $image); // local storage
+
+            $options = [
+                'overlayImageURL' => null, //
+                'thumbnail' => true, //true or false
+                'dimensions' => null, // null or ['width'=>700, 'height'=>700]
+                'roundCorners' => 0,
+            ];
+
+            // upload to cloudinary
+            $uploaded_image = CloudinaryService::uploadImage($image, 'promos/', $options);
+
+            // save image information
+            $image = new Image();
+            // $image->url =  env('APP_URL').Storage::url($path);  // local storage
+            $image->url = $uploaded_image->getSecurePath(); // cloudinary
+            $image->imageable_id = $promo->id;
+            $image->imageable_type = $promo::class;
+            $image->save();
+            
+        }
+        // attach the promo image to response
+        $promo->image;
+
         $promo_resource = new PromoResource($promo);
         $promo_resource->with['message'] = 'Promo created successfully';
 
@@ -152,10 +184,10 @@ class PromoController extends Controller
             }
         }
 
-        $promo = new PromoResource($promo);
-        $promos->with['message'] = "Promo retrieved successfully.";
+        $promo_resource = new PromoResource($promo);
+        $promo_resource->with['message'] = "Promo retrieved successfully.";
 
-        return $promos;
+        return $promo_resource;
     }
 
     /**
@@ -184,6 +216,7 @@ class PromoController extends Controller
     public function cancel(Promo $promo)
     {
         $promo->is_cancelled = true;
+        $coupon->cancellation_reason = null;
         $promo->save();
         $promo_resource = new PromoResource($promo);
         $promo_resource->with['message'] = 'Promo cancelled successfully';

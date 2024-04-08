@@ -2,13 +2,18 @@
 
 namespace App\Models;
 
+use App\Traits\HasImages;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 class Promo extends Model
 {
     use HasFactory;
+    use HasImages;
     use HasUuids;
 
     /**
@@ -49,7 +54,28 @@ class Promo extends Model
     ];
 
     /**
-     * Get the store that owns the coupon
+     * The accessors to append to the model's array form.
+     *
+     * @var array<int, string>
+     */
+    protected $appends = [
+        'is_active', 
+    ];
+
+     /**
+     * Determine if a promo is active
+     */
+    protected function isActive(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => is_null($this->cancelled_at) 
+                && $this->start_time >= today() 
+                && today() < $this->end_time
+        );
+    }
+
+    /**
+     * Get the store that owns the promo
      */
     public function store(): BelongsTo
     {
@@ -80,7 +106,7 @@ class Promo extends Model
 
 
     /**
-     * Get the discount type that owns the coupon
+     * Get the discount type that owns the promo
      */
     public function discountType(): BelongsTo
     {
@@ -88,7 +114,7 @@ class Promo extends Model
     }
 
     /**
-     * Scope the coupon by the discount type 
+     * Scope the promo by the discount type 
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  mix  $values
@@ -111,7 +137,7 @@ class Promo extends Model
     }
 
     /**
-     * Get the recipients of the coupon.
+     * Get the recipients of the promo.
      */
     public function recipients(): MorphToMany
     {
@@ -119,7 +145,7 @@ class Promo extends Model
     }
 
     /**
-     * Scope the coupon by the recipients 
+     * Scope the promo by the recipients 
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  mix  $values
@@ -144,7 +170,7 @@ class Promo extends Model
     }
 
      /**
-     * Get all applicable products of the coupon.
+     * Get all applicable products of the promo.
      */
     public function applicableProducts(): MorphToMany
     {
@@ -152,7 +178,7 @@ class Promo extends Model
     }
 
      /**
-     * Scope the coupon by the recipients 
+     * Scope the promo by the recipients 
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  mix  $values
@@ -174,7 +200,7 @@ class Promo extends Model
 
 
      /**
-     * Get all applicable products of the coupon.
+     * Get all applicable products of the promo.
      */
     public function applicableCategories(): MorphToMany
     {
@@ -182,7 +208,7 @@ class Promo extends Model
     }
 
      /**
-     * Scope the coupon by the recipients 
+     * Scope the promo by the recipients 
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  mix  $values
@@ -201,4 +227,5 @@ class Promo extends Model
        
         return $query; 
     }
+
 }

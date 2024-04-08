@@ -17,8 +17,5 @@ class UserSeeder extends Seeder
         if(User::all()->count() <= 0){
             TestUser::populateDB();
         }
-        else {
-            User::factory()->count(10)->create();
-        }
     }
 }

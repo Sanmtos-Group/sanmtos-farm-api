@@ -14,13 +14,24 @@ class CouponSeeder extends Seeder
      */
     public function run(): void
     {
-        $coupons = [
+        if(Coupon::count() == 0)
+        {
+            Coupon::upsert(
+                $this->defaultCoupons(), 
+                uniqueBy:['code'],
+                update: (new Coupon)->getFillable(),
+            );    
+        }
+    }
+
+    public function defaultCoupons(){
+        return [
             [
                 'code'=> 'SANMTOS',
                 'description' => 'Lauching coupon of 10% discount on all purchase for next 30 days',
                 'discount_type_id' =>  DiscountType::where('code', DiscountTypeEnums::PercentageOff->value)->first()->id ?? null,
                 'discount' => 10,
-                'for_first_purchase_only' => false,
+                'is_for_first_purchase_only' => false,
                 'expiration_date' => now()->addDays(30),
                 'store_id' => null
             ],
@@ -30,19 +41,10 @@ class CouponSeeder extends Seeder
                 'description' => '10% discount on first purchase in the next 60 days',
                 'discount_type_id' =>  DiscountType::where('code', DiscountTypeEnums::PercentageOff->value)->first()->id ?? null,
                 'discount' => 10,
-                'for_first_purchase_only' => true,
+                'is_for_first_purchase_only' => true,
                 'expiration_date' => now()->addDays(60),
                 'store_id' => null
             ],
         ];
-
-        if(Coupon::count() == 0)
-        {
-            Coupon::upsert(
-                $coupons, 
-                uniqueBy:['code'],
-                update: (new Coupon)->getFillable(),
-            );    
-        }
     }
 }

@@ -14,8 +14,19 @@ class NotificationPreferenceSeeder extends Seeder
      */
     public function run(): void
     {
-        // notification preference 
-        $preferences =[
+        if(NotificationPreference::count() <= 0) 
+        {
+            NotificationPreference::upsert(
+                $this->defaultNotificationPreferences(), 
+                uniqueBy:['code'],
+                update:['description', 'channel', 'type'],
+    
+            );
+        }
+    }
+
+    public function defaultNotificationPreferences(){
+        return [
             [
                 'code'=> NotificationPreferenceEnums::Summary->value,
                 'description'=> 'Receive an email summary notification',
@@ -41,13 +52,5 @@ class NotificationPreferenceSeeder extends Seeder
                 'type' => null
             ]
         ];
-
-        NotificationPreference::upsert(
-            $preferences, 
-            uniqueBy:['code'],
-            update:['description', 'channel', 'type'],
-
-        );
-
     }
 }

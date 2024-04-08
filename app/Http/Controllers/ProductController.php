@@ -60,7 +60,8 @@ class ProductController extends Controller
         ->allowedIncludes([
             'store',
             'category',
-            'likes'
+            'likes',
+            'country',
         ])
         ->paginate()
         ->appends(request()->query());

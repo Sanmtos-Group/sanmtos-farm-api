@@ -14,7 +14,15 @@ class DiscountTypeSeeder extends Seeder
      */
     public function run(): void
     {
-        $discount_types =[
+        DiscountType::upsert(
+            $this->defaultDiscountTypes(), 
+            uniqueBy:['code'],
+            update:['name', 'description'],
+        );
+    }
+
+    public function defaultDiscountTypes(){
+        return [
             [
                 'name' =>ucwords(strtolower(str_replace('_', ' ',  DiscountTypeEnums::FlatOff->value ))),
                 'description'=> 'Fixed discount amount deducted from the original price',
@@ -26,11 +34,5 @@ class DiscountTypeSeeder extends Seeder
                 'code'=>DiscountTypeEnums::PercentageOff->value,
             ],
         ];
-
-        DiscountType::upsert(
-            $discount_types, 
-            uniqueBy:['code'],
-            update:['name', 'description'],
-        );
     }
 }

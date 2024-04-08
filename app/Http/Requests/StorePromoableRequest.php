@@ -23,12 +23,18 @@ class StorePromoableRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'promo_id' => 'uuid|exists:promos,id',
-            'promoable_id' => 'uuid',
+            
+            'product_ids' =>'sometimes|array',
+            'product_ids.*' => 'sometimes|uuid|exists:products,id', 
+            'product_id' => 'sometimes|uuid|exists:products,id',
 
-            'product_ids' =>'array',
-            'product_ids.*' => 'uuid|exists:products,id', 
-            'product_id' => 'uuid|exists:products,id',
+            'category_ids' =>'sometimes|array',
+            'category_ids.*' => 'sometimes|uuid|exists:categories,id', 
+            'category_id' => 'somtimes|uuid|exists:categories,id',
+
+            'recipient_ids' =>'sometimes|array',
+            'recipient_ids.*' => 'sometimes|uuid|exists:users,id',
+            'recipient_id' => 'sometimes|uuid|exists:users,id',
             
         ];
     }

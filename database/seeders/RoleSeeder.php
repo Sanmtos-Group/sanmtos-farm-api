@@ -13,10 +13,18 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-         /**
-         * @var array $roles
-         */
-        $roles = [
+        if(Role::count() <=0 )
+        {
+            Role::upsert(
+                $this->defaultRoles(), 
+                uniqueBy:['name', 'store_id'],
+                update:['name', 'store_id'],
+            );
+        }
+    }
+
+    public function defaultRoles(){
+        return [
             [ 
                 'name'=>'super-admin',
                 'store_id'=>null    
@@ -34,11 +42,5 @@ class RoleSeeder extends Seeder
                 'store_id'=>null    
             ],
         ];
-
-        Role::upsert(
-            $roles, 
-            uniqueBy:['name', 'store_id'],
-            update:['name', 'store_id'],
-        );
     }
 }

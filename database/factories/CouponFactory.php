@@ -29,8 +29,9 @@ class CouponFactory extends Factory
             'is_for_first_purchase_only' => fake()->boolean(),
             'max_usage' => true,
             'unlimited_usage' => false,
-            'expiration_date' => now()->addDays(fake()->numberBetween(7))->format('Y-m-d H:i:s'),
+            'expiration_date' =>now()->addDays(fake()->numberBetween(7, 60)),
             'cancelled_at' => null,
+            'cancellation_reason' => null,
             'store_id' => Store::inRandomOrder()->first()?? Store::factory()->create(),
         ];
     }
