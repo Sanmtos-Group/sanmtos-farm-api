@@ -32,9 +32,9 @@ class StoreSeeder extends Seeder
                 'email' => $sanmtos_email,
             ]);
 
-             // create admin role if not exist
+             // create a store admin role if not exist
             $admin_role = Role::firstOrCreate([
-                'name' => 'admin',
+                'name' => 'store-admin',
                 'store_id'=> null
             ]);
 
