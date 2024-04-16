@@ -116,8 +116,8 @@ class ProductController extends Controller
 
                 $options = [
                     'overlayImageURL' => null, //
-                    'thumbnail' => true, //true or false
-                    'dimensions' => null, // null or ['width'=>700, 'height'=>700]
+                    'thumbnail' => null, /// null or ['width'=>700, 'height'=>700]
+                    'dimensions' => ['width'=>400, 'height'=>400], // null or ['width'=>700, 'height'=>700]
                     'roundCorners' => 0,
                 ];
 

@@ -141,9 +141,9 @@ class StoreSeeder extends Seeder
                 $file = new File(storage_path('app/'.$file));
 
                 $options = [
-                    'overlayImageURL' => null, //
-                    'thumbnail' => true, //true or false
-                    'dimensions' => null, // null or ['width'=>700, 'height'=>700]
+                    'overlayImageURL' => null, // null or 
+                    'thumbnail' => ['width'=>400, 'height'=>400], //null or ['width'=>700, 'height'=>700]
+                    'dimensions' => ['width'=>400, 'height'=>400], // null or ['width'=>700, 'height'=>700]
                     'roundCorners' => 0,
                 ];
 

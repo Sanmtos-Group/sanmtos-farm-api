@@ -35,12 +35,21 @@ class CloudinaryService {
                 );
         }
         if (!empty($options['thumbnail']))
-            $resize1 = Resize::thumbnail()->width(150)->height(150)->gravity(Gravity::focusOn(FocusOn::face()));
-        // end of if
-        if (!empty($options['dimensions']))
-            if (isset($options['dimensions']['width']) && isset($options['dimensions']['height']))
-                $resize2 = Resize::fill()->width($options['dimensions']['width'])->height($options['dimensions']['height']);
-        // end of if  
+        {
+            $resize1 = Resize::thumbnail()
+            ->width($options['thumbnail']['width'] ?? 400)
+            ->height($options['thumbnail']['height'] ?? 400)
+            ;
+            // ->gravity(Gravity::focusOn(FocusOn::face()));
+        }
+        
+        if (!empty($options['dimensions'])){
+            $resize2 = Resize::fill()
+            ->width($options['dimensions']['width'] ?? 400)
+            ->height($options['dimensions']['height'] ?? 400)
+            ->gravity(Gravity::focusOn(FocusOn::face()));
+        }
+
         return Cloudinary::upload($file->getRealPath(),[
             'folder' => $folder,
             "public_id" => $name,
