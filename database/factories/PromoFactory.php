@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Enums\DiscountTypeEnums;
+use App\Enums\DiscountTypeEnum;
 use App\Models\DiscountType;
 use App\Models\Store;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -22,7 +22,7 @@ class PromoFactory extends Factory
         return [
             'name' => fake()->randomElement(['Black Friday Promo!!!', 'Discount Delight Day Promo!!', 'Loyal Luxuries']),
             'description' => fake()->realText(),
-            'discount_type_id' =>  DiscountType::where('code', DiscountTypeEnums::PercentageOff->value)->first()->id ?? null,
+            'discount_type_id' =>  DiscountType::where('code', DiscountTypeEnum::PercentageOff->value)->first()->id ?? null,
             'discount' => fake()->numberBetween(1, 100),
             'free_delivery' => fake()->boolean(),
             'free_advert' => fake()->boolean(),

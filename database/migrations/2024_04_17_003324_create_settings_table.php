@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\HtmlInputTypeEnums;
+use App\Enums\HtmlInputTypeEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('settings', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('store_id')->nullable()->cascadeOnUpdate()->casecadeOnDelete();
-            $table->enum('html_input_type', array_merge(HtmlInputTypeEnums::values()))->nullable();
+            $table->enum('html_input_type', array_merge(HtmlInputTypeEnum::values()))->nullable();
             $table->text('select_options')->nullable();
             $table->string('label')->nullable();
             $table->text('description')->nullable();

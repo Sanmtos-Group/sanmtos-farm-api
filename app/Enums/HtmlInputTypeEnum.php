@@ -3,7 +3,7 @@ namespace App\Enums;
 
 use  App\Traits\Enum\HasEnumStaticMethods;
 
-enum HtmlInputTypeEnums: string 
+enum HtmlInputTypeEnum: string 
 {
     use HasEnumStaticMethods;
 

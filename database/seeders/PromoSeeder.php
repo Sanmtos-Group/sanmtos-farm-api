@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Enums\DiscountTypeEnums;
+use App\Enums\DiscountTypeEnum;
 use App\Models\DiscountType;
 use App\Models\Promo;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -20,13 +20,13 @@ class PromoSeeder extends Seeder
                 'name'=> 'Loyal Luxuries Promo!!',
                 'description' => 'Lauching coupon of 10% discount on all purchase for next 30 days',
 
-                'discount_type_id' =>  DiscountType::where('code', DiscountTypeEnums::PercentageOff->value)->first()->id ?? null,
+                'discount_type_id' =>  DiscountType::where('code', DiscountTypeEnum::PercentageOff->value)->first()->id ?? null,
             ])->make()->toArray()
             ,
             Promo::factory([
                 'name'=> 'Discount Delight Day Promo!!',
                 'description' => '10% discount on first purchase in the next 60 days',
-                'discount_type_id' =>  DiscountType::where('code', DiscountTypeEnums::PercentageOff->value)->first()->id ?? null,
+                'discount_type_id' =>  DiscountType::where('code', DiscountTypeEnum::PercentageOff->value)->first()->id ?? null,
             ])->make()->toArray()
             ,
         ];

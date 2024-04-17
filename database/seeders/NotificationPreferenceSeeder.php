@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Enums\NotificationPreferenceEnums;
+use App\Enums\NotificationPreferenceEnum;
 use App\Models\NotificationPreference;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -28,25 +28,25 @@ class NotificationPreferenceSeeder extends Seeder
     public function defaultNotificationPreferences(){
         return [
             [
-                'code'=> NotificationPreferenceEnums::Summary->value,
+                'code'=> NotificationPreferenceEnum::Summary->value,
                 'description'=> 'Receive an email summary notification',
                 'channel' => 'email',
                 'type' => null
             ],
             [
-                'code'=>NotificationPreferenceEnums::AnnouncementAndSales->value,
+                'code'=>NotificationPreferenceEnum::AnnouncementAndSales->value,
                 'description'=> 'Announcements and Sales promotions',
                 'channel' => 'email',
                 'type' => null
             ],
             [
-                'code'=>NotificationPreferenceEnums::SellerCommunityUpdates->value,
+                'code'=>NotificationPreferenceEnum::SellerCommunityUpdates->value,
                 'description'=> 'Get notifications to stay up to date with seller community',
                 'channel' => 'email',
                 'type' => null
             ],
             [
-                'code'=>NotificationPreferenceEnums::NewOrder->value,
+                'code'=>NotificationPreferenceEnum::NewOrder->value,
                 'description'=> 'Notify about new orders or requests',
                 'channel' => 'email',
                 'type' => null

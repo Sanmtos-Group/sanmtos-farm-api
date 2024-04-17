@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Enums\HtmlInputTypeEnums;
+use App\Enums\HtmlInputTypeEnum;
 use App\Models\Setting;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -28,7 +28,7 @@ class SettingSeeder extends Seeder
         return [
             [
                 'store_id' => null,
-                'html_input_type'  => HtmlInputTypeEnums::Number,
+                'html_input_type'  => HtmlInputTypeEnum::Number,
                 'select_options' => null,
                 'label'      => 'VAT',
                 'description' => 'Value added tax (%) to be deducted from all purchase total',

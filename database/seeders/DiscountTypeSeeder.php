@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Enums\DiscountTypeEnums;
+use App\Enums\DiscountTypeEnum;
 use App\Models\DiscountType;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -24,14 +24,14 @@ class DiscountTypeSeeder extends Seeder
     public function defaultDiscountTypes(){
         return [
             [
-                'name' =>ucwords(strtolower(str_replace('_', ' ',  DiscountTypeEnums::FlatOff->value ))),
+                'name' =>ucwords(strtolower(str_replace('_', ' ',  DiscountTypeEnum::FlatOff->value ))),
                 'description'=> 'Fixed discount amount deducted from the original price',
-                'code'=> DiscountTypeEnums::FlatOff->value,
+                'code'=> DiscountTypeEnum::FlatOff->value,
             ],
             [
-                'name' =>ucwords(strtolower(str_replace('_', ' ',  DiscountTypeEnums::PercentageOff->value ))),
+                'name' =>ucwords(strtolower(str_replace('_', ' ',  DiscountTypeEnum::PercentageOff->value ))),
                 'description'=> 'Reduction in price based on a percentage of the original price',
-                'code'=>DiscountTypeEnums::PercentageOff->value,
+                'code'=>DiscountTypeEnum::PercentageOff->value,
             ],
         ];
     }

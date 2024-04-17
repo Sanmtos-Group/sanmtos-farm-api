@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\VatEnum;
 use App\Handlers\PaymentHandler;
 use App\Models\Address;
 use App\Models\Coupon;
@@ -9,6 +10,7 @@ use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\PaymentGateway;
 use App\Models\Payment;
+use App\Models\Setting;
 use App\Services\CheckoutService;
 use Exception;
 use Illuminate\Http\Request;
@@ -49,11 +51,15 @@ class CheckoutController extends Controller
                 $items_total_price += $item->total_price;
             });
 
+            // $vat = Setting::where('key', VatEnum::Key->value)
+            // ->whereNull('store_id')->first();
+            
             $order = new Order([
                 'user_id' => auth()->user()->id,
                 'address_id' => $address->id ?? null,
                 'price' => $items_total_price,
                 'total_price' => $items_total_price,
+                // 'vat'=> $vat,
             ]);
 
             session([
