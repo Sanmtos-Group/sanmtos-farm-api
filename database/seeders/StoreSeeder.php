@@ -60,106 +60,109 @@ class StoreSeeder extends Seeder
             ]);           
         }
         
-        $folder = 'sanmtos_sample_products';
-        $files = Storage::files($folder);
-        $products = [];
-        $images = [];
-        $likes = [];
+        if($santoms_store->products()->count() <= 0)
+        {
+            $folder = 'sanmtos_sample_products';
+            $files = Storage::files($folder);
+            $products = [];
+            $images = [];
+            $likes = [];
 
-        foreach ($files as $key => $file) {
+            foreach ($files as $key => $file) {
 
-            $file_name = Str::remove($folder.'/', $file);
-            $exploded = explode('_', $file_name);
-            
-            try {
-
-                $category_name = Str::before($exploded[2], '.');
-                $prod_name = $exploded[0];
-                $prod_price = $exploded[1];
- 
-                $category = Category::firstOrCreate([
-                    'name' => $category_name,
-                    'slug' => Str::slug($category_name),
-                ]);
-
-                $product = Product::where('name',$prod_name)
-                ->where( 'store_id', $santoms_store->id)->first();
+                $file_name = Str::remove($folder.'/', $file);
+                $exploded = explode('_', $file_name);
                 
-                if(is_null($product))
-                {
-                    $product = Product::create(
-                        Product::factory()->make([
-                            'name'=> $prod_name,
-                            'price' => $prod_price,
-                            'regular_price' => $prod_price + \random_int(10,3000),
-                            'category_id' => $category->id,
-                            'weight' => 0.5,
-                            'volume' => random_int(1,3),
-                            'store_id' => $santoms_store->id,
-                        ])->toArray()
-                    );
+                try {
+
+                    $category_name = Str::before($exploded[2], '.');
+                    $prod_name = $exploded[0];
+                    $prod_price = $exploded[1];
+    
+                    $category = Category::firstOrCreate([
+                        'name' => $category_name,
+                        'slug' => Str::slug($category_name),
+                    ]);
+
+                    $product = Product::where('name',$prod_name)
+                    ->where( 'store_id', $santoms_store->id)->first();
+                    
+                    if(is_null($product))
+                    {
+                        $product = Product::create(
+                            Product::factory()->make([
+                                'name'=> $prod_name,
+                                'price' => $prod_price,
+                                'regular_price' => $prod_price + \random_int(10,3000),
+                                'category_id' => $category->id,
+                                'weight' => 0.5,
+                                'volume' => random_int(1,3),
+                                'store_id' => $santoms_store->id,
+                            ])->toArray()
+                        );
+                            
+                    }
+                    else {
                         
+                    }
+                        
+                    // add product to inventory
+                    // $product->inventories()->create([
+                    //     'quantity'=> 100,
+                    //     'shop_id' => $santoms_store->id,
+                    // ]);
+
+                    $product->likes()->createMany([
+                        ['user_id' => User::inRandomOrder()->first()->id?? User::factory()->create()->id,],
+                        ['user_id' => User::inRandomOrder()->first()->id?? User::factory()->create()->id,],
+                        ['user_id' => User::inRandomOrder()->first()->id?? User::factory()->create()->id,],
+                        ['user_id' => User::inRandomOrder()->first()->id?? User::factory()->create()->id,],
+                    ]);
+
+                    $product->ratings()->createMany([
+                        [
+                            'user_id' => User::inRandomOrder()->first()->id?? User::factory()->create()->id,
+                            'stars' => random_int(1,5),
+                        ],
+                        [
+                            'user_id' => User::inRandomOrder()->first()->id?? User::factory()->create()->id,
+                            'stars' => random_int(1,5),
+                        ],
+                        [
+                            'user_id' => User::inRandomOrder()->first()->id?? User::factory()->create()->id,
+                            'stars' => random_int(1,5),
+                        ],
+                        [
+                            'user_id' => User::inRandomOrder()->first()->id?? User::factory()->create()->id,
+                            'stars' => random_int(1,5),
+                        ],
+                    ]);
+
+                    // CloudinaryService::
+                
+                    $file = new File(storage_path('app/'.$file));
+
+                    $options = [
+                        'overlayImageURL' => null, // null or 
+                        'thumbnail' => ['width'=>400, 'height'=>400], //null or ['width'=>700, 'height'=>700]
+                        'dimensions' => ['width'=>400, 'height'=>400], // null or ['width'=>700, 'height'=>700]
+                        'roundCorners' => 0,
+                    ];
+
+
+                    // upload to cloudinary
+                    $uploaded_image = CloudinaryService::uploadImage($file, $path ='products/', $options);
+
+                    // save image information
+                    $image_data['url'] = $uploaded_image->getSecurePath();
+                    $image_data['imageable_id'] = $product->id;
+                    $image_data['imageable_type'] = $product::class;
+
+                    Image::create($image_data);
+                
+                } catch (\Throwable $th) {
+                print(PHP_EOL.PHP_EOL.$th->getMessage().PHP_EOL.PHP_EOL);
                 }
-                else {
-                    
-                }
-                    
-                // add product to inventory
-                // $product->inventories()->create([
-                //     'quantity'=> 100,
-                //     'shop_id' => $santoms_store->id,
-                // ]);
-
-                $product->likes()->createMany([
-                    ['user_id' => User::inRandomOrder()->first()->id?? User::factory()->create()->id,],
-                    ['user_id' => User::inRandomOrder()->first()->id?? User::factory()->create()->id,],
-                    ['user_id' => User::inRandomOrder()->first()->id?? User::factory()->create()->id,],
-                    ['user_id' => User::inRandomOrder()->first()->id?? User::factory()->create()->id,],
-                ]);
-
-                $product->ratings()->createMany([
-                    [
-                        'user_id' => User::inRandomOrder()->first()->id?? User::factory()->create()->id,
-                        'stars' => random_int(1,5),
-                    ],
-                    [
-                        'user_id' => User::inRandomOrder()->first()->id?? User::factory()->create()->id,
-                        'stars' => random_int(1,5),
-                    ],
-                    [
-                        'user_id' => User::inRandomOrder()->first()->id?? User::factory()->create()->id,
-                        'stars' => random_int(1,5),
-                    ],
-                    [
-                        'user_id' => User::inRandomOrder()->first()->id?? User::factory()->create()->id,
-                        'stars' => random_int(1,5),
-                    ],
-                ]);
-
-                // CloudinaryService::
-               
-                $file = new File(storage_path('app/'.$file));
-
-                $options = [
-                    'overlayImageURL' => null, // null or 
-                    'thumbnail' => ['width'=>400, 'height'=>400], //null or ['width'=>700, 'height'=>700]
-                    'dimensions' => ['width'=>400, 'height'=>400], // null or ['width'=>700, 'height'=>700]
-                    'roundCorners' => 0,
-                ];
-
-
-                // upload to cloudinary
-                $uploaded_image = CloudinaryService::uploadImage($file, $path ='products/', $options);
-
-                // save image information
-                $image_data['url'] = $uploaded_image->getSecurePath();
-                $image_data['imageable_id'] = $product->id;
-                $image_data['imageable_type'] = $product::class;
-
-                Image::create($image_data);
-               
-            } catch (\Throwable $th) {
-               print(PHP_EOL.PHP_EOL.$th->getMessage().PHP_EOL.PHP_EOL);
             }
         }
         // Store::factory()

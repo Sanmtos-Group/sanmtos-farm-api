@@ -42,6 +42,8 @@ class DatabaseSeeder extends Seeder
             // LikeSeeder::class,
             // RatingSeeder::class,
             NotificationPreferenceSeeder::class,
+            SettingSeeder::class,
+
         ]);
     }
 }
