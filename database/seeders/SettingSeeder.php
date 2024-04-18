@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\HtmlInputTypeEnum;
+use App\Enums\VATEnum;
 use App\Models\Setting;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -30,10 +31,10 @@ class SettingSeeder extends Seeder
                 'store_id' => null,
                 'html_input_type'  => HtmlInputTypeEnum::Number,
                 'select_options' => null,
-                'name'      => 'VAT',
-                'description' => 'Value Added Tax (%) to be deducted from all total purchased price',
-                'key' => 'vat',
-                'value' => 5,
+                'name'      => VATEnum::Name->value,
+                'description' => VATEnum::Description->value,
+                'key' => VATEnum::Key->value,
+                'value' => VATEnum::Value->value,
                 'group_name' => 'app setting',
                 'settable_id' => null,
                 'settable_type' => null,

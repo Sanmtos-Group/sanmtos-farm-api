@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\VatEnum;
+use App\Enums\VATEnum;
 use App\Handlers\PaymentHandler;
 use App\Models\Address;
 use App\Models\Coupon;
@@ -46,7 +46,7 @@ class CheckoutController extends Controller
                                ->where('is_active', true)->first();
                 
         $delivery_fee = 0;
-        $vat = (float) (!is_null($vat_setting) ? $vat_setting->value : VatEnum::Value->value);
+        $vat = (float) (!is_null($vat_setting) ? $vat_setting->value : VATEnum::Value->value);
         $vat =(float) number_format($vat, 2);
 
 
@@ -56,7 +56,7 @@ class CheckoutController extends Controller
                 $items_total_price += $item->total_price;
             });
 
-            $vat_setting = Setting::where('key', VatEnum::Key->value)
+            $vat_setting = Setting::where('key', VATEnum::Key->value)
             ->whereNull('store_id')->first();
 
 
