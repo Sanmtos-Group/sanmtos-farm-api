@@ -30,15 +30,15 @@ class SettingSeeder extends Seeder
                 'store_id' => null,
                 'html_input_type'  => HtmlInputTypeEnum::Number,
                 'select_options' => null,
-                'label'      => 'VAT',
-                'description' => 'Value added tax (%) to be deducted from all purchase total',
+                'name'      => 'VAT',
+                'description' => 'Value Added Tax (%) to be deducted from all total purchased price',
                 'key' => 'vat',
                 'value' => 5,
                 'group_name' => 'app setting',
                 'settable_id' => null,
                 'settable_type' => null,
                 'allowed_editor_roles' => json_encode(['super-admin']),
-                'allowed_view_roles'  => null,
+                'allowed_view_roles'  => json_encode(['*']),
                 'owner_feature' => 'app setting'
             ],
         ];

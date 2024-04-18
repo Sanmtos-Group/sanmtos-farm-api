@@ -44,6 +44,11 @@ class CheckoutController extends Controller
         $address =  auth()->user()->addresses()->where('is_preferred', true)->first() ?? null;
         $payment_gateway = PaymentGateway::where('is_default', true)
                                ->where('is_active', true)->first();
+                
+        $delivery_fee = 0;
+        $vat = (float) (!is_null($vat_setting) ? $vat_setting->value : VatEnum::Value->value);
+        $vat =(float) number_format($vat, 2);
+
 
         if(!session()->has(CheckoutService::DEFAULT_INSTANCE))
         {
@@ -51,15 +56,17 @@ class CheckoutController extends Controller
                 $items_total_price += $item->total_price;
             });
 
-            // $vat = Setting::where('key', VatEnum::Key->value)
-            // ->whereNull('store_id')->first();
-            
+            $vat_setting = Setting::where('key', VatEnum::Key->value)
+            ->whereNull('store_id')->first();
+
+
             $order = new Order([
                 'user_id' => auth()->user()->id,
                 'address_id' => $address->id ?? null,
                 'price' => $items_total_price,
-                'total_price' => $items_total_price,
-                // 'vat'=> $vat,
+                'devievery_fee' => $delivery_fee,
+                'vat'=> $vat,
+                'total_price' => $items_total_price + ($vat/100 * $items_total_price),
             ]);
 
             session([

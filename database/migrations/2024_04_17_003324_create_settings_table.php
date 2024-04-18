@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignUuid('store_id')->nullable()->cascadeOnUpdate()->casecadeOnDelete();
             $table->enum('html_input_type', array_merge(HtmlInputTypeEnum::values()))->nullable();
             $table->text('select_options')->nullable();
-            $table->string('label')->nullable();
+            $table->string('name')->nullable();
             $table->text('description')->nullable();
             $table->string('key');
             $table->text('value')->nullable();

@@ -8,5 +8,5 @@ enum VatEnum:string
     use HasEnumStaticMethods;
 
     case Key = 'vat';
-    case Value = 5.00 ;
+    case Value = "5" ;
 }

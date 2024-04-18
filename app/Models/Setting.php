@@ -20,7 +20,7 @@ class Setting extends Model
         'store_id',
         'html_input_type',
         'select_options',
-        'label',
+        'name',
         'description',
         'key',
         'value',
