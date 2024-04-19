@@ -62,7 +62,7 @@ class StoreSeeder extends Seeder
         
         if($santoms_store->products()->count() <= 0)
         {
-            $folder = 'sanmtos_sample_products';
+            $folder = 'seeders/images/products';
             $files = Storage::files($folder);
             $products = [];
             $images = [];

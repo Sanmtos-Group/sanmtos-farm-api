@@ -3,5 +3,5 @@
 
 # Except these specific files and directories
 !public/
-!sanmtos_sample_products/
+!seeders/
 !.gitignore
