@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreSettingRequest;
 use App\Http\Requests\UpdateSettingRequest;
+use App\Http\Resources\SettingResource;
 use App\Models\Setting;
-
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
+use Spatie\QueryBuilder\QueryBuilder;
 class SettingController extends Controller
 {
     /**
@@ -13,7 +16,53 @@ class SettingController extends Controller
      */
     public function index()
     {
-        //
+        $settings = QueryBuilder::for(Setting::class)
+        ->defaultSort('created_at')
+        ->allowedSorts(
+            'html_input_type',
+            'select_options',
+            'name',
+            'description',
+            'key',
+            'value',
+            'group_name',
+            'settable_id',
+            'settable_type',
+            'allowed_editor_roles',
+            'allowed_view_roles',
+            'owner_feature',
+            'created_at',
+            AllowedSort::custom('recent', new \App\Models\Sorts\LatestSort()),
+            AllowedSort::custom('oldest', new \App\Models\Sorts\OldestSort()),
+        )
+        ->allowedFilters([
+            'html_input_type',
+            'select_options',
+            'name',
+            'description',
+            'key',
+            'value',
+            'group_name',
+            'settable_id',
+            'settable_type',
+            'allowed_editor_roles',
+            'allowed_view_roles',
+            'owner_feature',
+            'created_at',
+            AllowedFilter::scope('store'),
+        ])
+        ->allowedIncludes([
+            'store',
+        ])
+        ->paginate()
+        ->appends(request()->query());
+
+        $setting_resource =  SettingResource::collection($settings);
+
+        $setting_resource->with['status'] = "OK";
+        $payment_resource->with['message'] = 'Settings retrieved successfully';
+
+        return $setting_resource;
     }
 
     /**
@@ -37,7 +86,10 @@ class SettingController extends Controller
      */
     public function show(Setting $setting)
     {
-        //
+        $setting_resource = new SettingResource($setting);
+        $setting_resource->with['message'] = 'Setting retrieved successfully';
+
+        return  $setting_resource;
     }
 
     /**
