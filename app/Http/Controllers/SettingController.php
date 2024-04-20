@@ -60,7 +60,7 @@ class SettingController extends Controller
         $setting_resource =  SettingResource::collection($settings);
 
         $setting_resource->with['status'] = "OK";
-        $payment_resource->with['message'] = 'Settings retrieved successfully';
+        $setting_resource->with['message'] = 'Settings retrieved successfully';
 
         return $setting_resource;
     }
@@ -86,6 +86,13 @@ class SettingController extends Controller
      */
     public function show(Setting $setting)
     {
+        if(request()->has('include'))
+        {
+            foreach (explode(',', request()->include) as $key => $value) {
+               $setting->{$value};
+            }
+        }
+
         $setting_resource = new SettingResource($setting);
         $setting_resource->with['message'] = 'Setting retrieved successfully';
 

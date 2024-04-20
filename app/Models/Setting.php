@@ -18,6 +18,7 @@ class Setting extends Model
      */
     protected $fillable = [
         'store_id',
+        'html_form_element',
         'html_input_type',
         'select_options',
         'name',
@@ -32,7 +33,7 @@ class Setting extends Model
         'owner_feature',
     ];
 
-     /**
+    /**
      * The attributes that should be cast to native types.
      *
      * @var array
