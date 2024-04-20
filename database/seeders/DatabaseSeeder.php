@@ -43,7 +43,7 @@ class DatabaseSeeder extends Seeder
             // RatingSeeder::class,
             NotificationPreferenceSeeder::class,
             SettingSeeder::class,
-
+            LogisticCompanySeeder::class,
         ]);
     }
 }

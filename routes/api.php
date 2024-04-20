@@ -16,6 +16,7 @@ use App\Http\Controllers\CountryController;
 use App\Http\Controllers\DiscountTypeController;
 use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\LogisticCompanyController;
 use App\Http\Controllers\NotificationPreferenceController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentGatewayController;
@@ -25,6 +26,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PromoController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UserController;
@@ -296,6 +298,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('store-search',  'storeSearch')->name('store-search');
     });
 
+    Route::apiResource('settings', SettingController::class);
+
+
 });
 
 // End of Auth Routes
@@ -362,6 +367,7 @@ Route::apiResource('discount-types', DiscountTypeController::class)->only(['inde
 Route::apiResource('images', ImageController::class)->only(['index', 'show']);
 Route::apiResource('notification-preferences', NotificationPreferenceController::class)->only(['index', 'show']);
 Route::apiResource('payment-gateways', PaymentGatewayController::class)->only(['index', 'show']);
+Route::apiResource('logistic-companies', LogisticCompanyController::class)->only(['index', 'show']);
 Route::apiResource('permissions', PermissionController::class)->only(['index', 'show']);
 
 

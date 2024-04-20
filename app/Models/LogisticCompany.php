@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Logistic extends Model
+class LogisticCompany extends Model
 {
     use HasFactory;
     use HasImages;
@@ -43,6 +43,7 @@ class Logistic extends Model
         'name',
         'is_active',
         'is_default',
+        'image'
     ];
 
     /**

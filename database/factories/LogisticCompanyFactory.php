@@ -2,13 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Enums\LogisticEnum;
+use App\Enums\LogisticCompanyEnum;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Logistic>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\LogisticCompany>
  */
-class LogisticFactory extends Factory
+class LogisticCompanyFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,7 +18,7 @@ class LogisticFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $name = fake()->unique()->randomElement(LogisticEnum::values()),
+            'name' => $name = fake()->unique()->randomElement(LogisticCompanyEnum::values()),
             'email' => $email = fake()->safeEmail(),
             'username' => fake()->userName(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password

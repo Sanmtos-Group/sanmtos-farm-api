@@ -6,6 +6,9 @@ use App\Http\Requests\StorePaymentGatewayRequest;
 use App\Http\Requests\UpdatePaymentGatewayRequest;
 use App\Http\Resources\PaymentGatewayResource;
 use App\Models\PaymentGateway;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class PaymentGatewayController extends Controller
 {
@@ -16,8 +19,33 @@ class PaymentGatewayController extends Controller
      */
     public function index()
     {
-        $payment_gateways = PaymentGateway::all();
-        $payment_gateway_resource = new PaymentGatewayResource($payment_gateways);
+        $payment_gateways = QueryBuilder::for(PaymentGateway::class)
+        ->defaultSort('is_default')
+        ->allowedSorts(
+            'name',
+            'is_active',
+            'is_default', 
+            'created_at',
+            AllowedSort::custom('recent', new \App\Models\Sorts\LatestSort()),
+            AllowedSort::custom('oldest', new \App\Models\Sorts\OldestSort()),
+        )
+        ->allowedFilters([
+            'name',
+            'is_active',
+            'is_default', 
+            'created_at',
+        ])
+        ->allowedIncludes([
+            'image',
+        ])
+        ->paginate()
+        ->appends(request()->query());
+
+        $payment_gateway_resource =  PaymentGatewayResource::collection($payment_gateways);
+
+        $payment_gateway_resource->with['status'] = "OK";
+        $payment_gateway_resource->with['message'] = 'Payment gateways retrived successfully';
+
         return $payment_gateway_resource;
     }
 

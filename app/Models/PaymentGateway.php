@@ -42,6 +42,7 @@ class PaymentGateway extends Model
         'name',
         'is_active',
         'is_default',
+        'image',
     ];
 
     /**
