@@ -3,7 +3,7 @@ namespace App\Enums;
 
 use  App\Traits\Enum\HasEnumStaticMethods;
 
-enum LogisticEnum:string
+enum LogisticCompanyEnum:string
 {
     use HasEnumStaticMethods;
     

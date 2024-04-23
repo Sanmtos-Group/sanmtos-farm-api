@@ -34,7 +34,6 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-
         $products = QueryBuilder::for(Product::class)
         ->defaultSort('created_at')
         ->allowedSorts(

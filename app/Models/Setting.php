@@ -18,6 +18,7 @@ class Setting extends Model
      */
     protected $fillable = [
         'store_id',
+        'html_form_element',
         'html_input_type',
         'select_options',
         'name',
@@ -32,7 +33,7 @@ class Setting extends Model
         'owner_feature',
     ];
 
-     /**
+    /**
      * The attributes that should be cast to native types.
      *
      * @var array
@@ -42,4 +43,34 @@ class Setting extends Model
         'allowed_editor_roles' => 'json',
         'allowed_view_roles' => 'json',
     ];
+    
+    /**
+     * Get the store that owns the product.
+     */
+    public function store(): BelongsTo
+    {
+        return $this->belongsTo(Store::class);
+    }
+
+    /**
+     * Scope a query to only include users of a given type.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  mix  $values
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeStore($query, ...$values)
+    {
+        $query->withWhereHas('store', function($query) use($values){
+            $query->whereIn('id', $values);
+
+            foreach ($values as $key => $value) {
+                $query->orWhere('name','like',"%".$value."%")
+                ->orWhere('slug','like',"%".$value."%");
+            }
+                
+        });
+        
+        return $query; 
+    }
 }

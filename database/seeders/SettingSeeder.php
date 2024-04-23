@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\HtmlFormElementEnum;
 use App\Enums\HtmlInputTypeEnum;
 use App\Enums\VATEnum;
 use App\Models\Setting;
@@ -29,6 +30,7 @@ class SettingSeeder extends Seeder
         return [
             [
                 'store_id' => null,
+                'html_form_element' => HtmlFormElementEnum::Input,
                 'html_input_type'  => HtmlInputTypeEnum::Number,
                 'select_options' => null,
                 'name'      => VATEnum::Name->value,

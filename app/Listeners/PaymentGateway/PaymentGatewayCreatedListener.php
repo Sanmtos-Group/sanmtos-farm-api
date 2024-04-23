@@ -24,7 +24,6 @@ class PaymentGatewayCreatedListener
     {
         $payment_gateway = $event->payment_gateway;
 
-
         if(PaymentGateway::count() <= 1)
         {
             $payment_gateway->is_active = true;

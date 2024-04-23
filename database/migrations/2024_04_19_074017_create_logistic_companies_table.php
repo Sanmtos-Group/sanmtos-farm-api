@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('logistics', function (Blueprint $table) {
+        Schema::create('logistic_companies', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name')->unique();
             $table->string('email')->nullable();
@@ -24,6 +24,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->boolean('is_default')->default(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

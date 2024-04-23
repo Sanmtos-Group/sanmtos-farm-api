@@ -164,7 +164,7 @@ class Product extends Model
         return $query->where('price','>=', $min)->where('price','<=',$max);
     }
 
-     /**
+    /**
      * Scope a query to only include users of a given type.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query

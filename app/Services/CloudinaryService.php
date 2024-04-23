@@ -55,7 +55,7 @@ class CloudinaryService {
             "public_id" => $name,
             "overwrite" => true,
             'transformation' => [
-                RoundCorners::byRadius($options['roundCorners']),
+                RoundCorners::byRadius($options['roundCorners']?? null),
                 $resize1,
                 $resize2,
                 $showOverlay,

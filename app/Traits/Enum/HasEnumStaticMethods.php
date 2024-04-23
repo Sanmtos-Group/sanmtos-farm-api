@@ -14,6 +14,18 @@ trait HasEnumStaticMethods {
        return enum_exists(self::class) ?  array_column(self::cases(), 'value') : [];
     }
 
+    /**
+     * Get all the values of the enums 
+     * 
+     * @return array <<int, string>>
+     */
+    public static function valuesToUpperCase(): array
+    {
+       return array_map(function ($value){
+            return strtoupper($value);
+       }, self::values());    
+    }
+
 
     /**
      * Get all name value pair of the enum 

@@ -24,7 +24,7 @@ trait HasImages {
         return $this->morphMany(Image::class, 'imageable');
     }
 
-    public function uploadToCloudinary(File $image, String $path='images', array $options=[])
+    public function uploadImageToCloudinary(File $image, String $path='images', array $options=[])
     {
         // upload to cloudinary
         $uploaded_image = CloudinaryService::uploadImage($image, $path, $options);
@@ -35,5 +35,16 @@ trait HasImages {
         $image_data['imageable_type'] = $this::class;
 
         Image::create($image_data);
+    }
+
+    public function deleteCloudinaryImages()
+    {
+        $images = $this->images()->where('url', 'like', '%cloudinary%')->get();
+
+        foreach ($images as $key => $image) 
+        {
+            CloudinaryService::destroy($image->url);
+            $image->forceDelete();
+        }
     }
 }
