@@ -94,7 +94,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::put('change-password', [PasswordResetController::class, 'changePassword'])->name('change-passowrd');
-    
+
 
     Route::apiResource('attributes', AttributeController::class)->only(['store', 'update', 'destroy']);
     Route::prefix('attributes/{attribute}/')->group(function () {
@@ -326,7 +326,10 @@ Route::controller(PasswordResetController::class)->group(function() {
     Route::put('resend-code','resendCode')->name('resend-code');
 });
 
-Route::get('search', [SearchController::class, 'search'])->name('search');
+Route::controller(SearchController::class)->group(function (){
+    Route::get('search',  'search')->name('search');
+    Route::get('searchable',  'searchable')->name('searchable');
+});
 
 Route::apiResource('attributes', AttributeController::class)->only(['index', 'show']);
 Route::apiResource('addresses', AddressController::class)->only(['index', 'show']);
