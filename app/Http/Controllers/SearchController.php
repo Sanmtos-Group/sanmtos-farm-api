@@ -2,16 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProductResource;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Store;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class SearchController extends Controller
 {
-    public function search()
+    public function search(): \Illuminate\Http\JsonResponse
     {
         $search = Product::where('name', 'LIKE', '%' . request()->name . '%')
             ->when(request()->price, function($query) {
@@ -43,7 +47,51 @@ class SearchController extends Controller
 
     }
 
-    public function productSearch()
+    public function searchable(): \Illuminate\Http\JsonResponse
+    {
+        $search = QueryBuilder::for(Product::class)
+            ->defaultSort('name')
+            ->allowedSorts(
+                'name',
+                'price',
+                'weight',
+                'volume',
+                'discount',
+                AllowedSort::custom('recent', new \App\Models\Sorts\LatestSort()),
+                AllowedSort::custom('oldest', new \App\Models\Sorts\OldestSort()),
+            )
+            ->allowedFilters([
+                'name',
+                'price',
+                'created_at',
+                AllowedFilter::scope('min_price'),
+                AllowedFilter::scope('max_price'),
+                AllowedFilter::scope('price_between'),
+                AllowedFilter::scope('category'),
+                AllowedFilter::scope('store'),
+                AllowedFilter::scope('recent'),
+            ])
+            ->allowedIncludes([
+                'rate',
+                'category',
+                'likes',
+                'country',
+            ])
+            ->paginate()
+            ->appends(request()->query());
+
+        $searchable =  ProductResource::collection($search);
+
+        $searchable->with['status'] = "OK";
+        $searchable->with['message'] = 'Products retrieved successfully';
+
+        return response()->json([
+            'message' => "Ok",
+            'data' => $searchable
+        ], 200);
+    }
+
+    public function productSearch(): \Illuminate\Http\JsonResponse
     {
         $product = Product::where('name', 'LIKE', '%' . request()->name . '%')
             ->when(request()->price, function($query) {
@@ -69,7 +117,7 @@ class SearchController extends Controller
 
     }
 
-    public function categorySearch()
+    public function categorySearch(): \Illuminate\Http\JsonResponse
     {
         $category = Category::where('name', 'LIKE', '%' . request()->name . '%')
             ->limit(10)
@@ -88,7 +136,7 @@ class SearchController extends Controller
         ], 200);
     }
 
-    public function orderSearch()
+    public function orderSearch(): \Illuminate\Http\JsonResponse
     {
         $order = Order::where('number', 'LIKE', '%' . request()->number . '%')
             ->when(request()->price, function($query) {
@@ -119,7 +167,7 @@ class SearchController extends Controller
         ], 200);
     }
 
-    public function userSearch()
+    public function userSearch(): \Illuminate\Http\JsonResponse
     {
         $user = User::where('first_name', 'LIKE', '%' . request()->first_name . '%')
             ->when(request()->last_name, function($query) {
@@ -150,7 +198,7 @@ class SearchController extends Controller
         ], 200);
     }
 
-    public function storeSearch()
+    public function storeSearch(): \Illuminate\Http\JsonResponse
     {
         $store = Store::where('name', 'LIKE', '%' . request()->first_name . '%')
             ->when(request()->created_at, function($query) {
