@@ -52,8 +52,9 @@ class CloudinaryService {
 
         return Cloudinary::upload($file->getRealPath(),[
             'folder' => $folder,
-            "public_id" => $name,
-            "overwrite" => true,
+            // 'background_removal' => 'cloudinary_ai',
+            'public_id' => $name,
+            'overwrite'  => true,
             'transformation' => [
                 RoundCorners::byRadius($options['roundCorners']?? null),
                 $resize1,

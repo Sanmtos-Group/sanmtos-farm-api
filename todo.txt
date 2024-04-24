@@ -1,2 +1,0 @@
-1. Add logistic company for delivery to order on checkout 
-2. implement DHL package and integrate in sanmtos

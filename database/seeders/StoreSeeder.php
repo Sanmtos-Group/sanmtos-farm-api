@@ -9,7 +9,6 @@ use App\Models\Product;
 use App\Models\Role;
 use App\Models\Store;
 use App\Models\User;
-use App\Services\CloudinaryService;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Http\File;
@@ -60,7 +59,7 @@ class StoreSeeder extends Seeder
             ]);           
         }
         
-        if($santoms_store->products()->count() <= 0)
+        if($santoms_store->products()->count() >= 0)
         {
             $folder = 'seeders/images/products';
             $files = Storage::files($folder);
@@ -137,8 +136,6 @@ class StoreSeeder extends Seeder
                             'stars' => random_int(1,5),
                         ],
                     ]);
-
-                    // CloudinaryService::
                 
                     $file = new File(storage_path('app/'.$file));
 
@@ -149,16 +146,7 @@ class StoreSeeder extends Seeder
                         'roundCorners' => 0,
                     ];
 
-
-                    // upload to cloudinary
-                    $uploaded_image = CloudinaryService::uploadImage($file, $path ='products/', $options);
-
-                    // save image information
-                    $image_data['url'] = $uploaded_image->getSecurePath();
-                    $image_data['imageable_id'] = $product->id;
-                    $image_data['imageable_type'] = $product::class;
-
-                    Image::create($image_data);
+                    $image = $product->uploadImageToCloudinary($file, $path ='products/', $options);
                 
                 } catch (\Throwable $th) {
                 print(PHP_EOL.PHP_EOL.$th->getMessage().PHP_EOL.PHP_EOL);
