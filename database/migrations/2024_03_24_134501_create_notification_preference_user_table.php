@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_notification_preference');
+        Schema::dropIfExists('notification_preference_user');
     }
 };
