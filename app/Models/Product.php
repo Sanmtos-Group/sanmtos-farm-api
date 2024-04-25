@@ -52,6 +52,9 @@ class Product extends Model
         'description',
         'short_description',
         'weight',
+        'width',
+        'length',
+        'height',
         'volume',
         'price',
         'regular_price',
@@ -78,17 +81,13 @@ class Product extends Model
      * @var array
      */
     protected $with = ['images', 'activePromo'];
+    
 
     /**
-     * Determine product discount
+     * ----------------------------------------------------------------------------------------------------
+     * Model's Accessors and Mutators
+     * ----------------------------------------------------------------------------------------------------
      */
-    protected function discount(): CastAttribute
-    {
-        return CastAttribute::make(
-            get: fn () => !is_null($this->regular_price) ?  round(($this->regular_price - $this->price)/ $this->regular_price * 100, 2): 0,
-            set: fn () => !is_null($this->regular_price) ?  round(($this->regular_price - $this->price)/ $this->regular_price * 100, 2): 0,
-        );
-    }
 
     /**
      * Get the store that owns the product.
@@ -96,17 +95,6 @@ class Product extends Model
     public function store(): BelongsTo
     {
         return $this->belongsTo(Store::class);
-    }
-
-
-    /**
-     * Determine product discount
-     */
-    protected function country(): CastAttribute
-    {
-        return CastAttribute::make(
-            get: fn () =>  $this->store->address->country?? null
-        );
     }
 
     /**
@@ -125,6 +113,49 @@ class Product extends Model
         return $this->belongsTo(User::class, 'verifier_id');
     }
 
+    /**
+     * ----------------------------------------------------------------------------------------------------
+     * Model's Accessors and Mutators
+     * ----------------------------------------------------------------------------------------------------
+     */
+
+    /**
+     * Determine product discount
+     */
+    protected function discount(): CastAttribute
+    {
+        return CastAttribute::make(
+            get: fn () => !is_null($this->regular_price) ?  round(($this->regular_price - $this->price)/ $this->regular_price * 100, 2): 0,
+            set: fn () => !is_null($this->regular_price) ?  round(($this->regular_price - $this->price)/ $this->regular_price * 100, 2): 0,
+        );
+    }
+
+    /**
+     * Determine product discount
+     */
+    protected function volume(): CastAttribute
+    {
+        return CastAttribute::make(
+            get: fn () => $this->length * $this->width * $this->height,
+            set: fn () => $this->length * $this->width * $this->height,
+        );
+    }
+
+    /**
+     * Determine product discount
+     */
+    protected function country(): CastAttribute
+    {
+        return CastAttribute::make(
+            get: fn () =>  $this->store->address->country?? null
+        );
+    }
+
+    /**
+     * ----------------------------------------------------------------------------------------------------
+     * Model's scope
+     * ----------------------------------------------------------------------------------------------------
+     */
     
 
     /**
