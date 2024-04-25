@@ -41,7 +41,7 @@ class PromoPolicy
      */
     public function update(User $user, Promo $promo): bool
     {
-        return $user->owns_a_store || $user->hasPermission('update promo') || true;
+        return $user->owns_a_store || $user->hasPermission('update promo');
     }
 
     /**

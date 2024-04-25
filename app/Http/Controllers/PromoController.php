@@ -96,9 +96,16 @@ class PromoController extends Controller
      */
     public function store(StorePromoRequest $request)
     {
+        $user = auth()->user();
+        
         $validated = $request->validated();
         $promo = Promo::create($validated);
 
+        if(!is_null($user) && $user->owns_a_store)
+        {
+            $promo->store_id = $user->store->id;
+            $promo->save();
+        }
       
         $recipients = [];
         // clean recipient ids for syncing 
@@ -135,7 +142,6 @@ class PromoController extends Controller
         }
         $promo->applicableCategories()->syncWithoutDetaching($applicable_categories);
         $promo->applicableCategories; 
-
 
         // save promo image
         if($request->hasFile('image'))

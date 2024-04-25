@@ -91,9 +91,16 @@ class CouponController extends Controller
      */
     public function store(StoreCouponRequest $request)
     {
+        $user = auth()->user();
+
         $validated = $request->validated();
         $coupon = Coupon::create($validated);
 
+        if(!is_null($user) && $user->owns_a_store)
+        {
+            $coupon->store_id = $user->store->id;
+            $coupon->save();
+        }
       
         $recipients = [];
         // clean recipient ids for syncing 
