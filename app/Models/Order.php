@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Model;
+
 class Order extends Model
 {
     use HasFactory;
@@ -80,7 +81,7 @@ class Order extends Model
         return $this->morphOne(Payment::class, 'paymentable');
     }
 
-      /**
+    /**
      *  meta attribute
      */
     protected function isPaid(): Attribute

@@ -6,6 +6,7 @@ use App\Enums\VATEnum;
 use App\Handlers\PaymentHandler;
 use App\Models\Address;
 use App\Models\Coupon;
+use App\Models\LogisticCompany;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\PaymentGateway;
@@ -43,7 +44,10 @@ class CheckoutController extends Controller
         $items = auth()->user()->cartItems;
         $address =  auth()->user()->addresses()->where('is_preferred', true)->first() ?? null;
         $payment_gateway = PaymentGateway::where('is_default', true)
-                               ->where('is_active', true)->first();
+        ->where('is_active', true)->first();
+
+        $logistic_company = LogisticCompany::where('is_default', true)
+        ->where('is_active', true)->first();
                 
         $delivery_fee = 0;
         $vat = (float) (!is_null($vat_setting) ? $vat_setting->value : VATEnum::Value->value);
@@ -74,6 +78,7 @@ class CheckoutController extends Controller
                 'order' =>  $order,
                 'items' => $items,
                 'payment_gateway_id' => $payment_gateway->id ?? null,
+                'logistic_company_id' => $logistic_company->id ?? null,
                 ]
             ]);
         }
@@ -161,6 +166,42 @@ class CheckoutController extends Controller
             "data" => $this->summary(),
             'status' => 'OK',
             "message" => "Payment gateway updated updated successfully"
+        ], 200);
+
+    }
+
+    /**
+     * Update or insert the logistic company 
+     * 
+     * @method PUT || PATCH
+     * @param App\Models\LogisticCompany $logistic_company
+     * @return \Illuminate\Http\Response\Json
+     */
+    public function upsertLogisticCompany(LogisticCompany $logistic_company)
+    {        
+        if(!($logistic_company->is_active))
+        {
+            return response()->json([
+                'data' => null,
+                'status' => 'FAILED',
+                "message" => "Failed to update logistic compnay",
+                "errors"=> [
+                    "adddress" => [
+                        "Logistic company is currently not active."
+                    ],
+                ]
+            ], 422);  
+        }
+
+        $updatable_summary = $this->summary();
+        $updatable_summary['logistic_company_id'] = $logistic_company->id;
+
+        session([CheckoutService::DEFAULT_INSTANCE => $updatable_summary]);
+
+        return response()->json([
+            "data" => $this->summary(),
+            'status' => 'OK',
+            "message" => "Logistic company updated updated successfully"
         ], 200);
 
     }
@@ -279,6 +320,11 @@ class CheckoutController extends Controller
                 $errors['payment_gateway_id'] = 'Please select payment gateway';
             }
 
+            if(!array_key_exists('logistic_company_id', $summary))
+            {
+                $errors['logistic_company_id'] = 'Please select desired logistic company for delivery';
+            }
+
             if(!empty($errors))
             {
                 throw new Exception("Order confirmation failed", 1);
@@ -306,13 +352,17 @@ class CheckoutController extends Controller
             
             $order->orderables()->createMany($orderables);
             
-            $payment = $order->payments()->create([
+            $payment = $order->payment()->create([
                 'user_id' => auth()->user()->id,
                 'amount' => $order->total_price,
                 'transaction_reference' =>  Payment::genTranxRef(),
                 'gateway_id' => $summary['payment_gateway_id'],
 
             ]);
+
+            // attached the logistic company to the order for delivery
+            // implement code here
+            //
 
             $payment_handler = new PaymentHandler();
 

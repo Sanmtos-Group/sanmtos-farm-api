@@ -200,6 +200,7 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::match(['put', 'patch'], 'delivery-address/{address}', 'upsertDeliveryAddress' )->name('checkout.devlivery-address.upsert');
                 Route::match(['put', 'patch'], 'coupon', 'addCoupon' )->name('checkout.coupon.add');
                 Route::match(['put', 'patch'], 'payment-gateway/{payment_gateway}', 'upsertPaymentGateway' )->name('checkout.payment-gateway.upsert');
+                Route::match(['put', 'patch'], 'logistic-compnay/{logistic_company}', 'upsertLogisticCompany' )->name('checkout.logistic-company.upsert');
                 Route::post( 'confirm-order', 'confirmOrder')->name('confirmOrder');
                 // Route::post('{coupon}/products', 'attachProducts')->name('products.attach');
                 // Route::delete('{coupon}/products', 'detachProducts')->name('products.detach');
@@ -240,6 +241,13 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::get('address', 'showAddress')->name('address.show');
                 Route::match(['put', 'patch'],'address', 'updateAddress')->name('address.update');
             });
+
+            Route::middleware(['merge.store.filter'])->group(function () {
+                Route::apiResource('products', ProductController::class);
+                Route::apiResource('promos', PromoController::class);
+                Route::apiResource('coupons', CouponController::class);
+            });
+
         });
     });
 

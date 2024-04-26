@@ -31,6 +31,7 @@ class PromoController extends Controller
      */
     public function index(Request $request)
     {
+        $user = auth()->user();
 
         $promos = QueryBuilder::for(Promo::class)
         ->defaultSort('created_at')
@@ -97,7 +98,7 @@ class PromoController extends Controller
     public function store(StorePromoRequest $request)
     {
         $user = auth()->user();
-        
+
         $validated = $request->validated();
         $promo = Promo::create($validated);
 
