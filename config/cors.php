@@ -26,6 +26,7 @@ return [
         'http://localhost:5173',
         'https://sanmtos.com',
         'https://sanmtos.com/',
+        '*',
     ],
 
     'allowed_origins_patterns' => [],
