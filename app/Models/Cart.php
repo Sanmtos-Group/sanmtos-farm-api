@@ -33,6 +33,7 @@ class Cart extends Model
      * @var array
      */
     protected $appends = [
+        'name',
         'image_url',
         'price',
         'total_price',
@@ -59,6 +60,16 @@ class Cart extends Model
     }
 
     /**
+     * Determine  a cart item  name
+     */
+    protected function name(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->products()->first()->name?? null,
+        );
+    } 
+
+    /**
      * Determine  a cart item  image
      */
     protected function imageUrl(): Attribute
@@ -68,7 +79,7 @@ class Cart extends Model
         );
     } 
 
-     /**
+    /**
      * Determine  a cart item  options
      */
     protected function options(): Attribute

@@ -77,8 +77,7 @@ class CartController extends Controller
      */
     public function items()
     {     
-
-        $cart_items = auth()->user() ? auth()->user()->cartItems :  CartFacade::contentArray();
+        $cart_items = Auth::guard('sanctum')->user() ? Auth::guard('sanctum')->user()->cartItems :  CartFacade::contentArray();
       
         $cart_resource =  new CartResource($cart_items);
         $cart_resource->with['message'] = 'Cart items retrived successfully';
@@ -100,15 +99,15 @@ class CartController extends Controller
             'cartable_type'=> $product::class,
             'cartable_url' => route('api.products.show', $product),
         ];
-
-        if(auth()->user())
+        
+        if(Auth::guard('sanctum')->user())
         {
-            $cart_item = auth()->user()->cartItems()->where('cartable_id', $product->id)->first();
+            $cart_item = Auth::guard('sanctum')->user()->cartItems()->where('cartable_id', $product->id)->first();
             
 
             if(is_null($cart_item)){
                 $cart_item = new Cart();
-                $cart_item->user_id = auth()->user()->id;
+                $cart_item->user_id = Auth::guard('sanctum')->user()->id;
                 $cart_item->cartable_id = $product->id;
                 $cart_item->cartable_type = $product::class;
                 $cart_item->quantity = $validated['quantity'] ?? 1;
@@ -120,7 +119,7 @@ class CartController extends Controller
 
             $cart_item->save() ?? null;
 
-            $cart_items = auth()->user()->cartItems;
+            $cart_items = Auth::guard('sanctum')->user()->cartItems;
         }
         else {
             CartFacade::add(
@@ -144,16 +143,16 @@ class CartController extends Controller
      */
     public function increment($item)
     {
-        if(auth()->user())
+        if(Auth::guard('sanctum')->user())
         {
-            $cart_item = auth()->user()->cartItems()->where('cartable_id', $item)->first();
+            $cart_item = Auth::guard('sanctum')->user()->cartItems()->where('cartable_id', $item)->first();
             if(!is_null($cart_item))
             {
                 $cart_item->quantity  +=1;
                 $cart_item->save();
             }
 
-            $cart_items = auth()->user()->cartItems;
+            $cart_items = Auth::guard('sanctum')->user()->cartItems;
         }
         else {
             CartFacade::update($item, 'plus');
@@ -171,8 +170,8 @@ class CartController extends Controller
      */
     public function decrement($item)
     {
-        if(auth()->user()){
-            $cart_item = auth()->user()->cartItems()->where('cartable_id', $item)->first();
+        if(Auth::guard('sanctum')->user()){
+            $cart_item = Auth::guard('sanctum')->user()->cartItems()->where('cartable_id', $item)->first();
 
             if(!is_null($cart_item))
             {
@@ -186,7 +185,7 @@ class CartController extends Controller
                 }
             }
 
-            $cart_items = auth()->user()->cartItems;
+            $cart_items = Auth::guard('sanctum')->user()->cartItems;
         }
         else {
             CartFacade::update($item, 'minus');
@@ -204,11 +203,11 @@ class CartController extends Controller
      */
     public function remove($item)
     {
-        if(auth()->user())
+        if(Auth::guard('sanctum')->user())
         {
-           auth()->user()->cartItems()->where('cartable_id', $item)->delete();
+           Auth::guard('sanctum')->user()->cartItems()->where('cartable_id', $item)->delete();
 
-            $cart_items = auth()->user()->cartItems;
+            $cart_items = Auth::guard('sanctum')->user()->cartItems;
         }
         else {
             CartFacade::remove($item);
@@ -226,14 +225,14 @@ class CartController extends Controller
      */
     public function clear()
     {
-        if(auth()->user())
+        if(Auth::guard('sanctum')->user())
         {
-            auth()->user()->cartItems()->delete();
+            Auth::guard('sanctum')->user()->cartItems()->delete();
         }
     
         CartFacade::clear();
 
-        $cart_items = auth()->user() ? auth()->user()->cartItems :  CartFacade::contentArray();
+        $cart_items = Auth::guard('sanctum')->user() ? Auth::guard('sanctum')->user()->cartItems :  CartFacade::contentArray();
 
         $cart_resource =  new CartResource($cart_items);
         $cart_resource->with['message'] = 'Cart items cleared successfully';
