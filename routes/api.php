@@ -47,7 +47,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
 Route::controller(PaymentController::class)->group(function () {
     Route::get('payments/callback', 'callback')->name('payments.callback');
     Route::post('payments/webhook', 'webhook')->name('payments.webhook');
@@ -415,3 +414,4 @@ Route::prefix('stores/{store}/')->group(function () {
         });
     });
 });
+

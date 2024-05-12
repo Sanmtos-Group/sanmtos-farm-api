@@ -12,7 +12,7 @@ return [
     | Supported: "exchange-rates-api-io", "exchange-rates-data-api", "exchange-rate-host"
     |
     */
-    'driver' => 'exchange-rates-data-api',
+    'driver' => 'exchange-rates-api-io',
 
     /*
     |--------------------------------------------------------------------------
@@ -33,6 +33,6 @@ return [
     | exchangeratesapi.io and exchangerate.host only allow API access via HTTP.
     |
     */
-    'https' => false,
+    'https' => true,
 
 ];
