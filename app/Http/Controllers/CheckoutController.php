@@ -19,6 +19,15 @@ use Illuminate\Support\Facades\DB;
 class CheckoutController extends Controller
 {
 
+    private $vat;
+
+    public function __construct()
+    {
+        $vat_setting = Setting::where('key', VATEnum::Key->value)->whereNull('store_id')->first();      
+        $this->vat = (float) (!is_null($vat_setting) ? $vat_setting->value : VATEnum::Value->value);
+        $this->vat =(float) number_format($this->vat, 2);
+    }   
+
     /**
      * Checking out the cart 
      *  
@@ -50,8 +59,7 @@ class CheckoutController extends Controller
         ->where('is_active', true)->first();
                 
         $delivery_fee = 0;
-        $vat = (float) (!is_null($vat_setting) ? $vat_setting->value : VATEnum::Value->value);
-        $vat =(float) number_format($vat, 2);
+      
 
 
         if(!session()->has(CheckoutService::DEFAULT_INSTANCE))
@@ -60,17 +68,13 @@ class CheckoutController extends Controller
                 $items_total_price += $item->total_price;
             });
 
-            $vat_setting = Setting::where('key', VATEnum::Key->value)
-            ->whereNull('store_id')->first();
-
-
             $order = new Order([
                 'user_id' => auth()->user()->id,
                 'address_id' => $address->id ?? null,
                 'price' => $items_total_price,
                 'devievery_fee' => $delivery_fee,
-                'vat'=> $vat,
-                'total_price' => $items_total_price + ($vat/100 * $items_total_price),
+                'vat'=> $this->vat,
+                'total_price' => $items_total_price + ($this->vat/100 * $items_total_price),
             ]);
 
             session([

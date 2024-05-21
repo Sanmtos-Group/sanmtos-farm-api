@@ -19,7 +19,7 @@ class PaystackGateway implements Payable
     {
 
         try{
-
+            
             /**
              *  In the case where you need to pass the data from your 
              *  controller instead of a form
@@ -36,14 +36,21 @@ class PaystackGateway implements Payable
             }
 
             $data = array(
-                "amount" => $payment->amount,
+                // "quantity" => 1,
+                "amount" => floatval($payment->amount),
                 "reference" => $payment->transaction_reference,
                 "email" => $payment->user->email,
+                "first_name" => $payment->user->first_name,
+                "last_name" => $payment->user->last_name,
                 "currency" => "NGN",
                 "orderID" => $payment->paymentable_id,
+                // "callback_url" => route('payments.callback'),
+                'metadata' => [
+                    'description' => $payment->description,
+                ]
             );
 
-            $payment->gateway_checkout_url =  Paystack::getAuthorizationUrl($data)->url;
+            $payment->gateway_checkout_url = Paystack::getAuthorizationUrl($data)->url;
             $payment->save();
             
             return $payment->gateway_checkout_url; 
@@ -60,18 +67,23 @@ class PaystackGateway implements Payable
      * @param Illuminate\Http\Request|array<int,string> $request
      * @param App\Models\Payment $payment
      */
-    public function verify($request, Payment $payment){
-       
+    public function verify(Request $request, Payment $payment)
+    {
+        
+        if(!$request->has('trxref') || !$request->has('reference'))
+        {
+            $request->query->set('trxref', $payment->transaction_reference);
+            $request->query->set('reference', $payment->transaction_reference);
+        }
 
         $response = Paystack::getPaymentData();
         $response = json_decode(json_encode($response));
 
         if($response->status == true 
-            && $response->data->reference==$payment->transaction_reference 
+            && $response->data->reference===$payment->transaction_reference 
             && $response->data->amount==$payment->amount 
         ){
             $payment->transaction_status = 'successful';
-            
             $payment->currency = $response->data->currency;
             $payment->method = $response->data->channel;
             $payment->ip_address = $response->data->ip_address;
@@ -82,7 +94,6 @@ class PaystackGateway implements Payable
 
             return true;
         }
-        
 
         return false;
     }
