@@ -58,23 +58,22 @@ class CheckoutController extends Controller
         $logistic_company = LogisticCompany::where('is_default', true)
         ->where('is_active', true)->first();
                 
-        $delivery_fee = 0;
+        $delivery_fee = 2500;
       
-
-
         if(!session()->has(CheckoutService::DEFAULT_INSTANCE))
         {
             $items->each(function($item) use (&$items_total_price){
                 $items_total_price += $item->total_price;
             });
 
+            $price = $items_total_price + $delivery_fee;
             $order = new Order([
                 'user_id' => auth()->user()->id,
                 'address_id' => $address->id ?? null,
                 'price' => $items_total_price,
                 'devievery_fee' => $delivery_fee,
                 'vat'=> $this->vat,
-                'total_price' => $items_total_price + ($this->vat/100 * $items_total_price),
+                'total_price' => $price + ($this->vat/100 * $price) ,
             ]);
 
             session([
