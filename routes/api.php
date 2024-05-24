@@ -50,10 +50,7 @@ use Illuminate\Support\Facades\Route;
 Route::controller(PaymentController::class)->group(function () {
     Route::get('payments/callback', 'callback')->name('payments.callback');
     Route::post('payments/webhook', 'webhook')->name('payments.webhook');
-    // Route::post('payments', 'makePayment')->name('payments');
-    // Route::get('payment-verify', 'handleGatewayCallback')->name('payment.verify');
-    // Route::get('payment-transaction', 'getAllTransactions')->name('payment.transaction');
-    // Route::get('payment-customer-detail', 'getAllCustomersTransacted')->name('payment.customer.details');
+    Route::match(['put', 'patch'], 'payments/{payment}/verify', 'verify')->name('payments.verify');
 });
 
 /**
