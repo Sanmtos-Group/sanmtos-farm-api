@@ -59,7 +59,7 @@ class PaystackGateway implements Payable
             throw $e;
         }     
     }
-
+    
     /**
      * Verify the payment
      * 

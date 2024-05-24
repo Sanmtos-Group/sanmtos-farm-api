@@ -135,18 +135,7 @@ class PaymentController extends Controller
 
         $payment->refresh();
 
-        if(!$is_verified){
-
-            return response()->json([
-                "data" => $payment,
-                "message" => 'Payment verification failed'
-            ], 422);
-        }
-
-        return response()->json([
-            "data" => $payment,
-            "message" => 'Payment verified successfully'
-        ], 200);
+        return redirect(env('SANMTOS_BASE_URL').'/confirm-payment?payment_id='.$payment->id);
     }
 
     /***
@@ -215,5 +204,33 @@ class PaymentController extends Controller
         // send notification of unregconized attempt
 
         http_response_code(200);
+    }
+
+    /**
+     * 
+     */
+    public function verify(Request $request, Payment $payment){
+    
+        $payment_handler = new PaymentHandler();
+        $payment_gateway_handler = $payment_handler->initializeGateway($payment->gateway->name);
+
+        $is_verified= $payment_gateway_handler->verify($request, $payment);
+
+        $payment->refresh();
+
+        if(!$is_verified)
+        {
+            return response()->json([
+                "data" => $payment,
+                "message" => 'Payment verification failed'
+            ], 422);
+        }
+        else {
+            return response()->json([
+                "data" => $payment,
+                "message" => 'Payment verified successfully'
+            ], 200);
+        }
+        return redirect()->back();
     }
 }
