@@ -37,14 +37,14 @@ class PaystackGateway implements Payable
 
             $data = array(
                 // "quantity" => 1,
-                "amount" => floatval($payment->amount),
+                "amount" => intval($payment->amount),
                 "reference" => $payment->transaction_reference,
                 "email" => $payment->user->email,
                 "first_name" => $payment->user->first_name,
                 "last_name" => $payment->user->last_name,
                 "currency" => "NGN",
                 "orderID" => $payment->paymentable_id,
-                // "callback_url" => route('payments.callback'),
+                "callback_url" => route('api.payments.callback'),
                 'metadata' => [
                     'description' => $payment->description,
                 ]
@@ -78,6 +78,7 @@ class PaystackGateway implements Payable
 
         $response = Paystack::getPaymentData();
         $response = json_decode(json_encode($response));
+
 
         if($response->status == true 
             && $response->data->reference===$payment->transaction_reference 

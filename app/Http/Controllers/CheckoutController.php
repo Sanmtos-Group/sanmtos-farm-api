@@ -71,7 +71,7 @@ class CheckoutController extends Controller
                 'user_id' => auth()->user()->id,
                 'address_id' => $address->id ?? null,
                 'price' => $items_total_price,
-                'devievery_fee' => $delivery_fee,
+                'delivery_fee' => $delivery_fee,
                 'vat'=> $this->vat,
                 'total_price' => $price + ($this->vat/100 * $price) ,
             ]);
@@ -89,6 +89,9 @@ class CheckoutController extends Controller
             $updatable_summary =  session(CheckoutService::DEFAULT_INSTANCE);
             if(is_null($updatable_summary['order']->address_id ?? null))
                 $updatable_summary['order']->address_id = $address->id ?? null;
+
+            if(is_null($updatable_summary['order']->delivery_fee ?? null))
+            $updatable_summary['order']->delivery_fee = $delivery_fee ?? null;
 
             if(is_null($updatable_summary['payment_gateway_id'] ?? null))
                 $updatable_summary['payment_gateway_id'] = $payment_gateway->id ?? null;
@@ -357,7 +360,7 @@ class CheckoutController extends Controller
             
             $payment = $order->payment()->create([
                 'user_id' => auth()->user()->id,
-                'amount' => $order->total_price,
+                'amount' => ceil($order->total_price),
                 'transaction_reference' =>  Payment::genTranxRef(),
                 'gateway_id' => $summary['payment_gateway_id'],
 

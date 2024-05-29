@@ -212,7 +212,7 @@ class PaymentController extends Controller
     public function verify(Request $request, Payment $payment){
     
         $payment_handler = new PaymentHandler();
-        $payment_gateway_handler = $payment_handler->initializeGateway($payment->gateway->name);
+        $payment_gateway_handler = $payment_handler->initializePaymentGateway($payment->gateway->name);
 
         $is_verified= $payment_gateway_handler->verify($request, $payment);
 
