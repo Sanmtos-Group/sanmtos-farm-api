@@ -37,7 +37,7 @@ class PaystackGateway implements Payable
 
             $data = array(
                 // "quantity" => 1,
-                "amount" => intval($payment->amount),
+                "amount" => $payment->amount * 100,
                 "reference" => $payment->transaction_reference,
                 "email" => $payment->user->email,
                 "first_name" => $payment->user->first_name,
@@ -82,7 +82,7 @@ class PaystackGateway implements Payable
 
         if($response->status == true 
             && $response->data->reference===$payment->transaction_reference 
-            && $response->data->amount==$payment->amount 
+            && $response->data->amount==$payment->amount * 100 
         ){
             $payment->transaction_status = 'successful';
             $payment->currency = $response->data->currency;

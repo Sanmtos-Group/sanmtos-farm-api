@@ -360,7 +360,7 @@ class CheckoutController extends Controller
             
             $payment = $order->payment()->create([
                 'user_id' => auth()->user()->id,
-                'amount' => ceil($order->total_price),
+                'amount' => intval(ceil($order->total_price)),
                 'transaction_reference' =>  Payment::genTranxRef(),
                 'gateway_id' => $summary['payment_gateway_id'],
 
