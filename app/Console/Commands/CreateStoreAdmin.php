@@ -40,8 +40,6 @@ class CreateStoreAdmin extends Command
 
             DB::beginTransaction();
             
-            $store_admin = 'store-admin';
-
             $input = [];
             $input['first_name'] = $this->ask('First Name');
             $input['last_name'] = $this->ask('Last Name');
@@ -73,8 +71,15 @@ class CreateStoreAdmin extends Command
             ]);
             $user->email_verified_at = now();
             $user->save();
+
+             // create a store admin role if not exist
+             $store_admin = Role::firstOrCreate([
+                'name' => 'store-admin',
+                'store_id'=> null
+            ]);
     
             $user->assignRole($store_admin);
+
 
             if(!$user->hasRole($store_admin))
             {
