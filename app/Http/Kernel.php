@@ -65,7 +65,9 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'merge.store.filter' => \App\Http\Middleware\MergeStoreFilter::class,
-
+        'merge.user.id.filter' => \App\Http\Middleware\MergeUserIdFilter::class,
+        'merge.user.addressable.filter' => \App\Http\Middleware\MergeUserAddressableFilter::class,
+        'merge.store.id.filter' => \App\Http\Middleware\MergeStoreIdFilter::class,
+        'merge.store.addressable.filter' => \App\Http\Middleware\MergeStoreAddressableFilter::class,
     ];
 }

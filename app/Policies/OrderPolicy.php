@@ -5,15 +5,19 @@ namespace App\Policies;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
+use App\Traits\Policy\AuthorizeAllActionToSuperAdmin;
+
 
 class OrderPolicy
 {
+    use AuthorizeAllActionToSuperAdmin;
+
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -21,7 +25,7 @@ class OrderPolicy
      */
     public function view(User $user, Order $order): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -29,7 +33,7 @@ class OrderPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -37,7 +41,9 @@ class OrderPolicy
      */
     public function update(User $user, Order $order): bool
     {
-        //
+        $user_can_update_address = $order->user_id == $user->id;
+        
+        return $user_can_update_address;
     }
 
     /**
@@ -45,7 +51,7 @@ class OrderPolicy
      */
     public function delete(User $user, Order $order): bool
     {
-        //
+        return false;
     }
 
     /**
@@ -53,7 +59,7 @@ class OrderPolicy
      */
     public function restore(User $user, Order $order): bool
     {
-        //
+        return true; 
     }
 
     /**
@@ -61,6 +67,6 @@ class OrderPolicy
      */
     public function forceDelete(User $user, Order $order): bool
     {
-        //
+        return false; 
     }
 }

@@ -36,7 +36,8 @@ class Order extends Model
         'shipped_at',
         'delivered_at',
         'failed_at',
-        'failure_reason'
+        'failure_reason',
+        'metadata',
     ];
 
      /**
@@ -48,6 +49,14 @@ class Order extends Model
         'is_paid',
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'metadata' => 'json',
+    ];
 
     /**
      * Get the user that owns the order.

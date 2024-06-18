@@ -142,47 +142,6 @@ class StoreController extends Controller
     }
 
     /**
-     * Create new address for a store
-     */
-    public function storeAddress(StoreAddressRequest $request)
-    {
-        $user = auth()->user();
-
-        $validated = $request->validated();
-
-        if(!$user->owns_a_store)
-        {
-            return response()->json([
-                'message' => "This action is unauthorized.",
-            ], 403);
-        }
-
-        if(!is_null($user->store->address))
-        {
-            return response()->json([
-                'message' => "Store address created already. Please option for updating store address",
-            ], 403);
-        }
-
-
-        $store = $user->store;
-
-        $validated['first_name'] = array_key_exists('first_name', $validated) ? $validated['first_name'] : $store->name;
-        $validated['last_name'] = array_key_exists('last_name', $validated) ? $validated['last_name'] : $store->name;
-        $validated['dialing_code'] = array_key_exists('dialing_code', $validated) ? $validated['dialing_code'] : $user->dialing_code;
-        $validated['phone_number'] = array_key_exists('phone_number', $validated) ? $validated['phone_number'] : $user->phone_number;
-
-        $store->address()->create($validated);
-
-        $store->refresh();
-
-        $adresses_resource = new AddressResource($store->address);
-        $adresses_resource->with['message'] = 'Store address created successfully';
-
-        return $adresses_resource;
-    }
-
-    /**
      * Update new address for a store
      */
     public function updateAddress(UpdateAddressRequest $request)

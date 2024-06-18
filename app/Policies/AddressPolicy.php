@@ -4,16 +4,19 @@ namespace App\Policies;
 
 use App\Models\Address;
 use App\Models\User;
+use App\Traits\Policy\AuthorizeAllActionToSuperAdmin;
 use Illuminate\Auth\Access\Response;
 
 class AddressPolicy
 {
+    use AuthorizeAllActionToSuperAdmin;
+
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -21,7 +24,13 @@ class AddressPolicy
      */
     public function view(User $user, Address $address): bool
     {
-        //
+        $user_can_view_address = false;
+        
+        if($address->addressable_type  == User::class)
+        {
+            $user_can_view_address = $user_can_view_address || ($address->addressable_id == $user->id);
+        }
+        return $user_can_view_address;
     }
 
     /**
@@ -29,7 +38,7 @@ class AddressPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -37,7 +46,13 @@ class AddressPolicy
      */
     public function update(User $user, Address $address): bool
     {
-        //
+        $user_can_update_address = false;
+        
+        if($address->addressable_type  == User::class)
+        {
+            $user_can_update_address = $user_can_update_address || ($address->addressable_id == $user->id);
+        }
+        return $user_can_update_address;
     }
 
     /**
@@ -45,7 +60,13 @@ class AddressPolicy
      */
     public function delete(User $user, Address $address): bool
     {
-        //
+        $user_can_delete_address = false;
+        
+        if($address->addressable_type  == User::class)
+        {
+            $user_can_delete_address = $user_can_delete_address || ($address->addressable_id == $user->id);
+        }
+        return $user_can_delete_address;
     }
 
     /**

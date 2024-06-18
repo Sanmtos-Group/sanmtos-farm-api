@@ -1,220 +1,243 @@
 
-  GET|HEAD        / ........................................................................................................... 
-  POST            _ignition/execute-solution .... ignition.executeSolution › Spatie\LaravelIgnition › ExecuteSolutionController
-  GET|HEAD        _ignition/health-check ................ ignition.healthCheck › Spatie\LaravelIgnition › HealthCheckController
-  POST            _ignition/update-config ............. ignition.updateConfig › Spatie\LaravelIgnition › UpdateConfigController
-  POST            api/account/verify ................. api.user.verify › Authentication\RegisterNewUserController@verifyAccount
-  GET|HEAD        api/addresses ................................................. api.addresses.index › AddressController@index
-  GET|HEAD        api/addresses/{address} ......................................... api.addresses.show › AddressController@show
-  POST            api/attributes ............................................. api.attributes.store › AttributeController@store
-  GET|HEAD        api/attributes ............................................. api.attributes.index › AttributeController@index
-  PUT|PATCH       api/attributes/{attribute} ............................... api.attributes.update › AttributeController@update
-  DELETE          api/attributes/{attribute} ............................. api.attributes.destroy › AttributeController@destroy
-  GET|HEAD        api/attributes/{attribute} ................................... api.attributes.show › AttributeController@show
-  DELETE          api/attributes/{attribute}/force-delete ...... api.attributes.forceDestroy › AttributeController@forceDestroy
-  PATCH           api/attributes/{attribute}/restore ..................... api.attributes.restore › AttributeController@restore
-  PATCH           api/cancel-plan ......................................... api.cancel-plan › SubscriptionController@cancelPlan
-  GET|HEAD        api/cart-items .................................................. api.cart-items.index › CartController@items
-  POST            api/cart-items ...................................................... api.cart-items.add › CartController@add
-  DELETE          api/cart-items .................................................. api.cart-items.clear › CartController@clear
-  PUT|PATCH       api/cart-items/{item} ................................... api.cart-items.increment › CartController@increment
-  DELETE          api/cart-items/{item} ................................... api.cart-items.decrement › CartController@decrement
-  DELETE          api/cart-items/{item}/remove .................................. api.cart-items.remove › CartController@remove
-  POST            api/categories .............................................. api.categories.store › CategoryController@store
-  GET|HEAD        api/categories .............................................. api.categories.index › CategoryController@index
-  PUT|PATCH       api/categories/{category} ................................. api.categories.update › CategoryController@update
-  DELETE          api/categories/{category} ............................... api.categories.destroy › CategoryController@destroy
-  GET|HEAD        api/categories/{category} ..................................... api.categories.show › CategoryController@show
-  GET|HEAD        api/category-search ................................... api.category-search › SearchController@categorySearch
-  PUT             api/change-password ............. api.change-passowrd › Authentication\PasswordResetController@changePassword
-  GET|HEAD        api/checkout ......................................... api.checkout.checkout.index › CheckoutController@index
-  POST            api/checkout/confirm-order ...................... api.checkout.confirmOrder › CheckoutController@confirmOrder
-  PUT|PATCH       api/checkout/coupon ......................... api.checkout.checkout.coupon.add › CheckoutController@addCoupon
-  PUT|PATCH       api/checkout/delivery-address/{address} api.checkout.checkout.devlivery-address.upsert › CheckoutController@…
-  PUT|PATCH       api/checkout/payment-gateway/{payment_gateway} api.checkout.checkout.payment-gateway.upsert › CheckoutContro…
-  GET|HEAD        api/checkout/summary ............................... api.checkout.checkout.summary › CheckoutController@index
-  GET|HEAD        api/countries ................................................. api.countries.index › CountryController@index
-  GET|HEAD        api/countries/{country} ......................................... api.countries.show › CountryController@show
-  POST            api/coupons ...................................................... api.coupons.store › CouponController@store
-  GET|HEAD        api/coupons ...................................................... api.coupons.index › CouponController@index
-  PUT|PATCH       api/coupons/{coupon} ........................................... api.coupons.update › CouponController@update
-  DELETE          api/coupons/{coupon} ......................................... api.coupons.destroy › CouponController@destroy
-  GET|HEAD        api/coupons/{coupon} ............................................... api.coupons.show › CouponController@show
-  POST            api/coupons/{coupon}/applicable-categories api.coupons.applicable-categories.attach › CouponController@attac…
-  DELETE          api/coupons/{coupon}/applicable-categories api.coupons.applicable-categories.detach › CouponController@detac…
-  POST            api/coupons/{coupon}/applicable-products api.coupons.applicable-products.attach › CouponController@attachApp…
-  DELETE          api/coupons/{coupon}/applicable-products api.coupons.applicable-products.detach › CouponController@detachApp…
-  PUT|PATCH       api/coupons/{coupon}/cancel .................................... api.coupons.cancel › CouponController@cancel
-  PUT|PATCH       api/coupons/{coupon}/continue .............................. api.coupons.continue › CouponController@continue
-  GET|HEAD        api/coupons/{coupon}/products ................... api.coupons.products.index › CouponController@productsIndex
-  POST            api/coupons/{coupon}/recipients ........... api.coupons.recipients.attach › CouponController@attachRecipients
-  DELETE          api/coupons/{coupon}/recipients ........... api.coupons.recipients.detach › CouponController@detachRecipients
-  GET|HEAD        api/discount-types .................................. api.discount-types.index › DiscountTypeController@index
-  GET|HEAD        api/discount-types/{discount_type} .................... api.discount-types.show › DiscountTypeController@show
-  POST            api/features ................................................... api.features.store › FeatureController@store
-  GET|HEAD        api/features ................................................... api.features.index › FeatureController@index
-  PUT|PATCH       api/features/{feature} ....................................... api.features.update › FeatureController@update
-  DELETE          api/features/{feature} ..................................... api.features.destroy › FeatureController@destroy
-  GET|HEAD        api/features/{feature} ........................................... api.features.show › FeatureController@show
-  POST            api/forgot-password ...... api.forgot-password › Authentication\PasswordResetController@sendPasswordResetCode
-  POST            api/images ......................................................... api.images.store › ImageController@store
-  GET|HEAD        api/images ......................................................... api.images.index › ImageController@index
-  PUT|PATCH       api/images/{image} ............................................... api.images.update › ImageController@update
-  DELETE          api/images/{image} ............................................. api.images.destroy › ImageController@destroy
-  GET|HEAD        api/images/{image} ................................................... api.images.show › ImageController@show
-  DELETE          api/images/{image}/force-delete ...................... api.images.forceDestroy › ImageController@forceDestroy
-  PATCH           api/images/{image}/restore ..................................... api.images.restore › ImageController@restore
-  POST            api/login .................................................. api.login › Authentication\LoginController@login
-  POST            api/login-via-otp ............................. api.login.viaOTP › Authentication\LoginController@loginViaOTP
-  GET|HEAD        api/logistic-companies ....................... api.logistic-companies.index › LogisticCompanyController@index
-  GET|HEAD        api/logistic-companies/{logistic_company} ...... api.logistic-companies.show › LogisticCompanyController@show
-  POST            api/logout .............................................. api.logout › Authentication\LogoutController@logout
-  PUT             api/new-password .................... api.new-password › Authentication\PasswordResetController@resetPassword
-  GET|HEAD        api/notification-preferences .... api.notification-preferences.index › NotificationPreferenceController@index
-  GET|HEAD        api/notification-preferences/{notification_preference} api.notification-preferences.show › NotificationPrefe…
-  GET|HEAD        api/order-search ............................................ api.order-search › SearchController@orderSearch
-  POST            api/password-less ........ api.password-less › Authentication\RegisterNewUserController@registerWithOnlyEmail
-  GET|HEAD        api/payment-gateways ............................ api.payment-gateways.index › PaymentGatewayController@index
-  GET|HEAD        api/payment-gateways/{payment_gateway} ............ api.payment-gateways.show › PaymentGatewayController@show
-  GET|HEAD        api/payments/callback .................................... api.payments.callback › PaymentController@callback
-  POST            api/payments/webhook ....................................... api.payments.webhook › PaymentController@webhook
-  POST            api/permissions .......................................... api.permissions.store › PermissionController@store
-  GET|HEAD        api/permissions .......................................... api.permissions.index › PermissionController@index
-  PUT|PATCH       api/permissions/sync ....................................... api.permissions.sync › PermissionController@sync
-  PUT|PATCH       api/permissions/{permission} ........................... api.permissions.update › PermissionController@update
-  DELETE          api/permissions/{permission} ......................... api.permissions.destroy › PermissionController@destroy
-  GET|HEAD        api/permissions/{permission} ............................... api.permissions.show › PermissionController@show
-  POST            api/plans ............................................................ api.plans.store › PlanController@store
-  GET|HEAD        api/plans ............................................................ api.plans.index › PlanController@index
-  PUT|PATCH       api/plans/{plan} ................................................... api.plans.update › PlanController@update
-  DELETE          api/plans/{plan} ................................................. api.plans.destroy › PlanController@destroy
-  GET|HEAD        api/plans/{plan} ....................................................... api.plans.show › PlanController@show
-  POST            api/plans/{plan}/features .......................... api.plans.features.attach › PlanController@attachFeature
-  DELETE          api/plans/{plan}/features .......................... api.plans.features.detach › PlanController@detachFeature
-  GET|HEAD        api/product-search ...................................... api.product-search › SearchController@productSearch
-  POST            api/products ................................................... api.products.store › ProductController@store
-  GET|HEAD        api/products ................................................... api.products.index › ProductController@index
-  PUT|PATCH       api/products/{product} ....................................... api.products.update › ProductController@update
-  DELETE          api/products/{product} ..................................... api.products.destroy › ProductController@destroy
-  GET|HEAD        api/products/{product} ........................................... api.products.show › ProductController@show
-  POST            api/products/{product}/coupons .................. api.products.coupons.store › ProductController@couponsStore
-  GET|HEAD        api/products/{product}/coupons .................. api.products.coupons.index › ProductController@couponsIndex
-  GET|HEAD        api/products/{product}/likes ........................ api.products.likes.index › ProductController@indexLikes
-  POST            api/products/{product}/likes ...................... api.products.likes.create › ProductController@createLikes
-  DELETE          api/products/{product}/likes .................... api.products.likes.destroy › ProductController@destroyLikes
-  DELETE          api/products/{product}/likes/all ......... api.products.likes.destroy.all › ProductController@destroyAllLikes
-  POST            api/products/{product}/promos ..................... api.products.promos.store › ProductController@promosStore
-  GET|HEAD        api/products/{product}/promos ..................... api.products.promos.index › ProductController@promosIndex
-  GET|HEAD        api/products/{product}/ratings .................. api.products.ratings.index › ProductController@indexRatings
-  POST            api/products/{product}/ratings ................ api.products.ratings.create › ProductController@createRatings
-  PUT|PATCH       api/products/{product}/ratings ................ api.products.ratings.update › ProductController@updateRatings
-  DELETE          api/products/{product}/ratings .............. api.products.ratings.destroy › ProductController@destroyRatings
-  DELETE          api/products/{product}/ratings/all ... api.products.ratings.destroy.all › ProductController@destroyAllRatings
-  PUT|PATCH       api/products/{product}/revoke-verification api.products.revoke-verification › ProductController@revokeVerifi…
-  PUT|PATCH       api/products/{product}/verify ................................ api.products.verify › ProductController@verify
-  POST            api/promos ......................................................... api.promos.store › PromoController@store
-  GET|HEAD        api/promos ......................................................... api.promos.index › PromoController@index
-  PUT|PATCH       api/promos/{promo} ............................................... api.promos.update › PromoController@update
-  DELETE          api/promos/{promo} ............................................. api.promos.destroy › PromoController@destroy
-  GET|HEAD        api/promos/{promo} ................................................... api.promos.show › PromoController@show
-  POST            api/promos/{promo}/applicable-categories api.promos.applicable-categories.attach › PromoController@attachApp…
-  DELETE          api/promos/{promo}/applicable-categories api.promos.applicable-categories.detach › PromoController@detachApp…
-  POST            api/promos/{promo}/applicable-products api.promos.applicable-products.attach › PromoController@attachApplica…
-  DELETE          api/promos/{promo}/applicable-products api.promos.applicable-products.detach › PromoController@detachApplica…
-  PUT|PATCH       api/promos/{promo}/cancel ........................................ api.promos.cancel › PromoController@cancel
-  PUT|PATCH       api/promos/{promo}/continue .................................. api.promos.continue › PromoController@continue
-  GET|HEAD        api/promos/{promo}/products ....................... api.promos.products.index › PromoController@productsIndex
-  POST            api/promos/{promo}/recipients ............... api.promos.recipients.attach › PromoController@attachRecipients
-  DELETE          api/promos/{promo}/recipients ............... api.promos.recipients.detach › PromoController@detachRecipients
-  POST            api/register ............................... api.register › Authentication\RegisterNewUserController@register
-  POST            api/renew-plan ............................................ api.renew-plan › SubscriptionController@renewPlan
-  PUT             api/resend ..................................... api.resend › Authentication\RegisterNewUserController@resend
-  PUT             api/resend-code ......................... api.resend-code › Authentication\PasswordResetController@resendCode
-  POST            api/roles ............................................................ api.roles.store › RoleController@store
-  GET|HEAD        api/roles ............................................................ api.roles.index › RoleController@index
-  PUT|PATCH       api/roles/{role} ................................................... api.roles.update › RoleController@update
-  DELETE          api/roles/{role} ................................................. api.roles.destroy › RoleController@destroy
-  GET|HEAD        api/roles/{role} ....................................................... api.roles.show › RoleController@show
-  PUT|PATCH       api/roles/{role}/grant-permission/{permission} . api.roles.permissions.grant › RoleController@grantPermission
-  GET|HEAD        api/roles/{role}/permissions ....................... api.roles.permissions.index › RoleController@permissions
-  DELETE          api/roles/{role}/revoke-permission/{permission} api.roles.permissions.revoke › RoleController@revokePermissi…
-  GET|HEAD        api/search ............................................................. api.search › SearchController@search
-  GET|HEAD        api/settings ................................................... api.settings.index › SettingController@index
-  POST            api/settings ................................................... api.settings.store › SettingController@store
-  GET|HEAD        api/settings/{setting} ........................................... api.settings.show › SettingController@show
-  PUT|PATCH       api/settings/{setting} ....................................... api.settings.update › SettingController@update
-  DELETE          api/settings/{setting} ..................................... api.settings.destroy › SettingController@destroy
-  GET|HEAD        api/store-search ............................................ api.store-search › SearchController@storeSearch
-  POST            api/store/address .................................... api.store.address.store › StoreController@storeAddress
-  GET|HEAD        api/store/address ...................................... api.store.address.show › StoreController@showAddress
-  PUT|PATCH       api/store/address .................................. api.store.address.update › StoreController@updateAddress
-  POST            api/stores ......................................................... api.stores.store › StoreController@store
-  GET|HEAD        api/stores ......................................................... api.stores.index › StoreController@index
-  PUT|PATCH       api/stores/{store} ............................................... api.stores.update › StoreController@update
-  DELETE          api/stores/{store} ............................................. api.stores.destroy › StoreController@destroy
-  GET|HEAD        api/stores/{store} ................................................... api.stores.show › StoreController@show
-  GET|HEAD        api/stores/{store}/products ....................... api.stores.products.index › StoreController@productsIndex
-  POST            api/stores/{store}/promos ............................. api.stores.promos.store › StoreController@promosStore
-  GET|HEAD        api/stores/{store}/promos ............................. api.stores.promos.index › StoreController@promosIndex
-  POST            api/subscriptions ...................................... api.subscriptions › SubscriptionController@subscribe
-  PATCH           api/switch-plan ......................................... api.switch-plan › SubscriptionController@switchPlan
-  GET|HEAD        api/user-payments ......................................... api.user-payments.index › PaymentController@index
-  POST            api/user-payments ......................................... api.user-payments.store › PaymentController@store
-  GET|HEAD        api/user-payments/{user_payment} ............................ api.user-payments.show › PaymentController@show
-  PUT|PATCH       api/user-payments/{user_payment} ........................ api.user-payments.update › PaymentController@update
-  DELETE          api/user-payments/{user_payment} ...................... api.user-payments.destroy › PaymentController@destroy
-  GET|HEAD        api/user-search ............................................... api.user-search › SearchController@userSearch
-  GET|HEAD        api/user/addresses ................................... api.user.addresses.index › UserController@indexAddress
-  POST            api/user/addresses ................................... api.user.addresses.store › UserController@storeAddress
-  GET|HEAD        api/user/addresses/{address} ........................... api.user.addresses.show › UserController@showAddress
-  PUT|PATCH       api/user/addresses/{address} ....................... api.user.addresses.update › UserController@updateAddress
-  DELETE          api/user/addresses/{address} ....................... api.user.addresses.delete › UserController@deleteAddress
-  GET|HEAD        api/user/notification-preferences api.user.notification-preference.index › UserController@indexNotificationP…
-  POST            api/user/notification-preferences api.user.notification-preference.subscribe › UserController@subscribeNotif…
-  DELETE          api/user/notification-preferences api.user.notification-preference.subscribe › UserController@unsubscribeNot…
-  GET|HEAD        api/user/notification-preferences/{notificationPreference} api.user.notification-preference.show › UserContr…
-  GET|HEAD        api/user/orders .......................................... api.user.orders.index › UserController@indexOrders
-  GET|HEAD        api/user/preference .............................. api.user.preference.index › UserController@indexPreference
-  POST            api/user/preference ............................ api.user.preference.upsert › UserController@upsertPreference
-  GET|HEAD        api/user/profile ............................................ api.user.profile.index › UserController@profile
-  PUT|PATCH       api/user/profile ..................................... api.user.profile.update › UserController@updateProfile
-  POST            api/user/profile-photo .................... api.user.profile-photo.update › UserController@updateProfilePhoto
-  PUT|PATCH       api/users/{user}/assign-role/{role} ...................... api.users.roles.assign › UserController@assignRole
-  DELETE          api/users/{user}/remove-role/{role} ...................... api.users.roles.remove › UserController@removeRole
-  GET|HEAD        api/users/{user}/roles ......................................... api.users.roles.index › UserController@roles
-  POST            api/verify-otp ............................ api.verify-otp › Authentication\PasswordResetController@verifyOTP
-  GET|HEAD        dashboard ......................................................................................... dashboard
-  POST            email/verification-notification verification.send › Laravel\Fortify › EmailVerificationNotificationControlle…
-  GET|HEAD        email/verify ............. verification.notice › Laravel\Fortify › EmailVerificationPromptController@__invoke
-  GET|HEAD        email/verify/{id}/{hash} ............. verification.verify › Laravel\Fortify › VerifyEmailController@__invoke
-  GET|HEAD        forgot-password ..................... password.request › Laravel\Fortify › PasswordResetLinkController@create
-  POST            forgot-password ........................ password.email › Laravel\Fortify › PasswordResetLinkController@store
-  GET|HEAD        livewire/livewire.js ............................ Livewire\Mechanisms › FrontendAssets@returnJavaScriptAsFile
-  GET|HEAD        livewire/livewire.min.js.map ...................................... Livewire\Mechanisms › FrontendAssets@maps
-  GET|HEAD        livewire/preview-file/{filename} ... livewire.preview-file › Livewire\Features › FilePreviewController@handle
-  POST            livewire/update ......................... livewire.update › Livewire\Mechanisms › HandleRequests@handleUpdate
-  POST            livewire/upload-file ................. livewire.upload-file › Livewire\Features › FileUploadController@handle
-  GET|HEAD        login ....................................... login › Laravel\Fortify › AuthenticatedSessionController@create
-  POST            login ................................................ Laravel\Fortify › AuthenticatedSessionController@store
-  POST            logout .................................... logout › Laravel\Fortify › AuthenticatedSessionController@destroy
-  POST            reset-password .............................. password.update › Laravel\Fortify › NewPasswordController@store
-  GET|HEAD        reset-password/{token} ...................... password.reset › Laravel\Fortify › NewPasswordController@create
-  GET|HEAD        sanctum/csrf-cookie ....................... sanctum.csrf-cookie › Laravel\Sanctum › CsrfCookieController@show
-  GET|HEAD        two-factor-challenge .... two-factor.login › Laravel\Fortify › TwoFactorAuthenticatedSessionController@create
-  POST            two-factor-challenge ........................ Laravel\Fortify › TwoFactorAuthenticatedSessionController@store
-  GET|HEAD        user/confirm-password .................................. Laravel\Fortify › ConfirmablePasswordController@show
-  POST            user/confirm-password .............. password.confirm › Laravel\Fortify › ConfirmablePasswordController@store
-  GET|HEAD        user/confirmed-password-status password.confirmation › Laravel\Fortify › ConfirmedPasswordStatusController@s…
-  POST            user/confirmed-two-factor-authentication two-factor.confirm › Laravel\Fortify › ConfirmedTwoFactorAuthentica…
-  PUT             user/password ............................ user-password.update › Laravel\Fortify › PasswordController@update
-  GET|HEAD        user/profile .................................. profile.show › Laravel\Jetstream › UserProfileController@show
-  PUT             user/profile-information user-profile-information.update › Laravel\Fortify › ProfileInformationController@up…
-  POST            user/two-factor-authentication two-factor.enable › Laravel\Fortify › TwoFactorAuthenticationController@store
-  DELETE          user/two-factor-authentication two-factor.disable › Laravel\Fortify › TwoFactorAuthenticationController@dest…
-  GET|HEAD        user/two-factor-qr-code ............... two-factor.qr-code › Laravel\Fortify › TwoFactorQrCodeController@show
-  GET|HEAD        user/two-factor-recovery-codes ... two-factor.recovery-codes › Laravel\Fortify › RecoveryCodeController@index
-  POST            user/two-factor-recovery-codes ............................... Laravel\Fortify › RecoveryCodeController@store
-  GET|HEAD        user/two-factor-secret-key ...... two-factor.secret-key › Laravel\Fortify › TwoFactorSecretKeyController@show
+  GET|HEAD        / ..................................................................................................................... 
+  POST            _ignition/execute-solution .............. ignition.executeSolution › Spatie\LaravelIgnition › ExecuteSolutionController
+  GET|HEAD        _ignition/health-check .......................... ignition.healthCheck › Spatie\LaravelIgnition › HealthCheckController
+  POST            _ignition/update-config ....................... ignition.updateConfig › Spatie\LaravelIgnition › UpdateConfigController
+  POST            api/account/verify ........................... api.user.verify › Authentication\RegisterNewUserController@verifyAccount
+  GET|HEAD        api/addresses ........................................................... api.addresses.index › AddressController@index
+  GET|HEAD        api/addresses/{address} ................................................... api.addresses.show › AddressController@show
+  POST            api/attributes ....................................................... api.attributes.store › AttributeController@store
+  GET|HEAD        api/attributes ....................................................... api.attributes.index › AttributeController@index
+  PUT|PATCH       api/attributes/{attribute} ......................................... api.attributes.update › AttributeController@update
+  DELETE          api/attributes/{attribute} ....................................... api.attributes.destroy › AttributeController@destroy
+  GET|HEAD        api/attributes/{attribute} ............................................. api.attributes.show › AttributeController@show
+  DELETE          api/attributes/{attribute}/force-delete ................ api.attributes.forceDestroy › AttributeController@forceDestroy
+  PATCH           api/attributes/{attribute}/restore ............................... api.attributes.restore › AttributeController@restore
+  PATCH           api/cancel-plan ................................................... api.cancel-plan › SubscriptionController@cancelPlan
+  GET|HEAD        api/cart-items ............................................................ api.cart-items.index › CartController@items
+  POST            api/cart-items ................................................................ api.cart-items.add › CartController@add
+  DELETE          api/cart-items ............................................................ api.cart-items.clear › CartController@clear
+  PUT|PATCH       api/cart-items/{item} ............................................. api.cart-items.increment › CartController@increment
+  DELETE          api/cart-items/{item} ............................................. api.cart-items.decrement › CartController@decrement
+  DELETE          api/cart-items/{item}/remove ............................................ api.cart-items.remove › CartController@remove
+  POST            api/categories ........................................................ api.categories.store › CategoryController@store
+  GET|HEAD        api/categories ........................................................ api.categories.index › CategoryController@index
+  PUT|PATCH       api/categories/{category} ........................................... api.categories.update › CategoryController@update
+  DELETE          api/categories/{category} ......................................... api.categories.destroy › CategoryController@destroy
+  GET|HEAD        api/categories/{category} ............................................... api.categories.show › CategoryController@show
+  GET|HEAD        api/category-search ............................................. api.category-search › SearchController@categorySearch
+  PUT             api/change-password ....................... api.change-passowrd › Authentication\PasswordResetController@changePassword
+  GET|HEAD        api/checkout ................................................... api.checkout.checkout.index › CheckoutController@index
+  POST            api/checkout/confirm-order ................................ api.checkout.confirmOrder › CheckoutController@confirmOrder
+  PUT|PATCH       api/checkout/coupon ................................... api.checkout.checkout.coupon.add › CheckoutController@addCoupon
+  PUT|PATCH       api/checkout/delivery-address/{address} api.checkout.checkout.devlivery-address.upsert › CheckoutController@upsertDeli…
+  PUT|PATCH       api/checkout/logistic-compnay/{logistic_company} api.checkout.checkout.logistic-company.upsert › CheckoutController@up…
+  PUT|PATCH       api/checkout/payment-gateway/{payment_gateway} api.checkout.checkout.payment-gateway.upsert › CheckoutController@upser…
+  GET|HEAD        api/checkout/summary ......................................... api.checkout.checkout.summary › CheckoutController@index
+  GET|HEAD        api/countries ........................................................... api.countries.index › CountryController@index
+  GET|HEAD        api/countries/{country} ................................................... api.countries.show › CountryController@show
+  POST            api/coupons ................................................................ api.coupons.store › CouponController@store
+  GET|HEAD        api/coupons ................................................................ api.coupons.index › CouponController@index
+  PUT|PATCH       api/coupons/{coupon} ..................................................... api.coupons.update › CouponController@update
+  DELETE          api/coupons/{coupon} ................................................... api.coupons.destroy › CouponController@destroy
+  GET|HEAD        api/coupons/{coupon} ......................................................... api.coupons.show › CouponController@show
+  POST            api/coupons/{coupon}/applicable-categories api.coupons.applicable-categories.attach › CouponController@attachApplicabl…
+  DELETE          api/coupons/{coupon}/applicable-categories api.coupons.applicable-categories.detach › CouponController@detachApplicabl…
+  POST            api/coupons/{coupon}/applicable-products api.coupons.applicable-products.attach › CouponController@attachApplicablePro…
+  DELETE          api/coupons/{coupon}/applicable-products api.coupons.applicable-products.detach › CouponController@detachApplicablePro…
+  PUT|PATCH       api/coupons/{coupon}/cancel .............................................. api.coupons.cancel › CouponController@cancel
+  PUT|PATCH       api/coupons/{coupon}/continue ........................................ api.coupons.continue › CouponController@continue
+  GET|HEAD        api/coupons/{coupon}/products ............................. api.coupons.products.index › CouponController@productsIndex
+  POST            api/coupons/{coupon}/recipients ..................... api.coupons.recipients.attach › CouponController@attachRecipients
+  DELETE          api/coupons/{coupon}/recipients ..................... api.coupons.recipients.detach › CouponController@detachRecipients
+  GET|HEAD        api/discount-types ............................................ api.discount-types.index › DiscountTypeController@index
+  GET|HEAD        api/discount-types/{discount_type} .............................. api.discount-types.show › DiscountTypeController@show
+  POST            api/features ............................................................. api.features.store › FeatureController@store
+  GET|HEAD        api/features ............................................................. api.features.index › FeatureController@index
+  PUT|PATCH       api/features/{feature} ................................................. api.features.update › FeatureController@update
+  DELETE          api/features/{feature} ............................................... api.features.destroy › FeatureController@destroy
+  GET|HEAD        api/features/{feature} ..................................................... api.features.show › FeatureController@show
+  POST            api/forgot-password ................ api.forgot-password › Authentication\PasswordResetController@sendPasswordResetCode
+  POST            api/images ................................................................... api.images.store › ImageController@store
+  GET|HEAD        api/images ................................................................... api.images.index › ImageController@index
+  PUT|PATCH       api/images/{image} ......................................................... api.images.update › ImageController@update
+  DELETE          api/images/{image} ....................................................... api.images.destroy › ImageController@destroy
+  GET|HEAD        api/images/{image} ............................................................. api.images.show › ImageController@show
+  DELETE          api/images/{image}/force-delete ................................ api.images.forceDestroy › ImageController@forceDestroy
+  PATCH           api/images/{image}/restore ............................................... api.images.restore › ImageController@restore
+  POST            api/login ............................................................ api.login › Authentication\LoginController@login
+  POST            api/login-via-otp ....................................... api.login.viaOTP › Authentication\LoginController@loginViaOTP
+  GET|HEAD        api/logistic-companies ................................. api.logistic-companies.index › LogisticCompanyController@index
+  GET|HEAD        api/logistic-companies/{logistic_company} ................ api.logistic-companies.show › LogisticCompanyController@show
+  POST            api/logout ........................................................ api.logout › Authentication\LogoutController@logout
+  PUT             api/new-password .............................. api.new-password › Authentication\PasswordResetController@resetPassword
+  GET|HEAD        api/notification-preferences .............. api.notification-preferences.index › NotificationPreferenceController@index
+  GET|HEAD        api/notification-preferences/{notification_preference} api.notification-preferences.show › NotificationPreferenceContr…
+  GET|HEAD        api/order-search ...................................................... api.order-search › SearchController@orderSearch
+  POST            api/password-less .................. api.password-less › Authentication\RegisterNewUserController@registerWithOnlyEmail
+  GET|HEAD        api/payment-gateways ...................................... api.payment-gateways.index › PaymentGatewayController@index
+  GET|HEAD        api/payment-gateways/{payment_gateway} ...................... api.payment-gateways.show › PaymentGatewayController@show
+  GET|HEAD        api/payments/callback .............................................. api.payments.callback › PaymentController@callback
+  POST            api/payments/webhook ................................................. api.payments.webhook › PaymentController@webhook
+  PUT|PATCH       api/payments/{payment}/verify .......................................... api.payments.verify › PaymentController@verify
+  POST            api/permissions .................................................... api.permissions.store › PermissionController@store
+  GET|HEAD        api/permissions .................................................... api.permissions.index › PermissionController@index
+  PUT|PATCH       api/permissions/sync ................................................. api.permissions.sync › PermissionController@sync
+  PUT|PATCH       api/permissions/{permission} ..................................... api.permissions.update › PermissionController@update
+  DELETE          api/permissions/{permission} ................................... api.permissions.destroy › PermissionController@destroy
+  GET|HEAD        api/permissions/{permission} ......................................... api.permissions.show › PermissionController@show
+  POST            api/plans ...................................................................... api.plans.store › PlanController@store
+  GET|HEAD        api/plans ...................................................................... api.plans.index › PlanController@index
+  PUT|PATCH       api/plans/{plan} ............................................................. api.plans.update › PlanController@update
+  DELETE          api/plans/{plan} ........................................................... api.plans.destroy › PlanController@destroy
+  GET|HEAD        api/plans/{plan} ................................................................. api.plans.show › PlanController@show
+  POST            api/plans/{plan}/features .................................... api.plans.features.attach › PlanController@attachFeature
+  DELETE          api/plans/{plan}/features .................................... api.plans.features.detach › PlanController@detachFeature
+  GET|HEAD        api/product-search ................................................ api.product-search › SearchController@productSearch
+  POST            api/products ............................................................. api.products.store › ProductController@store
+  GET|HEAD        api/products ............................................................. api.products.index › ProductController@index
+  PUT|PATCH       api/products/{product} ................................................. api.products.update › ProductController@update
+  DELETE          api/products/{product} ............................................... api.products.destroy › ProductController@destroy
+  GET|HEAD        api/products/{product} ..................................................... api.products.show › ProductController@show
+  POST            api/products/{product}/coupons ............................ api.products.coupons.store › ProductController@couponsStore
+  GET|HEAD        api/products/{product}/coupons ............................ api.products.coupons.index › ProductController@couponsIndex
+  GET|HEAD        api/products/{product}/likes .................................. api.products.likes.index › ProductController@indexLikes
+  POST            api/products/{product}/likes ................................ api.products.likes.create › ProductController@createLikes
+  DELETE          api/products/{product}/likes .............................. api.products.likes.destroy › ProductController@destroyLikes
+  DELETE          api/products/{product}/likes/all ................... api.products.likes.destroy.all › ProductController@destroyAllLikes
+  POST            api/products/{product}/promos ............................... api.products.promos.store › ProductController@promosStore
+  GET|HEAD        api/products/{product}/promos ............................... api.products.promos.index › ProductController@promosIndex
+  GET|HEAD        api/products/{product}/ratings ............................ api.products.ratings.index › ProductController@indexRatings
+  POST            api/products/{product}/ratings .......................... api.products.ratings.create › ProductController@createRatings
+  PUT|PATCH       api/products/{product}/ratings .......................... api.products.ratings.update › ProductController@updateRatings
+  DELETE          api/products/{product}/ratings ........................ api.products.ratings.destroy › ProductController@destroyRatings
+  DELETE          api/products/{product}/ratings/all ............. api.products.ratings.destroy.all › ProductController@destroyAllRatings
+  PUT|PATCH       api/products/{product}/revoke-verification .... api.products.revoke-verification › ProductController@revokeVerification
+  PUT|PATCH       api/products/{product}/verify .......................................... api.products.verify › ProductController@verify
+  POST            api/promos ................................................................... api.promos.store › PromoController@store
+  GET|HEAD        api/promos ................................................................... api.promos.index › PromoController@index
+  PUT|PATCH       api/promos/{promo} ......................................................... api.promos.update › PromoController@update
+  DELETE          api/promos/{promo} ....................................................... api.promos.destroy › PromoController@destroy
+  GET|HEAD        api/promos/{promo} ............................................................. api.promos.show › PromoController@show
+  POST            api/promos/{promo}/applicable-categories api.promos.applicable-categories.attach › PromoController@attachApplicableCat…
+  DELETE          api/promos/{promo}/applicable-categories api.promos.applicable-categories.detach › PromoController@detachApplicableCat…
+  POST            api/promos/{promo}/applicable-products api.promos.applicable-products.attach › PromoController@attachApplicableProducts
+  DELETE          api/promos/{promo}/applicable-products api.promos.applicable-products.detach › PromoController@detachApplicableProducts
+  PUT|PATCH       api/promos/{promo}/cancel .................................................. api.promos.cancel › PromoController@cancel
+  PUT|PATCH       api/promos/{promo}/continue ............................................ api.promos.continue › PromoController@continue
+  GET|HEAD        api/promos/{promo}/products ................................. api.promos.products.index › PromoController@productsIndex
+  POST            api/promos/{promo}/recipients ......................... api.promos.recipients.attach › PromoController@attachRecipients
+  DELETE          api/promos/{promo}/recipients ......................... api.promos.recipients.detach › PromoController@detachRecipients
+  POST            api/register ......................................... api.register › Authentication\RegisterNewUserController@register
+  POST            api/renew-plan ...................................................... api.renew-plan › SubscriptionController@renewPlan
+  PUT             api/resend ............................................... api.resend › Authentication\RegisterNewUserController@resend
+  PUT             api/resend-code ................................... api.resend-code › Authentication\PasswordResetController@resendCode
+  POST            api/roles ...................................................................... api.roles.store › RoleController@store
+  GET|HEAD        api/roles ...................................................................... api.roles.index › RoleController@index
+  PUT|PATCH       api/roles/{role} ............................................................. api.roles.update › RoleController@update
+  DELETE          api/roles/{role} ........................................................... api.roles.destroy › RoleController@destroy
+  GET|HEAD        api/roles/{role} ................................................................. api.roles.show › RoleController@show
+  PUT|PATCH       api/roles/{role}/grant-permission/{permission} ........... api.roles.permissions.grant › RoleController@grantPermission
+  GET|HEAD        api/roles/{role}/permissions ................................. api.roles.permissions.index › RoleController@permissions
+  DELETE          api/roles/{role}/revoke-permission/{permission} ........ api.roles.permissions.revoke › RoleController@revokePermission
+  GET|HEAD        api/search ....................................................................... api.search › SearchController@search
+  GET|HEAD        api/searchable ........................................................... api.searchable › SearchController@searchable
+  GET|HEAD        api/settings ............................................................. api.settings.index › SettingController@index
+  POST            api/settings ............................................................. api.settings.store › SettingController@store
+  GET|HEAD        api/settings/{setting} ..................................................... api.settings.show › SettingController@show
+  PUT|PATCH       api/settings/{setting} ................................................. api.settings.update › SettingController@update
+  DELETE          api/settings/{setting} ............................................... api.settings.destroy › SettingController@destroy
+  GET|HEAD        api/store-search ...................................................... api.store-search › SearchController@storeSearch
+  POST            api/store/address .............................................. api.store.address.store › StoreController@storeAddress
+  GET|HEAD        api/store/address ................................................ api.store.address.show › StoreController@showAddress
+  PUT|PATCH       api/store/address ............................................ api.store.address.update › StoreController@updateAddress
+  GET|HEAD        api/store/coupons .................................................... api.store.coupons.index › CouponController@index
+  POST            api/store/coupons .................................................... api.store.coupons.store › CouponController@store
+  GET|HEAD        api/store/coupons/{coupon} ............................................. api.store.coupons.show › CouponController@show
+  PUT|PATCH       api/store/coupons/{coupon} ......................................... api.store.coupons.update › CouponController@update
+  DELETE          api/store/coupons/{coupon} ....................................... api.store.coupons.destroy › CouponController@destroy
+  GET|HEAD        api/store/products ................................................. api.store.products.index › ProductController@index
+  POST            api/store/products ................................................. api.store.products.store › ProductController@store
+  GET|HEAD        api/store/products/{product} ......................................... api.store.products.show › ProductController@show
+  PUT|PATCH       api/store/products/{product} ..................................... api.store.products.update › ProductController@update
+  DELETE          api/store/products/{product} ................................... api.store.products.destroy › ProductController@destroy
+  GET|HEAD        api/store/promos ....................................................... api.store.promos.index › PromoController@index
+  POST            api/store/promos ....................................................... api.store.promos.store › PromoController@store
+  GET|HEAD        api/store/promos/{promo} ................................................. api.store.promos.show › PromoController@show
+  PUT|PATCH       api/store/promos/{promo} ............................................. api.store.promos.update › PromoController@update
+  DELETE          api/store/promos/{promo} ........................................... api.store.promos.destroy › PromoController@destroy
+  POST            api/stores ................................................................... api.stores.store › StoreController@store
+  GET|HEAD        api/stores ................................................................... api.stores.index › StoreController@index
+  PUT|PATCH       api/stores/{store} ......................................................... api.stores.update › StoreController@update
+  DELETE          api/stores/{store} ....................................................... api.stores.destroy › StoreController@destroy
+  GET|HEAD        api/stores/{store} ............................................................. api.stores.show › StoreController@show
+  GET|HEAD        api/stores/{store}/products ................................. api.stores.products.index › StoreController@productsIndex
+  POST            api/stores/{store}/promos ....................................... api.stores.promos.store › StoreController@promosStore
+  GET|HEAD        api/stores/{store}/promos ....................................... api.stores.promos.index › StoreController@promosIndex
+  POST            api/subscriptions ................................................ api.subscriptions › SubscriptionController@subscribe
+  PATCH           api/switch-plan ................................................... api.switch-plan › SubscriptionController@switchPlan
+  GET|HEAD        api/user-payments ................................................... api.user-payments.index › PaymentController@index
+  POST            api/user-payments ................................................... api.user-payments.store › PaymentController@store
+  GET|HEAD        api/user-payments/{user_payment} ...................................... api.user-payments.show › PaymentController@show
+  PUT|PATCH       api/user-payments/{user_payment} .................................. api.user-payments.update › PaymentController@update
+  DELETE          api/user-payments/{user_payment} ................................ api.user-payments.destroy › PaymentController@destroy
+  GET|HEAD        api/user-search ......................................................... api.user-search › SearchController@userSearch
+  GET|HEAD        api/user/addresses ................................................. api.user.addresses.index › AddressController@index
+  POST            api/user/addresses ................................................. api.user.addresses.store › AddressController@store
+  GET|HEAD        api/user/addresses/{address} ......................................... api.user.addresses.show › AddressController@show
+  PUT|PATCH       api/user/addresses/{address} ..................................... api.user.addresses.update › AddressController@update
+  DELETE          api/user/addresses/{address} ................................... api.user.addresses.destroy › AddressController@destroy
+  GET|HEAD        api/user/notification-preferences . api.user.notification-preference.index › UserController@indexNotificationPreference
+  POST            api/user/notification-preferences api.user.notification-preference.subscribe › UserController@subscribeNotificationPre…
+  DELETE          api/user/notification-preferences api.user.notification-preference.subscribe › UserController@unsubscribeNotificationP…
+  GET|HEAD        api/user/notification-preferences/{notificationPreference} api.user.notification-preference.show › UserController@show…
+  GET|HEAD        api/user/orders ......................................................... api.user.orders.index › OrderController@index
+  GET|HEAD        api/user/orders/{order} ................................................... api.user.orders.show › OrderController@show
+  GET|HEAD        api/user/preference ........................................ api.user.preference.index › UserController@indexPreference
+  POST            api/user/preference ...................................... api.user.preference.upsert › UserController@upsertPreference
+  GET|HEAD        api/user/profile ...................................................... api.user.profile.index › UserController@profile
+  PUT|PATCH       api/user/profile ............................................... api.user.profile.update › UserController@updateProfile
+  POST            api/user/profile-photo .............................. api.user.profile-photo.update › UserController@updateProfilePhoto
+  PUT|PATCH       api/users/{user}/assign-role/{role} ................................ api.users.roles.assign › UserController@assignRole
+  DELETE          api/users/{user}/remove-role/{role} ................................ api.users.roles.remove › UserController@removeRole
+  GET|HEAD        api/users/{user}/roles ................................................... api.users.roles.index › UserController@roles
+  POST            api/verify-otp ...................................... api.verify-otp › Authentication\PasswordResetController@verifyOTP
+  PUT             current-team ................................... current-team.update › Laravel\Jetstream › CurrentTeamController@update
+  GET|HEAD        dashboard ................................................................................................... dashboard
+  GET|HEAD        forgot-password ............................... password.request › Laravel\Fortify › PasswordResetLinkController@create
+  POST            forgot-password .................................. password.email › Laravel\Fortify › PasswordResetLinkController@store
+  GET|HEAD        livewire/livewire.js ...................................... Livewire\Mechanisms › FrontendAssets@returnJavaScriptAsFile
+  GET|HEAD        livewire/livewire.min.js.map ................................................ Livewire\Mechanisms › FrontendAssets@maps
+  GET|HEAD        livewire/preview-file/{filename} ............. livewire.preview-file › Livewire\Features › FilePreviewController@handle
+  POST            livewire/update ................................... livewire.update › Livewire\Mechanisms › HandleRequests@handleUpdate
+  POST            livewire/upload-file ........................... livewire.upload-file › Livewire\Features › FileUploadController@handle
+  GET|HEAD        login ................................................. login › Laravel\Fortify › AuthenticatedSessionController@create
+  POST            login .......................................................... Laravel\Fortify › AuthenticatedSessionController@store
+  POST            logout .............................................. logout › Laravel\Fortify › AuthenticatedSessionController@destroy
+  GET|HEAD        register ................................................. register › Laravel\Fortify › RegisteredUserController@create
+  POST            register ............................................................. Laravel\Fortify › RegisteredUserController@store
+  POST            reset-password ........................................ password.update › Laravel\Fortify › NewPasswordController@store
+  GET|HEAD        reset-password/{token} ................................ password.reset › Laravel\Fortify › NewPasswordController@create
+  GET|HEAD        sanctum/csrf-cookie ................................. sanctum.csrf-cookie › Laravel\Sanctum › CsrfCookieController@show
+  GET|HEAD        team-invitations/{invitation} ........... team-invitations.accept › Laravel\Jetstream › TeamInvitationController@accept
+  GET|HEAD        teams/create ................................................. teams.create › Laravel\Jetstream › TeamController@create
+  GET|HEAD        teams/{team} ..................................................... teams.show › Laravel\Jetstream › TeamController@show
+  GET|HEAD        two-factor-challenge .............. two-factor.login › Laravel\Fortify › TwoFactorAuthenticatedSessionController@create
+  POST            two-factor-challenge .................................. Laravel\Fortify › TwoFactorAuthenticatedSessionController@store
+  GET|HEAD        user/api-tokens ....................................... api-tokens.index › Laravel\Jetstream › ApiTokenController@index
+  GET|HEAD        user/confirm-password ............................................ Laravel\Fortify › ConfirmablePasswordController@show
+  POST            user/confirm-password ........................ password.confirm › Laravel\Fortify › ConfirmablePasswordController@store
+  GET|HEAD        user/confirmed-password-status ....... password.confirmation › Laravel\Fortify › ConfirmedPasswordStatusController@show
+  POST            user/confirmed-two-factor-authentication two-factor.confirm › Laravel\Fortify › ConfirmedTwoFactorAuthenticationContro…
+  PUT             user/password ...................................... user-password.update › Laravel\Fortify › PasswordController@update
+  GET|HEAD        user/profile ............................................ profile.show › Laravel\Jetstream › UserProfileController@show
+  PUT             user/profile-information ...... user-profile-information.update › Laravel\Fortify › ProfileInformationController@update
+  POST            user/two-factor-authentication .......... two-factor.enable › Laravel\Fortify › TwoFactorAuthenticationController@store
+  DELETE          user/two-factor-authentication ....... two-factor.disable › Laravel\Fortify › TwoFactorAuthenticationController@destroy
+  GET|HEAD        user/two-factor-qr-code ......................... two-factor.qr-code › Laravel\Fortify › TwoFactorQrCodeController@show
+  GET|HEAD        user/two-factor-recovery-codes ............. two-factor.recovery-codes › Laravel\Fortify › RecoveryCodeController@index
+  POST            user/two-factor-recovery-codes ......................................... Laravel\Fortify › RecoveryCodeController@store
+  GET|HEAD        user/two-factor-secret-key ................ two-factor.secret-key › Laravel\Fortify › TwoFactorSecretKeyController@show
 
-                                                                                                           Showing [216] routes
+                                                                                                                     Showing [239] routes
 

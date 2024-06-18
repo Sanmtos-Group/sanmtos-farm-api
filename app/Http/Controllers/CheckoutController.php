@@ -341,6 +341,9 @@ class CheckoutController extends Controller
 
             $order = $summary['order'];
             $order->number = strtoupper('SF'.date('YMd')).(Order::where('created_at', 'like' ,'%'.date('Y-m-d').'%')->count() + 1);
+            $metadata = new class() {};
+            $metadata->address = $order->address->toArray();
+            $order->metadata = $metadata;
             $order->save();
             
             $items = $summary['items'];
@@ -365,10 +368,6 @@ class CheckoutController extends Controller
                 'gateway_id' => $summary['payment_gateway_id'],
 
             ]);
-
-            // attached the logistic company to the order for delivery
-            // implement code here
-            //
 
             $payment_handler = new PaymentHandler();
 

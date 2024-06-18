@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class MergeStoreFilter
+class MergeStoreIdFilter
 {
     /**
      * Handle an incoming request.
@@ -17,10 +17,14 @@ class MergeStoreFilter
     {
         $user = $request->user();
 
-        if(!is_null($user) && $user->owns_a_store)
+        if(!is_null($user))
         {
-            $request->merge(['filter' => ['store'=>$user->store->id]]);
+            $filters = $request->input('filter', []);
+            $updated_filters = array_merge($filters, ['store_id'=>$user->store->id?? null]);
+            $request->merge(['filter' => $updated_filters]);
         }
+
         return $next($request);
+
     }
 }

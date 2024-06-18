@@ -18,6 +18,7 @@ use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\LogisticCompanyController;
 use App\Http\Controllers\NotificationPreferenceController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentGatewayController;
 use App\Http\Controllers\PermissionController;
@@ -71,12 +72,6 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::match(['put', 'patch'],'profile', 'updateProfile')->name('profile.update');
                 Route::post('profile-photo', 'updateProfilePhoto')->name('profile-photo.update');
 
-                Route::get('addresses', 'indexAddress')->name('addresses.index');
-                Route::post('addresses', 'storeAddress')->name('addresses.store');
-                Route::get('addresses/{address}', 'showAddress')->name('addresses.show');
-                Route::match(['put', 'patch'],'addresses/{address}', 'updateAddress')->name('addresses.update');
-                Route::delete('addresses/{address}', 'deleteAddress')->name('addresses.delete');
-
                 Route::get('preference', 'indexPreference')->name('preference.index');
                 Route::post('preference', 'upsertPreference')->name('preference.upsert');
 
@@ -85,7 +80,13 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::post('notification-preferences', 'subscribeNotificationPreference')->name('notification-preference.subscribe');
                 Route::delete('notification-preferences', 'unsubscribeNotificationPreference')->name('notification-preference.subscribe');
 
-                Route::get('orders', 'indexOrders')->name('orders.index');
+                Route::middleware(['merge.user.id.filter'])->group(function () {
+                    Route::apiResource('orders', OrderController::class)->except(['destroy']);
+                });
+
+                Route::middleware(['merge.user.addressable.filter'])->group(function () {
+                    Route::apiResource('addresses', AddressController::class);
+                });
 
             });
         });
@@ -231,14 +232,19 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('store')->group(function () {
         Route::name('store.')->group(function () {
+
+            Route::middleware(['merge.store.addressable.filter'])->group(function () {
+                Route::apiResource('address', AddressController::class)->only(['store']);
+            });
+
             Route::controller(StoreController::class)->group(function(){
-                // Route::get('address', 'indexAddress')->name('address.index');
+                Route::get('address', 'indexAddress')->name('address.index');
                 Route::post('address', 'storeAddress')->name('address.store');
                 Route::get('address', 'showAddress')->name('address.show');
                 Route::match(['put', 'patch'],'address', 'updateAddress')->name('address.update');
             });
-
-            Route::middleware(['merge.store.filter'])->group(function () {
+            
+            Route::middleware(['merge.store.id.filter'])->group(function () {
                 Route::apiResource('products', ProductController::class);
                 Route::apiResource('promos', PromoController::class);
                 Route::apiResource('coupons', CouponController::class);

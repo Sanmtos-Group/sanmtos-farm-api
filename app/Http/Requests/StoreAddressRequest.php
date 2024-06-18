@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Address;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreAddressRequest extends FormRequest
@@ -11,7 +12,7 @@ class StoreAddressRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->user()->can('create', Address::class);
     }
 
     /**
@@ -33,6 +34,8 @@ class StoreAddressRequest extends FormRequest
             'state' => 'required|string|max:191',
             'lga' => 'nullable|string|max:191',
             'is_preferred' => 'boolean',
+            'addressable_id' => 'required|uuid',
+            'addressable_type' => 'required|string|max:191',
         ];
     }
 

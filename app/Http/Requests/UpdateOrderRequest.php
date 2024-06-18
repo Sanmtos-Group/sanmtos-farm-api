@@ -11,7 +11,7 @@ class UpdateOrderRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user()->can('update', $this->order);
     }
 
     /**
@@ -22,7 +22,7 @@ class UpdateOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'alternative_phone_numbers' => 'sometimes|required|string|max:191',
         ];
     }
 }

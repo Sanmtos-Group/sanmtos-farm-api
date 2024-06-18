@@ -54,6 +54,7 @@ class CouponController extends Controller
             'store_id',
             'created_at',
             'updated_at',
+            AllowedFilter::exact('store_id'),
             AllowedFilter::scope('store'),
             AllowedFilter::scope('discount_types'),
             AllowedFilter::scope('recipients'),

@@ -29,7 +29,6 @@ return new class extends Migration
             $table->timestamp('delivered_at')->nullable();
             $table->timestamp('failed_at')->nullable();
             $table->string('failure_reason')->nullable();
-
             $table->string('status')->nullable();
             $table->timestamps();
             $table->softDeletes();

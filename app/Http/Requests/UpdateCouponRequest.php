@@ -13,7 +13,7 @@ class UpdateCouponRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()->can('update', Coupon::class);
+        return $this->user()->can('update', $this->coupon);
     }
 
     /**
