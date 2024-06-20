@@ -77,6 +77,8 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
+        $order->load('orderables', 'payment');
+        
         if(request()->has('include'))
         {
             foreach (explode(',', request()->include) as $key => $value) {

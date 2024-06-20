@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -67,6 +68,16 @@ class Payment extends Model
     {
         return $this->morphTo();
     }
+
+    /**
+     * Determine  a cart item  metadata
+     */
+    protected function metadata(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => json_decode($value) ,
+        );
+    } 
 
     public static function genTranxRef(){
         return 'sf'.Str::of(Str::uuid())->replace("-","");
