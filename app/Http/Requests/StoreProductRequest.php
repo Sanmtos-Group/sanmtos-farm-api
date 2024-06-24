@@ -31,7 +31,6 @@ class StoreProductRequest extends FormRequest
             'height' => 'numeric|min:0.00',
             'volume' => 'numeric|min:0.00',
             'price' => 'required|numeric|min:0.01',
-            'currency' => 'required|string',
             'quantity' => 'integer|min:1',
             // 'regular_price' => 'required|numeric|min:0.01',
             // 'discount' => 'integer|min:0|max:100',
@@ -42,5 +41,18 @@ class StoreProductRequest extends FormRequest
             // 'verifier_at' => 'nullable|date',
             // 'verifier_id' => 'nullable|integer|exists:users,id',
         ];
+    }
+
+    /**
+     * Prepare the data for validation.
+     *
+     * @return void
+     */
+    protected function prepareForValidation()
+    {
+
+        $this->merge([
+            'currency' => 'NGN',
+        ]);
     }
 }

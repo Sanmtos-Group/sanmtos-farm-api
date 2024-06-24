@@ -34,7 +34,7 @@ class StoreCouponRequest extends FormRequest
             // 'max_usage' => 'sometimes|integer|gt:0',
             // 'unlimited_usuage' => 'sometimes|boolean',
             'expiration_date' => 'required|date|after:'.now(),
-            'store_id' => 'nullable|uuid|exists:stores,id',
+            'store_id' => 'required|uuid|exists:stores,id',
 
             'recipient_ids' =>'sometimes|array',
             'recipient_ids.*' => 'uuid|exists:users,id',

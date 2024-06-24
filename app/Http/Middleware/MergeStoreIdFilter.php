@@ -17,12 +17,19 @@ class MergeStoreIdFilter
     {
         $user = $request->user();
 
-        if(!is_null($user))
+        $store_id =null;
+
+        if(!is_null($user) && $user->owns_a_store)
         {
-            $filters = $request->input('filter', []);
-            $updated_filters = array_merge($filters, ['store_id'=>$user->store->id?? null]);
-            $request->merge(['filter' => $updated_filters]);
+            $store_id = $user->store->id;
         }
+
+        $filters = $request->input('filter', []);
+        $updated_filters = array_merge($filters, ['store_id'=>$store_id?? null]);
+        $request->merge([
+            'filter' => $updated_filters,
+            'store_id' => $store_id,
+        ]);
 
         return $next($request);
 

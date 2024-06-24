@@ -35,7 +35,7 @@ class StorePromoRequest extends FormRequest
             'is_unlimited' => 'sometimes|boolean',
             'start_datetime' => 'required_if:is_unlimited,0,null|date|after_or_equal:'.now(),
             'end_datetime' => 'required_if:is_unlimited,0,null|date|after:start_datetime',
-            'store_id' => 'nullable|uuid|exists:stores,id',
+            'store_id' => 'required|uuid|exists:stores,id',
             'image' =>'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', #2mb
         ];
     }
