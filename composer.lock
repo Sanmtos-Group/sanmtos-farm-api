@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "788e4a937b003c7cd6536e32850897df",
+    "content-hash": "0588ad13114a0d318677abe1fe6b85d8",
     "packages": [
         {
             "name": "ashallendesign/laravel-exchange-rates",
@@ -4291,7 +4291,7 @@
             "dist": {
                 "type": "path",
                 "url": "../sanmtos-chat-api",
-                "reference": "4aa2f4116d73c351dcc739b2110617ce4dc716dd"
+                "reference": "ea61dd7387b1113e8b11987bb4fc69bb819fc2c2"
             },
             "require": {
                 "guzzlehttp/guzzle": "^7.8",
