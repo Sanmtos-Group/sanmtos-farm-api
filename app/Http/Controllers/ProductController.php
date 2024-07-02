@@ -50,6 +50,7 @@ class ProductController extends Controller
             'price', 
             'created_at',
             AllowedFilter::exact('store_id'),
+            AllowedFilter::exact('category_id'),
             AllowedFilter::scope('min_price'),
             AllowedFilter::scope('max_price'),
             AllowedFilter::scope('price_between'),
