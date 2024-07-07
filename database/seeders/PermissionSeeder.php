@@ -57,6 +57,12 @@ class PermissionSeeder extends Seeder
             ['name'=>'update promo'],
             ['name'=>'delete promo'],
             ['name'=>'cancel promo'],
+
+            ['name'=>'view users'],
+            ['name'=>'read user'],
+            ['name'=>'create user'],
+            ['name'=>'update user'],
+            ['name'=>'delete user'],
         ];
     }
 }

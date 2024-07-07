@@ -69,5 +69,6 @@ class Kernel extends HttpKernel
         'merge.user.addressable.filter' => \App\Http\Middleware\MergeUserAddressableFilter::class,
         'merge.store.id.filter' => \App\Http\Middleware\MergeStoreIdFilter::class,
         'merge.store.addressable.filter' => \App\Http\Middleware\MergeStoreAddressableFilter::class,
+        'merge.work.stores.id.filter' => \App\Http\Middleware\MergeWorkStoresIdFilter::class,
     ];
 }

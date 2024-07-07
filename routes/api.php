@@ -234,12 +234,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::name('store.')->group(function () {
 
             Route::middleware(['merge.store.addressable.filter'])->group(function () {
-                Route::apiResource('address', AddressController::class)->only(['store']);
+                Route::apiResource('address', AddressController::class)->only(['index','store']);
+            });
+
+            Route::middleware(['merge.work.stores.id.filter'])->group(function () {
+                Route::apiResource('staff', UserController::class)->only(['index']);
             });
 
             Route::controller(StoreController::class)->group(function(){
-                Route::get('address', 'indexAddress')->name('address.index');
-                Route::post('address', 'storeAddress')->name('address.store');
                 Route::get('address', 'showAddress')->name('address.show');
                 Route::match(['put', 'patch'],'address', 'updateAddress')->name('address.update');
             });
@@ -262,7 +264,7 @@ Route::middleware('auth:sanctum')->group(function () {
         });
     });
 
-    // Route::apiResource('users', UserController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('users', UserController::class)->except(['store', 'update', 'destroy']);
     Route::prefix('users/{user}/')->group(function () {
         Route::name('users.roles.')->group(function () {
             Route::controller(UserController::class)->group(function (){

@@ -225,17 +225,7 @@ class User extends Authenticatable
         return $this->hasOne(Store::class);
     }
 
-    /**
-     * Determine if a user owns a store
-     */
-    protected function ownsAStore(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => !empty($this->store),
-        );
-    }
-
-    /**
+     /**
      * The stores that the user works for.
      */
     public function workStores(): BelongsToMany
@@ -267,6 +257,94 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Role::class)->using(RoleUser::class);
     }
+
+    /**
+     * Get the user's coupon usages.
+     */
+    public function couponUsages(): HasMany
+    {
+        return $this->hasMany(CouponUsage::class);
+    }
+
+    /**
+     * Scope a query to only include users that owns a certain store
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  mix  $values
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeRoles($query, ...$values)
+    {
+        $query->withWhereHas('roles', function($query) use($values){
+            $query->whereIn('roles.id', $values);
+
+            foreach ($values as $key => $value) {
+                $query->orWhere('roles.name','like',"%".$value."%");
+            }
+                
+        });
+        
+        return $query; 
+    }
+
+
+    /**
+     * Scope a query to only include users of particular store they work for.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  mix  $values
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeWorkStores($query, ...$values)
+    {
+        $query->withWhereHas('workStores', function($query) use($values){
+            $query->whereIn('stores.id', $values);
+
+            foreach ($values as $key => $value) {
+                $query->orWhere('stores.name','like',"%".$value."%")
+                ->orWhere('stores.slug','like',"%".$value."%");
+            }
+                
+        });
+        
+        return $query; 
+    }
+
+
+    /**
+     * Scope a query to only include users that owns a certain store
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  mix  $values
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeStore($query, ...$values)
+    {
+        $query->withWhereHas('store', function($query) use($values){
+            $query->whereIn('id', $values);
+
+            foreach ($values as $key => $value) {
+                $query->orWhere('name','like',"%".$value."%")
+                ->orWhere('slug','like',"%".$value."%");
+            }
+                
+        });
+        
+        return $query; 
+    }
+
+
+    /**
+     * Determine if a user owns a store
+     */
+    protected function ownsAStore(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => !empty($this->store),
+        );
+    }
+
+   
 
     /**
      * Assign roles to user 
@@ -443,14 +521,6 @@ class User extends Authenticatable
         }
 
         return false;
-    }
-
-    /**
-     * Get the user's coupon usages.
-     */
-    public function couponUsages(): HasMany
-    {
-        return $this->hasMany(CouponUsage::class);
     }
 
     /**

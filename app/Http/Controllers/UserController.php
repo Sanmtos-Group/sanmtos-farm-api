@@ -25,12 +25,75 @@ class UserController extends Controller
 {
 
     /**
+     * Create the controller instance.
+     */
+    public function __construct()
+    {
+        $this->authorizeResource(User::class, 'role');
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $users = User::all();
-        $user_resource = new UserResource($users);
+        $users = QueryBuilder::for(User::class)
+        ->defaultSort('created_at')
+        ->allowedSorts(
+            'first_name',
+            'last_name',
+            'gender',
+            'dialing_code',
+            'phone_number',
+            AllowedSort::custom('recent', new \App\Models\Sorts\LatestSort()),
+            AllowedSort::custom('oldest', new \App\Models\Sorts\OldestSort()),
+        )
+        ->allowedFilters([
+            'first_name',
+            'last_name',
+            'gender',
+            'dialing_code',
+            'phone_number',
+            AllowedFilter::exact('store_id'),
+            AllowedFilter::exact('category_id'),
+            AllowedFilter::scope('min_price'),
+            AllowedFilter::scope('max_price'),
+            AllowedFilter::scope('price_between'),
+            AllowedFilter::scope('category'),
+            AllowedFilter::scope('store'),
+            AllowedFilter::scope('recent'),
+            AllowedFilter::scope('roles'),
+            AllowedFilter::callback('rolesId', function($query,$value){
+                $query->whereHas('roles', function($query) use($value){
+                    $query->whereIn('roles.id', explode(',', $value));
+                });
+            }),
+            AllowedFilter::scope('workStores'),
+            AllowedFilter::callback('workStoresId', function($query,$value){
+                $query->whereHas('workStores', function($query) use($value){
+                    $query->whereIn('stores.id', explode(',', $value));
+                });
+            }),
+        ])
+        ->allowedIncludes([
+            'addresses',
+            'preference',
+            'notificationPreferences',
+            'orders',
+            'store',
+            'workStores',
+            'cartItems',
+            'roles',
+            'couponUsages'
+        ])
+        ->paginate()
+        ->appends(request()->query());
+
+        $user_resource =  UserResource::collection($users);
+
+        $user_resource->with['status'] = "OK";
+        $user_resource->with['message'] = 'Users retrived successfully';
+
         return $user_resource;
     }
 
@@ -247,7 +310,17 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        //
+        if(request()->has('include'))
+        {
+            foreach (explode(',', request()->include) as $key => $value) {
+               $user->{$value};
+            }
+        }
+
+        $user_resource = new UserResource($user);
+        $user_resource->with['message'] = 'User retrieved successfully';
+
+        return  $user_resource;
     }
 
     /**
