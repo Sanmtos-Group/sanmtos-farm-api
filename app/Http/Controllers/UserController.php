@@ -134,7 +134,7 @@ class UserController extends Controller
         return $user_resource;
     }
 
-      /**
+    /**
      * Update authenticated user profile pic
      * 
      * @method PUT || PATCH
@@ -264,38 +264,6 @@ class UserController extends Controller
 
         return $notification_preference_resource;
     }
-
-
-    /**
-     * Display a listing users that are staff.
-     */
-    public function staffs()
-    {
-        $users = User::where('is_staff', true)->get();
-        $user_resource = new UserResource($users);
-
-        $user_resource->with['message'] = 'Sanmtos staffs retrieved successfully';
-
-        return $user_resource;
-    }
-
-
-    /**
-     * Display a listing users that are store staff.
-     *
-     */
-    public function storeStaffs()
-    {
-        $users = User::has('workStores')->get();
-
-        $user_resource = new UserResource($users);
-
-        $user_resource->with['message'] = 'Stores staffs retrieved successfully';
-
-        return $user_resource;
-
-    }
-
 
     /**
      * Store a newly created resource in storage.
