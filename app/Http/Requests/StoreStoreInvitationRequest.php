@@ -2,8 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\StoreInvitation;
 use Illuminate\Foundation\Http\FormRequest;
-
+use Illuminate\Validation\Validator;
 class StoreStoreInvitationRequest extends FormRequest
 {
     /**
@@ -11,7 +12,7 @@ class StoreStoreInvitationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user()->can('create', StoreInvitation::class);
     }
 
     /**
@@ -22,7 +23,29 @@ class StoreStoreInvitationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'email' => 'required|email',
+            'store_id' => 'required|uuid|exists:stores,id',
+            'roles' => 'nullable|string|max:191',
+        ];
+    }
+    /**
+     * Get the "after" validation callables for the request.
+     */
+    public function after(): array
+    {
+        return [
+            function (Validator $validator) 
+            {
+                $store_invitation = StoreInvitation::where('email', $this->email)
+                ->where('store_id', $this->store_id)->first();
+
+                if(!is_null($store_invitation))
+                {
+                    $error_message = 'Store invitation already sent, awaiting response';
+
+                    $validator->errors()->add('store_invitation_error',$error_message);
+                }        
+            }
         ];
     }
 }

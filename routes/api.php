@@ -29,6 +29,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StoreController;
+use App\Http\Controllers\StoreInvitationController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VerificationCodeController;
@@ -247,6 +248,9 @@ Route::middleware('auth:sanctum')->group(function () {
             });
             
             Route::middleware(['merge.store.id.filter'])->group(function () {
+                Route::post('send-invite', [StoreInvitationController::class, 'store']);
+                Route::post('accept-invite', [StoreInvitationController::class, 'acceptInvitation']);
+                Route::post('decline-invite', [StoreInvitationController::class, 'declineInvitation']);
                 Route::apiResource('products', ProductController::class);
                 Route::apiResource('promos', PromoController::class);
                 Route::apiResource('coupons', CouponController::class);

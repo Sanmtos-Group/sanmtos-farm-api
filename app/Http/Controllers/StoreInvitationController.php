@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreStoreInvitationRequest;
 use App\Http\Requests\UpdateStoreInvitationRequest;
+use App\Http\Resources\StoreInvitationResource;
 use App\Models\StoreInvitation;
-
 class StoreInvitationController extends Controller
 {
     /**
@@ -29,7 +29,14 @@ class StoreInvitationController extends Controller
      */
     public function store(StoreStoreInvitationRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+        $store_invitation = StoreInvitation::create($validated);
+        $store_invitation_resource = new StoreInvitationResource($store_invitation);
+        $store_invitation_resource->with['message'] = 'Store Invitation created successfully';
+
+        return $store_invitation_resource;
+
     }
 
     /**

@@ -4,16 +4,18 @@ namespace App\Policies;
 
 use App\Models\StoreInvitation;
 use App\Models\User;
+use App\Traits\Policy\AuthorizeAllActionToSuperAdmin;
 use Illuminate\Auth\Access\Response;
 
 class StoreInvitationPolicy
 {
+    use AuthorizeAllActionToSuperAdmin;
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        //
+        return $this->user->owns_a_store;
     }
 
     /**
@@ -21,7 +23,7 @@ class StoreInvitationPolicy
      */
     public function view(User $user, StoreInvitation $storeInvitation): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -29,7 +31,7 @@ class StoreInvitationPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -37,7 +39,7 @@ class StoreInvitationPolicy
      */
     public function update(User $user, StoreInvitation $storeInvitation): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -45,7 +47,7 @@ class StoreInvitationPolicy
      */
     public function delete(User $user, StoreInvitation $storeInvitation): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -53,7 +55,7 @@ class StoreInvitationPolicy
      */
     public function restore(User $user, StoreInvitation $storeInvitation): bool
     {
-        //
+        return true;
     }
 
     /**
@@ -61,6 +63,6 @@ class StoreInvitationPolicy
      */
     public function forceDelete(User $user, StoreInvitation $storeInvitation): bool
     {
-        //
+        return true;
     }
 }
