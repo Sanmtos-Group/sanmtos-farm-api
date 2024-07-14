@@ -6,6 +6,10 @@ use App\Http\Requests\StoreStoreInvitationRequest;
 use App\Http\Requests\UpdateStoreInvitationRequest;
 use App\Http\Resources\StoreInvitationResource;
 use App\Models\StoreInvitation;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
+use Spatie\QueryBuilder\QueryBuilder;
+
 class StoreInvitationController extends Controller
 {
     /**
@@ -13,7 +17,32 @@ class StoreInvitationController extends Controller
      */
     public function index()
     {
-        //
+        $store_invitations = QueryBuilder::for(StoreInvitation::class)
+        ->defaultSort('created_at')
+        ->allowedSorts(
+            'email',
+            AllowedSort::custom('recent', new \App\Models\Sorts\LatestSort()),
+            AllowedSort::custom('oldest', new \App\Models\Sorts\OldestSort()),
+        )
+        ->allowedFilters([
+            'email', 
+            'created_at',
+            AllowedFilter::exact('store_id'),
+            AllowedFilter::scope('recent'),
+        ])
+        ->allowedIncludes([
+            'store',
+            'user',
+        ])
+        ->paginate()
+        ->appends(request()->query());
+
+        $product_resource =  StoreInvitationResource::collection($store_invitations);
+
+        $product_resource->with['status'] = "OK";
+        $product_resource->with['message'] = 'Store Invitations retrived successfully';
+
+        return $product_resource;
     }
 
     /**
@@ -32,6 +61,7 @@ class StoreInvitationController extends Controller
         $validated = $request->validated();
 
         $store_invitation = StoreInvitation::create($validated);
+        $store_invitation->refresh();
         $store_invitation_resource = new StoreInvitationResource($store_invitation);
         $store_invitation_resource->with['message'] = 'Store Invitation created successfully';
 

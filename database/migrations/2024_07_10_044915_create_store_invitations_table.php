@@ -19,7 +19,7 @@ return new class extends Migration
             $table->timestamp('expires_at')->nullable();
             $table->string('status')->default('pending');
             $table->timestamp('accepted_at')->nullable();
-            $table->timestamp('rejected_at')->nullable();
+            $table->timestamp('declined_at')->nullable();
             $table->unique(['store_id', 'email']);
             $table->timestamps();
 

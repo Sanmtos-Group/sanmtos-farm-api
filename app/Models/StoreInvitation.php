@@ -25,7 +25,7 @@ class StoreInvitation extends Model
         'expires_at',
         'status',
         'accepted_at',
-        'rejected_at',
+        'declined_at',
     ];
 
 
@@ -48,7 +48,7 @@ class StoreInvitation extends Model
     protected function isAccepted(): Attribute
     {
         return Attribute::make(
-            get: fn () => !is_null($this->rejected_at) ? false: (is_null($this->accepted_at)? null: true),
+            get: fn () => !is_null($this->declined_at) ? false: (is_null($this->accepted_at)? null: true),
         );
     }
 

@@ -4,7 +4,7 @@ namespace App\Listeners\StoreInvitation;
 
 use App\Events\StoreInvitation\StoreInvitationCreated;
 use App\Models\Role;
-use App\Notifications\StoreInvitation;
+use App\Notifications\StoreInvitationNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Notification;
@@ -16,7 +16,7 @@ class StoreInvitationCreatedListener
      */
     public function __construct()
     {
-        // $this->afterCommit();
+
     }
 
     /**
@@ -25,18 +25,19 @@ class StoreInvitationCreatedListener
     public function handle(StoreInvitationCreated $event): void
     {
         $store_invitation = $event->store_invitation;
-
-        if(!is_null($store = $store_invitation->store))
+        $store =  $store_invitation->store()->first();
+        if(!is_null($store))
         {
+            $user = $store_invitation->user()->first();
 
-            if(is_null($user = $store_invitation->user))
+            if(is_null($user ))
             {
                 Notification::route('mail', [
                     $store_invitation->email => '',
-                ])->notify(new StoreInvitation($store_invitation));
+                ])->notify(new StoreInvitationNotification($store_invitation));
             }
             else {
-                $user->notify(new StoreInvitation($store_invitation));
+                $user->notify(new StoreInvitationNotification($store_invitation));
             }
 
         }
