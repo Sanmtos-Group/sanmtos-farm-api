@@ -166,5 +166,13 @@ class Store extends Model
         ->where('valid_until','>', today());
     }
 
-    
+     /**
+     * Get the roles the store operates.
+     * 
+     * @return Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function roles(): HasMany
+    {
+        return $this->hasMany(Role::class, 'store_id', 'id');
+    }
 }

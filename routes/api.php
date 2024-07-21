@@ -248,9 +248,7 @@ Route::middleware('auth:sanctum')->group(function () {
             });
             
             Route::middleware(['merge.store.id.filter'])->group(function () {
-                Route::Resource('store-invitations', StoreInvitationController::class);
-                Route::post('accept-invitation', [StoreInvitationController::class, 'acceptInvitation']);
-                Route::post('decline-invitation', [StoreInvitationController::class, 'declineInvitation']);
+                Route::apiResource('store-invitations', StoreInvitationController::class);
                 Route::apiResource('products', ProductController::class);
                 Route::apiResource('promos', PromoController::class);
                 Route::apiResource('coupons', CouponController::class);
@@ -423,4 +421,6 @@ Route::prefix('stores/{store}/')->group(function () {
         });
     });
 });
+Route::post('store-invitations/{store_invitation}/accept', [StoreInvitationController::class, 'accept']);
+
 

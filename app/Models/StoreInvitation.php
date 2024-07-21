@@ -69,7 +69,7 @@ class StoreInvitation extends Model
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'email');
+        return $this->belongsTo(User::class, 'email', 'email');
     }
   
 }

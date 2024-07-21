@@ -22,6 +22,7 @@ class StoreInvitationNotification extends Notification implements ShouldQueue
      */
     public function __construct(StoreInvitation $store_invitation)
     {
+        $this->afterCommit();
         $this->store_invitation = $store_invitation;
     }
 
