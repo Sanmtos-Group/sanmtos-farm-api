@@ -358,7 +358,7 @@ class User extends Authenticatable
         }
 
         if(!is_null($the_role=$this->findRole($role))){
-            $this->roles()->attach($the_role->id);
+            $this->roles()->attach($the_role->id,['created_at'=>now()]);
             return true;
         }
 
@@ -368,10 +368,27 @@ class User extends Authenticatable
             return false;
         }
         
-        $this->roles()->attach($new_role->id);
+        $this->roles()->attach($new_role->id,['created_at'=>now()]);
 
         return true;
+    }
 
+      /**
+     * Revoke role to user 
+     */
+    public function revokeRole($role)
+    {
+        if(!$this->hasRole($role))
+        {
+           return true;
+        }
+
+        if(!is_null($the_role=$this->findRole($role))){
+            $this->roles()->detach($the_role->id);
+            return true;
+        }
+
+        return true;
     }
 
     /**

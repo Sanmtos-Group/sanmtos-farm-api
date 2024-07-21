@@ -422,5 +422,6 @@ Route::prefix('stores/{store}/')->group(function () {
     });
 });
 Route::post('store-invitations/{store_invitation}/accept', [StoreInvitationController::class, 'accept']);
+Route::post('store-invitations/{store_invitation}/decline', [StoreInvitationController::class, 'decline']);
 
 

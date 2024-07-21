@@ -88,7 +88,7 @@ class StoreInvitationController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Accept the specified resource invitation.
      */
     public function accept(StoreInvitation $store_invitation)
     {
@@ -101,7 +101,7 @@ class StoreInvitationController extends Controller
             return response()->json([
                 "data" => null,
                 'status' => 'Failed',
-                "message" => "Invitation declined on ".$tore_invitation->declined_at
+                "message" => "Invitation declined on ".$store_invitation->declined_at
             ], 422);
         }
 
@@ -120,7 +120,7 @@ class StoreInvitationController extends Controller
     
                 if(!is_null($store_invitation->user))
                 {
-                    $store_invitation->user->workStores()->attach($store_invitation->store);
+                    $store_invitation->user->workStores()->attach($store_invitation->store, ['created_at'=>now()]);
     
                     $saleperson = $store_invitation->store->roles()->firstOrCreate([
                         'name' => 'salesperson',
@@ -135,6 +135,74 @@ class StoreInvitationController extends Controller
 
             $store_invitation_resource = new StoreInvitationResource($store_invitation);
             $store_invitation_resource->with['message'] = 'Store invitation accepted successfully';
+    
+            return $store_invitation_resource;
+
+            //code...
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            \Log::Error($th);
+            return response()->json([
+                "data" => null,
+                'status' => 'Failed',
+                "message" => $th->getMessage()
+            ], 422);
+        }
+        
+
+
+    }
+
+     /**
+     * Decline the specified resource invitation.
+     */
+    public function decline(StoreInvitation $store_invitation)
+    {
+        if(!is_null($store_invitation->accepted_at))
+        {
+
+            $store_invitation->status = 'accepted';
+            $store_invitation->save();
+
+            return response()->json([
+                "data" => null,
+                'status' => 'Failed',
+                "message" => "Invitation already accepted on ".$store_invitation->accepted_at
+            ], 422);
+        }
+
+        try {
+
+            DB::beginTransaction();
+
+            if(is_null($store_invitation->declined_at))
+            {
+
+                $store_invitation->status = 'declined';
+                $store_invitation->declined_at = now();
+                $store_invitation->save();
+    
+                $store_invitation->load(['store','user']);
+    
+                if(!is_null($store_invitation->user))
+                {
+                    $store_invitation->user->workStores()->detach($store_invitation->store);
+    
+                    $saleperson = $store_invitation->store->roles()->firstOrCreate([
+                        'name' => 'salesperson',
+                    ]);
+        
+                    $store_invitation->user->revokeRole($saleperson);
+    
+                }
+            }
+    
+            DB::commit();
+
+            $store_invitation->refresh();
+
+            $store_invitation_resource = new StoreInvitationResource($store_invitation);
+            $store_invitation_resource->with['message'] = 'Store invitation declined successfully';
     
             return $store_invitation_resource;
 
