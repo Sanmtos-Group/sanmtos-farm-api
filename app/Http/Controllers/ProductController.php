@@ -108,6 +108,8 @@ class ProductController extends Controller
             'width' => $validated['width'],
             'height' => $validated['height'],
             'volume' => $validated['length'] * $validated['width'] * $validated['height'],
+            'quantity' => $validated['quantity'],
+
             // 'discount' => $validated['discount'] ?? null,
             'category_id' => $validated['category_id'],
             'store_id' => $validated['store_id'],
