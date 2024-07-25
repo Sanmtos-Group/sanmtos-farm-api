@@ -159,36 +159,36 @@ class Product extends Model
     
 
     /**
-     * Scope a query to only include users of a given type.
+     * Scope a query to only include products of a given type.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  mixed  $min
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return void
      */
     public function scopeMinPrice($query, $min)
     {
-        return $query->where('price','>=', $min);
+        $query->where('price','>=', $min);
     }
 
     /**
-     * Scope a query to only include users of a given type.
+     * Scope a query to only include products of a given type.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  mixed  $max
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return void
      */
     public function scopeMaxPrice($query, $max)
     {
-        return $query->where('price','<=',$max);
+        $query->where('price','<=',$max);
     }
 
     /**
-     * Scope a query to only include users of a given type.
+     * Scope a query to only include products of a given type.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  mixed  $min
      * @param  mixed  $max
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return void
      */
     public function scopePriceBetween($query, $min, $max)
     {
@@ -196,47 +196,81 @@ class Product extends Model
     }
 
     /**
-     * Scope a query to only include users of a given type.
+     * Scope a query to only include products of a given type.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  mix  $values
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return void
      */
     public function scopeStore($query, ...$values)
     {
         $query->withWhereHas('store', function($query) use($values){
-            $query->whereIn('id', $values);
-
-            foreach ($values as $key => $value) {
-                $query->orWhere('name','like',"%".$value."%")
-                ->orWhere('slug','like',"%".$value."%");
-            }
-                
+            $query->whereIn('id', $values)
+            ->orWhere(function($query)use($values){
+                foreach ($values as $key => $value) {
+                    $query->Where('name','like',"%".$value."%")
+                    ->orWhere('slug','like',"%".$value."%");
+                }
+            });
         });
-        
-        return $query; 
     }
 
 
     /**
-     * Scope a query to only include users of a given type.
+     * Scope a query to only include products of a given type.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @param  mix  $values
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return void
      */
     public function scopeCategory($query, ...$values)
     {
         $query->withWhereHas('category', function($query) use($values){
-            $query->whereIn('id', $values);
+            $query->whereIn('id', $values)
+            ->orWhere(function($query)use($values){
+                foreach ($values as $key => $value) {
+                    $query->Where('name','like',"%".$value."%");
+                }
+            });
+        });
+    }
 
-            foreach ($values as $key => $value) {
-                $query->orWhere('name','like',"%".$value."%")
-                ->orWhere('slug','like',"%".$value."%");
-            }
+    /**
+     * Scope a query to only include products of the country given 
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  mix  $values
+     * @return void
+     */
+    public function scopeCountry($query, ...$values)
+    {
+        $query->WhereHas('store.address.country', function($query) use($values){
+            $query->whereIn('id', $values)
+            ->orWhere(function($query)use($values){
+                foreach ($values as $key => $value) {
+                    $query->Where('name','like',"%".$value."%");
+                }
+            });
                 
         });
-        
-        return $query; 
+    }
+
+     /**
+     * Scope a query to only include products of the state given 
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  mix  $values
+     * @return void
+     */
+    public function scopeState($query, ...$values)
+    {
+        $query->WhereHas('store.address.country', function($query) use($values){
+            $query->whereIn('state', $values)
+            ->orWhere(function($query)use($values){
+                foreach ($values as $key => $value) {
+                    $query->Where('name','like',"%".$value."%");
+                }
+            });
+        }); 
     }
 }

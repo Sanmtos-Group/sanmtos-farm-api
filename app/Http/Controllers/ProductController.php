@@ -57,6 +57,14 @@ class ProductController extends Controller
             AllowedFilter::scope('category'),
             AllowedFilter::scope('store'),
             AllowedFilter::scope('recent'),
+            AllowedFilter::scope('country'),
+            AllowedFilter::callback('country_id', function ($query, $value){
+                $query->WhereHas('store.address.country', function($query) use($value){
+                    $query->where('id', $value);
+                });
+            }),
+            AllowedFilter::scope('state'),
+
         ])
         ->allowedIncludes([
             'store',
@@ -217,6 +225,7 @@ class ProductController extends Controller
      */
     public function verify(Product $product)
     {
+        $product->status ='verified';
         $product->verified_at = now();
         $product->verifier_id = auth()->user()->id;
         $product->save();
@@ -235,6 +244,7 @@ class ProductController extends Controller
      */
     public function revokeVerification(Product $product)
     {
+        $product->status ='verification revoked';
         $product->verified_at = null;
         $product->verifier_id = null;
         $product->save();
