@@ -4,8 +4,62 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0588ad13114a0d318677abe1fe6b85d8",
+    "content-hash": "fe4fe7237434d753d22dc040bfd15ba6",
     "packages": [
+        {
+            "name": "ajagabos/laravel-kwik",
+            "version": "1.0.0",
+            "dist": {
+                "type": "path",
+                "url": "../ajagabos-laravel-kwik",
+                "reference": "7c84798ebd0954b729aac3e12fc8865813615ee7"
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^7.2",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.6",
+                "phpstan/phpstan": "^1.11",
+                "phpunit/phpunit": "^11.2",
+                "symfony/var-dumper": "^7.1"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Ajagabos\\Kwik\\KwikServiceProvider"
+                    ],
+                    "aliases": {
+                        "Kwik": "Ajagabos\\Kwik\\Facades\\Kwik"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Ajagabos\\Kwik\\": "src/",
+                    "Ajagabos\\Kwik\\Tests\\": "tests/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Ajagabos\\Kwik\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Philip James Ajagabos",
+                    "email": "ajagabos007@gmail.com"
+                }
+            ],
+            "description": "A KWIK Laravel Package",
+            "transport-options": {
+                "relative": true
+            }
+        },
         {
             "name": "ashallendesign/laravel-exchange-rates",
             "version": "v7.4.0",
@@ -4291,7 +4345,7 @@
             "dist": {
                 "type": "path",
                 "url": "../sanmtos-chat-api",
-                "reference": "b8fa42dfca06092cc85e064f19d20eff096da9ab"
+                "reference": "a13f2ce0ce0519d9d8355a9e9456af293b1408b5"
             },
             "require": {
                 "guzzlehttp/guzzle": "^7.8",

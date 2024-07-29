@@ -106,16 +106,20 @@ class ProductController extends Controller
             $validated['store_id'] = $user->ownsAStore ? $user->store->id : $validated['store_id'];
         }
 
+        $length = array_key_exists('length', $validated) ? $validated['length'] : 0;
+        $width = array_key_exists('width', $validated) ? $validated['width'] : 0;
+        $height = array_key_exists('height', $validated) ? $validated['height'] : 0;
+
         $product = Product::create([
             'name' => $validated['name'],
             'description' => $validated['description'] ?? null,
             'short_description' => $validated['short_description'] ?? null,
             'price' => $validated['price'],
             'weight' => $validated['weight'],
-            'length' => $validated['length'],
-            'width' => $validated['width'],
-            'height' => $validated['height'],
-            'volume' => $validated['length'] * $validated['width'] * $validated['height'],
+            'length' => $length,
+            'width' => $width,
+            'height' => $height,
+            'volume' => $length * $width * $height,
             'quantity' => $validated['quantity'],
 
             // 'discount' => $validated['discount'] ?? null,
