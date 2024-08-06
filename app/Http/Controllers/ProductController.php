@@ -172,8 +172,13 @@ class ProductController extends Controller
     {
         if(request()->has('include'))
         {
-            foreach (explode(',', request()->include) as $key => $value) {
-               $product->{$value};
+            foreach (explode(',', request()->include) as $key => $include) 
+            {
+               try {
+                $product->load($include);
+               } catch (\Throwable $th) {
+                //throw $th;
+               }
             }
         }
 

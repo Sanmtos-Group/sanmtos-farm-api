@@ -62,6 +62,17 @@ class StoreController extends Controller
      */
     public function show(Store $store)
     {
+        if(request()->has('include'))
+        {
+            foreach (explode(',', request()->include) as $key => $include) 
+            {
+               try {
+                $store->load($include);
+               } catch (\Throwable $th) {
+                //throw $th;
+               }
+            }
+        }
         $store_resource = new StoreResource($store);
         $store_resource->with['message'] = 'Store retrieved successfully';
 

@@ -280,11 +280,15 @@ class UserController extends Controller
     {
         if(request()->has('include'))
         {
-            foreach (explode(',', request()->include) as $key => $value) {
-               $user->{$value};
+            foreach (explode(',', request()->include) as $key => $include) 
+            {
+               try {
+                $user->load($include);
+               } catch (\Throwable $th) {
+                //throw $th;
+               }
             }
         }
-
         $user_resource = new UserResource($user);
         $user_resource->with['message'] = 'User retrieved successfully';
 
