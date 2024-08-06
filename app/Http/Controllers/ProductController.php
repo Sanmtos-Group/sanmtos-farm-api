@@ -182,6 +182,16 @@ class ProductController extends Controller
             }
         }
 
+        if(request()->has('append'))
+        {
+            foreach (explode(',', request()->append) as $key => $attribute) 
+            {
+                if (array_key_exists($attribute, $product->getAttributes())) {
+                    $product->append($attribute);
+                } 
+            }
+        }
+
         $product_resource = new ProductResource($product);
         $product_resource->with['message'] = 'Product retrieved successfully';
 
