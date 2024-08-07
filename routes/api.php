@@ -108,6 +108,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     });
 
+    Route::apiResource('orders', OrderController::class)->only(['index', 'show']);
+
+
     Route::prefix('permissions')->group(function () {
         Route::name('permissions.')->group(function () {
             Route::match(['put', 'patch'], 'sync', [PermissionController::class, 'sync'])->name('sync');
