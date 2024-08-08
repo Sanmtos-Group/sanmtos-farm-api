@@ -22,14 +22,6 @@ class GoogleAPIService {
      */
     public function __construct()
     {
-        $this->isVendor =  Config::get('kwik.is_vendor') == true ? true : false;
-        
-        $this->setEmail();
-        $this->setPassword();
-        $this->setBaseUrl();
-        $this->setdomainName();
-        $this->setAccessToken();
-        $this->setAppAccessToken();
         $this->setClient();
     }
 
@@ -51,7 +43,44 @@ class GoogleAPIService {
         );
     }
 
-    public static function getPlaceTextsearch(){
+     /**
+     * @param string $relativeUrl
+     * @param string $method
+     * @param array<string, string> $body
+     * @return Kwik
+     * @throws Exception
+     */
+    private function httpRequest(String $method, String $relativeUrl,  array $body = [])
+    {
+        if (is_null($method)) {
+            throw new Exception("Empty method not allowed");
+        }
+        $params = [];
+        $key = env('GOOGLE_API_KEY');
+        if(!is_null($key) && empty($params['key']?? null))
+        {
+            $params = [
+                'key' => $key
+            ];
+    
+        }
+     
+        $request_data = [
+            "body" => json_encode($body),
+            'query' => $params
+        ];
+        
+        $this->response = $this->client->{strtolower($method)}(
+            $this->baseUrl.$relativeUrl, $request_data
+        );
+
+        return $this;
+    }
+
+    /**
+     * Place search via text 
+     */
+    public static function getPlaceTextsearch(string $address){
 
     }
 }
