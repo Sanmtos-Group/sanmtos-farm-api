@@ -25,7 +25,9 @@ class UserPolicy
      */
     public function view(User $user, User $model): bool
     {
-        return $user->hasAnyRole(['store-admin', 'admin']) || $user->hasPermission('read user');
+        return  $user->hasAnyRole(['store-admin', 'admin']) 
+                || $user->hasPermission('read user')
+                || $user->id == $model->id;
     }
 
     /**
