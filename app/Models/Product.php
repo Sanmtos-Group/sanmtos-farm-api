@@ -8,7 +8,6 @@ use App\Traits\HasCoupons;
 use App\Traits\HasImages;
 use App\Traits\HasPromos;
 use App\Traits\HasReviews;
-
 use Illuminate\Database\Eloquent\Casts\Attribute as CastAttribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;/*  */
 use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Database\Eloquent\SoftDeletes;
+
 class Product extends Model
 {
     use HasAttributes;

@@ -358,7 +358,7 @@ class User extends Authenticatable
         }
 
         if(!is_null($the_role=$this->findRole($role))){
-            $this->roles()->attach($the_role->id,['created_at'=>now()]);
+            $this->roles()->syncWithPivotValues($the_role->id,['created_at'=>now()]);
             return true;
         }
 
@@ -368,7 +368,7 @@ class User extends Authenticatable
             return false;
         }
         
-        $this->roles()->attach($new_role->id,['created_at'=>now()]);
+        $this->roles()->syncWithPivotValues($new_role->id,['created_at'=>now()]);
 
         return true;
     }

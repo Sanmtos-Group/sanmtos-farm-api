@@ -25,6 +25,8 @@ use Illuminate\Support\Facades\Storage;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\QueryBuilder;
+use Illuminate\Support\Str;
+
 class ProductController extends Controller
 {
     /**
@@ -184,11 +186,12 @@ class ProductController extends Controller
 
         if(request()->has('append'))
         {
-            foreach (explode(',', request()->append) as $key => $attribute) 
+            foreach (explode(',', request()->append) as $key => $attrs) 
             {
-                if (array_key_exists($attribute, $product->getAttributes())) {
-                    $product->append($attribute);
-                } 
+                if(method_exists($product, $attrs) || array_key_exists($attrs, $product->getAttributes()))
+                {
+                    $product->append($attrs);
+                }
             }
         }
 

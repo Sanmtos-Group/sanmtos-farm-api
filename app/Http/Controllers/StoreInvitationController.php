@@ -109,24 +109,27 @@ class StoreInvitationController extends Controller
 
             DB::beginTransaction();
 
+
             if(is_null($store_invitation->accepted_at))
             {
-
-                $store_invitation->status = 'accepted';
-                $store_invitation->accepted_at = now();
-                $store_invitation->save();
     
                 $store_invitation->load(['store','user']);
-    
+
                 if(!is_null($store_invitation->user))
                 {
-                    $store_invitation->user->workStores()->attach($store_invitation->store, ['created_at'=>now()]);
+                    $store_invitation->user->workStores()
+                    ->syncWithPivotValues($store_invitation->store->id, ['created_at'=>now()]);
     
                     $saleperson = $store_invitation->store->roles()->firstOrCreate([
                         'name' => 'salesperson',
                     ]);
-        
+
                     $store_invitation->user->assignRole($saleperson);
+
+
+                    $store_invitation->status = 'accepted';
+                    $store_invitation->accepted_at = now();
+                    $store_invitation->save();
     
                 }
             }
@@ -226,6 +229,10 @@ class StoreInvitationController extends Controller
      */
     public function destroy(StoreInvitation $store_invitation)
     {
-        //
+        $store_invitation->delete();
+
+        $store_invitation_resource = new StoreInvitationResource(null);
+        $store_invitation_resource->with['message'] = 'Store invitation deleted succesfully';
+        return $store_invitation_resource;
     }
 }

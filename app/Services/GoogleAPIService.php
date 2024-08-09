@@ -2,12 +2,14 @@
 
 namespace App\Services; 
 
+use ArgumentCountError;
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 
 class GoogleAPIService {
    
-    const PLACES_API_BASE_URL="https://maps.googleapis.com/maps/api/place";
+    const MAP_API_BASE_URL="https://maps.googleapis.com/maps/api";
 
     /**
      * Instance of Client
@@ -34,10 +36,10 @@ class GoogleAPIService {
     {
         $this->client = new Client(
             [
-                'base_uri' => array_key_exists('base_uri', $options) ? $options['base_uri'] : $this->baseUrl,
+                'base_uri' => array_key_exists('base_uri', $options) ? $options['base_uri'] : self::MAP_API_BASE_URL,
                 'headers' => [
-                    'Content-Type'  => 'application/json',
-                    'Accept'        => 'application/json'
+                    // 'Content-Type'  => 'application/json',
+                    // 'Accept'        => 'application/json'
                 ]
             ]
         );
@@ -47,22 +49,18 @@ class GoogleAPIService {
      * @param string $relativeUrl
      * @param string $method
      * @param array<string, string> $body
-     * @return Kwik
+     * @return \App\Sservice\GoogleAPIService
      * @throws Exception
      */
-    private function httpRequest(String $method, String $relativeUrl,  array $body = [])
+    private function httpRequest(String $method, String $relativeUrl, array $body = [], array $params=[])
     {
         if (is_null($method)) {
             throw new Exception("Empty method not allowed");
         }
-        $params = [];
         $key = env('GOOGLE_API_KEY');
         if(!is_null($key) && empty($params['key']?? null))
         {
-            $params = [
-                'key' => $key
-            ];
-    
+            $params['key'] =  $key;
         }
      
         $request_data = [
@@ -71,8 +69,10 @@ class GoogleAPIService {
         ];
         
         $this->response = $this->client->{strtolower($method)}(
-            $this->baseUrl.$relativeUrl, $request_data
+            $relativeUrl, $request_data
         );
+
+        dd($this->response);
 
         return $this;
     }
@@ -80,7 +80,44 @@ class GoogleAPIService {
     /**
      * Place search via text 
      */
-    public static function getPlaceTextsearch(string $address){
+    public function getPlaceTextsearch(string $address)
+    {
+        $params['query'] = $address;
+        $this->httpRequest('GET', '/place/textsearch/json', $data=[], $params);
 
+        return $this->responseData();
     }
+
+    /**
+     * Get the access token set using the setter or after login
+     * 
+     * @return  \GuzzleHttp\Psr7\Response
+     */
+    public function getResponse(): Response
+    {
+        return $this->response ?? null;
+    }
+
+    public function responseData()
+    {
+        $data = [];
+
+        if($this->response->getReasonPhrase() ==='OK')
+        {
+            $response =  \json_decode ($this->response->getBody(), true);
+
+            if(array_key_exists('status', $response) && $response['status']===200)
+            {
+                $data = $response['data'];
+            }
+            else {
+                \Log::error($response);
+                throw new Exception( array_key_exists('message', $response) ? $response['message'] : "Error Processing Request", 1);
+            }
+           
+        }
+
+        return $data;
+    }
+    
 }
