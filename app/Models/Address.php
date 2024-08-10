@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -48,6 +49,15 @@ class Address extends Model
     ];
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'metadata' => 'json',
+    ];
+
+    /**
      * The relationships that should always be loaded.
      *
      * @var array
@@ -80,5 +90,37 @@ class Address extends Model
     public function country(): BelongsTo
     {
         return $this->belongsTo(Country::class);
+    }
+
+    /**
+     * -------------------------
+     * Address Atrributes
+     * -------------------------
+     */
+
+    /**
+     * Determine full address
+     */
+    protected function fullAddress(): Attribute
+    {
+        $full_address = $this->address;
+
+        if(!empty($this->lga))
+        {
+            $full_address.=", ".$this->lga;
+        }
+        if(!empty($this->state))
+        {
+            $full_address.=", ".$this->state;
+        }
+
+        if(!is_null($this->country))
+        {
+            $full_address.=", ".$this->country->name;
+        }
+
+        return Attribute::make(
+            get: fn () => $full_address,
+        );
     }
 }

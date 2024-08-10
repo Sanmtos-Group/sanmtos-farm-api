@@ -22,6 +22,14 @@ class EventServiceProvider extends ServiceProvider
         \App\Events\StoreInvitation\StoreInvitationCreated::class => [
             \App\Listeners\StoreInvitation\StoreInvitationCreatedListener::class,
         ],
+
+        \App\Events\Address\AddressCreated::class => [
+            \App\Listeners\Address\AddressCreatedListener::class,
+        ],
+
+        \App\Events\Address\AddressUpdated::class => [
+            \App\Listeners\Address\AddressUpdatedListener::class,
+        ],
     ];
 
     /**

@@ -143,6 +143,7 @@ class AddressController extends Controller
         }
 
         $address->update($validated);
+
         $address_resource = new AddressResource($address);
         $address_resource->with['message'] = "Address updated successfully";
 

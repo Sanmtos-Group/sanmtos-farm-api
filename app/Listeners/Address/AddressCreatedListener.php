@@ -4,7 +4,9 @@ namespace App\Listeners\Address;
 
 use App\Models\Address;
 use App\Events\Address\AddressCreated;
+use App\Jobs\UpdateAddressMetadata;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Bus\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 
 class AddressCreatedListener
@@ -40,6 +42,8 @@ class AddressCreatedListener
             ->where('addressable_type', $address->addressable_type)
             ->update(['is_preferred' => false]);
         }
-        
+
+        UpdateAddressMetadata::dispatch($address);
+
     }
 }
