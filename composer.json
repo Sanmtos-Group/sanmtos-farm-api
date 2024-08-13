@@ -48,14 +48,6 @@
         }
     },
     "repositories": [
-        {
-            "type": "path",
-            "url" : "../sanmtos-chat-api"
-        },
-        {
-            "type": "path",
-            "url" : "../ajagabos-laravel-kwik"
-        } 
     ],
     "scripts": {
         "post-autoload-dump": [
