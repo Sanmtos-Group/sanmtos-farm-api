@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f79220c1a917940f0946d3f1af23184e",
+    "content-hash": "694a1aad22d043f063bf3431b2c2dbed",
     "packages": [
         {
             "name": "alexpechkarev/geometry-library",
@@ -4481,63 +4481,6 @@
                 }
             ],
             "time": "2024-04-27T21:32:50+00:00"
-        },
-        {
-            "name": "sanmtos/chat",
-            "version": "1.0.0",
-            "dist": {
-                "type": "path",
-                "url": "../sanmtos-chat-api",
-                "reference": "a13f2ce0ce0519d9d8355a9e9456af293b1408b5"
-            },
-            "require": {
-                "guzzlehttp/guzzle": "^7.8",
-                "php": "^8.2"
-            },
-            "require-dev": {
-                "fakerphp/faker": "^1.23",
-                "mockery/mockery": "^1.6",
-                "phpstan/phpstan": "*",
-                "phpunit/phpunit": "^11.1",
-                "symfony/var-dumper": "^7.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Sanmtos\\Chat\\ChatServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Sanmtos\\Chat\\": "src/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Sanmtos\\Chat\\Tests\\": "tests/",
-                    "Sanmtos\\Chat\\Database\\Factories\\": "database/factories/",
-                    "Sanmtos\\Chat\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Sanmtos",
-                    "email": "sanmtos@gmail.com"
-                },
-                {
-                    "name": "Philip James Ajagabos",
-                    "email": "ajagabos007@gmail.com"
-                }
-            ],
-            "description": "Sanmtos Chat API package for  laravel developers",
-            "transport-options": {
-                "relative": true
-            }
         },
         {
             "name": "spatie/laravel-package-tools",

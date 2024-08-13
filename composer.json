@@ -19,7 +19,6 @@
         "laravel/tinker": "^2.8",
         "livewire/livewire": "^3.0",
         "lucasdotvin/laravel-soulbscription": "^4.2",
-        "sanmtos/chat": "^1.0",
         "spatie/laravel-query-builder": "^6.0",
         "unicodeveloper/laravel-paystack": "^1.2"
     },
