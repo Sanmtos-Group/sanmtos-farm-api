@@ -43,7 +43,6 @@ class UserController extends Controller
             'first_name',
             'last_name',
             'gender',
-            'dialing_code',
             'phone_number',
             AllowedSort::custom('recent', new \App\Models\Sorts\LatestSort()),
             AllowedSort::custom('oldest', new \App\Models\Sorts\OldestSort()),
@@ -52,7 +51,6 @@ class UserController extends Controller
             'first_name',
             'last_name',
             'gender',
-            'dialing_code',
             'phone_number',
             AllowedFilter::exact('store_id'),
             AllowedFilter::exact('category_id'),
@@ -85,8 +83,22 @@ class UserController extends Controller
             'cartItems',
             'roles',
             'couponUsages'
-        ])
-        ->paginate()
+        ]);
+
+        //  Perform search query
+        if(request()->has('q'))
+        {
+            $q = request()->input('q');
+
+            $users->where(function($query) use($q){
+                $query->where('email', 'like',  '%'.$q.'%')
+                ->orWhere('first_name', 'like',  '%'.$q.'%')
+                ->orWhere('last_name', 'like',  '%'.$q.'%')
+                ->orWhere('phone_number', 'like',  '%'.$q.'%');
+            });
+        }
+        
+        $users = $users->paginate()
         ->appends(request()->query());
 
         $user_resource =  UserResource::collection($users);
