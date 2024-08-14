@@ -56,6 +56,7 @@ class Product extends Model
         'length',
         'height',
         'volume',
+        'shelf_life',
         'price',
         'regular_price',
         'currency',

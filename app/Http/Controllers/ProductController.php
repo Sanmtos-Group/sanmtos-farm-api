@@ -44,12 +44,22 @@ class ProductController extends Controller
             'weight',
             'volume',
             'discount',
+            'width',
+            'length',
+            'height',
+            'shelf_life',
             AllowedSort::custom('recent', new \App\Models\Sorts\LatestSort()),
             AllowedSort::custom('oldest', new \App\Models\Sorts\OldestSort()),
         )
         ->allowedFilters([
             'name', 
             'price', 
+            'volume',
+            'discount',
+            'width',
+            'length',
+            'height',
+            'shelf_life',
             'created_at',
             AllowedFilter::exact('store_id'),
             AllowedFilter::exact('category_id'),
@@ -108,26 +118,7 @@ class ProductController extends Controller
             $validated['store_id'] = $user->ownsAStore ? $user->store->id : $validated['store_id'];
         }
 
-        $length = array_key_exists('length', $validated) ? $validated['length'] : 0;
-        $width = array_key_exists('width', $validated) ? $validated['width'] : 0;
-        $height = array_key_exists('height', $validated) ? $validated['height'] : 0;
-
-        $product = Product::create([
-            'name' => $validated['name'],
-            'description' => $validated['description'] ?? null,
-            'short_description' => $validated['short_description'] ?? null,
-            'price' => $validated['price'],
-            'weight' => $validated['weight'],
-            'length' => $length,
-            'width' => $width,
-            'height' => $height,
-            'volume' => $length * $width * $height,
-            'quantity' => $validated['quantity'],
-
-            // 'discount' => $validated['discount'] ?? null,
-            'category_id' => $validated['category_id'],
-            'store_id' => $validated['store_id'],
-        ]);
+        $product = Product::create($validated);
 
         // save product images
         if($request->hasFile('images'))

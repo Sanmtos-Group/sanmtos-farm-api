@@ -28,6 +28,7 @@ class ProductFactory extends Factory
             'length' => $length = fake()->randomNumber(2),
             'height' => $height = fake()->randomNumber(2),
             'volume' => $length * $width * $height,
+            'shelf_life' => fake()->numberBetween(1, 12). " ".fake()->randomElement(['Day(s)', 'Week(s)', 'Month(s)', 'Year(s)']),
             'price' => $price = fake()->randomFloat(0, 1), // random floats of 2 decimal place of min 1.00
             'currency' => 'NGN', //fake()->currencyCode(),
             'regular_price' => $regular_price = $price + fake()->randomFloat(0, 1),

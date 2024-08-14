@@ -29,6 +29,7 @@ class StoreProductRequest extends FormRequest
             'length' => 'numeric|min:0.00',
             'width' => 'numeric|min:0.00',
             'height' => 'numeric|min:0.00',
+            'shelf_life' => 'nullable|string|max:191',
             'volume' => 'numeric|min:0.00',
             'price' => 'required|numeric|min:0.01',
             'quantity' => 'integer|min:1',
@@ -54,5 +55,16 @@ class StoreProductRequest extends FormRequest
         $this->merge([
             'currency' => 'NGN',
         ]);
+    }
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return [
+            'weight' => 'weight (KG)',
+        ];
     }
 }

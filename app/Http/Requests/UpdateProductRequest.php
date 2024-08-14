@@ -29,6 +29,7 @@ class UpdateProductRequest extends FormRequest
             'length' => 'numeric|min:0.00',
             'width' => 'numeric|min:0.00',
             'height' => 'numeric|min:0.00',
+            'shelf_life' => 'nullable|string|max:191',
             'volume' => 'numeric|min:0.00',
             'price' => 'numeric|min:0.01',
             'currency' => 'nullable|string',
