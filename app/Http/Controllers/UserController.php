@@ -73,8 +73,8 @@ class UserController extends Controller
                 });
             }),
             AllowedFilter::callback('salesperson_id', function ($query, $value){
-                $query->WhereHas('workStores', function($query) use($value){
-                    $query->where('id', $value);
+                $query->WhereHas('store.staffs', function($query) use($value){
+                    $query->where('store_user.user_id', $value);
                 });
             }),
         ])
