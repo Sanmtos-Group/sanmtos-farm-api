@@ -116,6 +116,7 @@ class Store extends Model
         return $this->belongsToMany(User::class, StoreUser::class);
     }
 
+
     /**
      * Get the products for the store.
      */

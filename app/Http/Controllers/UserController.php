@@ -72,6 +72,11 @@ class UserController extends Controller
                     $query->whereIn('stores.id', explode(',', $value));
                 });
             }),
+            AllowedFilter::callback('salesperson_id', function ($query, $value){
+                $query->WhereHas('workStores', function($query) use($value){
+                    $query->where('id', $value);
+                });
+            }),
         ])
         ->allowedIncludes([
             'addresses',

@@ -234,6 +234,23 @@ Route::middleware('auth:sanctum')->group(function () {
 
     });
 
+    /**
+     * Saleperson routes
+     */
+    Route::prefix('salesperson')->group(function () {
+        Route::name('salesperson.')->group(function () {
+            Route::middleware(['merge.salesperson.id.filter'])->group(function () {
+                Route::apiResource('products', ProductController::class);
+                Route::apiResource('stores', StoreController::class);
+                Route::apiResource('vendors', UserController::class);
+            });
+        });
+    });
+
+    /**
+     * This routes is for vendor having a store
+     * 
+     */
     Route::prefix('store')->group(function () {
         Route::name('store.')->group(function () {
 

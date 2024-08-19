@@ -67,6 +67,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'merge.user.id.filter' => \App\Http\Middleware\MergeUserIdFilter::class,
         'merge.user.addressable.filter' => \App\Http\Middleware\MergeUserAddressableFilter::class,
+        'merge.salesperson.id.filter' => \App\Http\Middleware\MergeSalespersonIdFilter::class,
         'merge.store.id.filter' => \App\Http\Middleware\MergeStoreIdFilter::class,
         'merge.store.addressable.filter' => \App\Http\Middleware\MergeStoreAddressableFilter::class,
         'merge.work.stores.id.filter' => \App\Http\Middleware\MergeWorkStoresIdFilter::class,

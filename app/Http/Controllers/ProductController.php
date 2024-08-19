@@ -75,6 +75,11 @@ class ProductController extends Controller
                     $query->where('id', $value);
                 });
             }),
+            AllowedFilter::callback('salesperson_id', function ($query, $value){
+                $query->WhereHas('store.staffs', function($query) use($value){
+                    $query->where('id', $value);
+                });
+            }),
             AllowedFilter::scope('state'),
 
         ])
