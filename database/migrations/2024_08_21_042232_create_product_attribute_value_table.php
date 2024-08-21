@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('valuetables', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+        Schema::create('product_attribute_value', function (Blueprint $table) {
+            $table->id();
+            $table->foreignUuid('product_id')->contrained('products')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignUuid('attribute_id')->contrained('attributes')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignUuid('value_id')->contrained('values')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->uuidMorphs('valuetables');
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('valuetables');
+        Schema::dropIfExists('product_attribute_value');
     }
 };

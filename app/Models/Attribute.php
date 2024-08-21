@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Attribute extends Model
@@ -56,10 +57,22 @@ class Attribute extends Model
 
     /**
      * Get all of the products that are assigned this attribute.
+     * 
+     * @return  \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
     public function products()
     {
         return $this->morphedByMany(Product::class, 'attributable');
+    }
+
+    /**
+     * Get all of the categories that are assigned this tag.
+     * 
+     * @return  \Illuminate\Database\Eloquent\Relations\MorphToMany
+     */
+    public function categories(): MorphToMany
+    {
+        return $this->morphedByMany(Category::class, 'attributable');
     }
 
 }

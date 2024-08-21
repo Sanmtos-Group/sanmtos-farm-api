@@ -88,6 +88,7 @@ class ProductController extends Controller
             'category',
             'likes',
             'country',
+            'attributesValues.attribute'
         ])
         ->paginate()
         ->appends(request()->query());

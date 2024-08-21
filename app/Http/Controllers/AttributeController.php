@@ -7,6 +7,9 @@ use App\Models\Attribute;
 use App\Http\Requests\StoreAttributeRequest;
 use App\Http\Requests\UpdateAttributeRequest;
 use Cviebrock\EloquentSluggable\Services\SlugService;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class AttributeController extends Controller
 {
@@ -15,9 +18,25 @@ class AttributeController extends Controller
      */
     public function index()
     {
-        $attributes = Attribute::all();
-        $attribute_resource = new AttributeResource($attributes);
-        
+        $attributes = QueryBuilder::for(Attribute::class)
+        ->defaultSort('created_at')
+        ->allowedSorts(
+            'name',
+        )
+        ->allowedFilters([
+            'name', 
+        ])
+        ->allowedIncludes([
+            'categories',
+        ])
+        ->paginate()
+        ->appends(request()->query());
+
+        $attribute_resource =  AttributeResource::collection($attributes);
+
+        $attribute_resource->with['status'] = "OK";
+        $attribute_resource->with['message'] = 'Attributes retrived successfully';
+
         return $attribute_resource;
     }
 
