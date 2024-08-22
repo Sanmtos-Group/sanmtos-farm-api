@@ -10,7 +10,7 @@ use Cviebrock\EloquentSluggable\Services\SlugService;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\QueryBuilder;
-
+use Illuminate\Support\Str;
 class AttributeController extends Controller
 {
     /**
@@ -25,6 +25,7 @@ class AttributeController extends Controller
         )
         ->allowedFilters([
             'name', 
+            AllowedFilter::scope('ofCategory')
         ])
         ->allowedIncludes([
             'categories',
@@ -57,6 +58,20 @@ class AttributeController extends Controller
         $validated['slug'] = SlugService::createSlug(Attribute::class, 'slug', $validated['slug'] ?? $validated['name']);
         
         $attribute = Attribute::create($validated);
+
+        $categories = [];
+        
+        // clean category ids for syncing 
+        foreach ($validated['category_ids']?? [] as $key=>$category_id) 
+        {
+            $categories [$category_id] = [
+                // Other pivot table attributes if needed
+                'id' => Str::uuid()->toString(), // Generate UUID for the pivot ID
+            ];
+        }
+        $attribute->categories()->syncWithoutDetaching($categories);
+        $attribute->categories;  
+        
         $attribute_resource = new AttributeResource($attribute);
         $attribute_resource->with['message'] = 'Attribute created successfully';
 
@@ -68,6 +83,29 @@ class AttributeController extends Controller
      */
     public function show(Attribute $attribute)
     {
+        if(request()->has('include'))
+        {
+            foreach (explode(',', request()->include) as $key => $include) 
+            {
+               try {
+                $attribute->load($include);
+               } catch (\Throwable $th) {
+                    continue;
+               }
+            }
+        }
+
+        if(request()->has('append'))
+        {
+            foreach (explode(',', request()->append) as $key => $attrs) 
+            {
+                if(method_exists($attribute, $attrs) || array_key_exists($attrs, $attribute->getAttributes()))
+                {
+                    $attribute->append($attrs);
+                }
+            }
+        }
+
         $attribute_resource = new AttributeResource($attribute);
         $attribute_resource->with['message'] = 'Attribute retrieved successfully';
 

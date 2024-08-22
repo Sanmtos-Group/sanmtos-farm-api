@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
 
 class Attribute extends Model
 {
@@ -74,5 +75,14 @@ class Attribute extends Model
     {
         return $this->morphedByMany(Category::class, 'attributable');
     }
-
+    
+    /**
+     * Scope a query to only include users of a given type.
+     */
+    public function scopeOfCategory(Builder $query, Category $category): Builder
+    {
+        return $query->whereHas('categories', function($query) use($category){
+            $query->where('attributables.attributable_id', $category->id);
+        });
+    }
 }
