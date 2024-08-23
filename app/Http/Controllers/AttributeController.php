@@ -6,11 +6,14 @@ use App\Http\Resources\AttributeResource;
 use App\Models\Attribute;
 use App\Http\Requests\StoreAttributeRequest;
 use App\Http\Requests\UpdateAttributeRequest;
+use App\Http\Requests\StoreAttributableRequest;
 use Cviebrock\EloquentSluggable\Services\SlugService;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\QueryBuilder;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+
 class AttributeController extends Controller
 {
     /**
@@ -176,6 +179,65 @@ class AttributeController extends Controller
         $attribute_resource = new AttributeResource(null);
         $attribute_resource->with['message'] = 'Attribute permanently deleted successfully';
         
+        return $attribute_resource;
+    }
+
+        /**
+     * Add to attribute  categories
+     *
+     * @param App\Models\Attribute $attribute
+     * @param App\Http\Requests\StoreAttributableRequest $request
+     * @return AttributeResource $attribute_resource
+     */
+    public function attachCategories(Attribute $attribute, StoreAttributableRequest $request )
+    {
+        $validated = $request->validated();
+
+        // attach by multiple category ids
+       if(array_key_exists('category_ids', $validated))
+       {
+            $_categories = [];
+            // clean  category ids for syncing 
+            foreach ($validated['category_ids'] as $key=>$category_id) 
+            {
+                $_categories [$category_id] = [
+                    // Other pivot table attributes if needed
+                    'id' => Str::uuid()->toString(), // Generate UUID for the pivot ID
+                ];
+            }
+
+            $attribute->categories()->syncWithoutDetaching($_categories);
+       }
+       
+
+        $attribute->categories = $attribute->categories()->paginate()
+        ->appends(request()->query());    
+
+        $attribute_resource = new AttributeResource($attribute);
+        $attribute_resource->with['message'] = 'Category(ies) attached to attribute succesfully';
+        return $attribute_resource;
+    }
+
+    /**
+     * Detached categories to attribute
+     *
+     * @param App\Models\Attribute $attribute
+     * @param Illuminatie\Http\Request $request
+     * @return App\Http\Resources\ProductResource $product_resource
+     */
+    public function detachCategories(Attribute $attribute, Request $request )
+    {
+        // detach by multiple category ids
+        if($request->has('category_ids'))
+        {
+            $attribute->categories()->detach($request->category_ids);
+        }
+       
+        $attribute->categories = $attribute->categories()->paginate()
+        ->appends(request()->query());
+
+        $attribute_resource = new AttributeResource($attribute);
+        $attribute_resource->with['message'] = 'Category(ies) detached from attribute succesfully';
         return $attribute_resource;
     }
 }

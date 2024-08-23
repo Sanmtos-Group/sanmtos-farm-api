@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasAttributes;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -13,11 +14,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
+    use HasAttributes;
     use HasFactory;
     use HasUuids;
     use SoftDeletes;
     use Sluggable;
-
 
     /**
      * The attributes that are mass assignable.

@@ -10,6 +10,7 @@ use App\Http\Resources\CategoryResource;
 use App\Models\Task;
 use Cviebrock\EloquentSluggable\Services\SlugService;
 use Spatie\QueryBuilder\QueryBuilder;
+use Spatie\QueryBuilder\AllowedFilter;
 
 class CategoryController extends Controller
 {
@@ -19,9 +20,14 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = QueryBuilder::for(Category::class)
-            ->allowedFilters('name')
             ->defaultSort('name')
             ->allowedSorts(['name', 'created_at'])
+            ->allowedFilters([
+                AllowedFilter::scope('attribute'),
+            ])
+            ->allowedIncludes([
+                'attributes',
+            ])
             ->paginate(10);
         return CategoryResource::collection($categories);
 

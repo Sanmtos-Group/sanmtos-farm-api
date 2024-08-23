@@ -98,12 +98,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('attributes', AttributeController::class)->only(['store', 'update', 'destroy']);
     Route::prefix('attributes/{attribute}/')->group(function () {
+        Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
         Route::name('attributes.')->group(function () {
             Route::controller(AttributeController::class)->group(function(){
                 Route::delete('force-delete', 'forceDestroy')->name('forceDestroy');
                 Route::patch('restore', 'restore')->name('restore');
+                Route::post('categories', 'attachCategories')->name('categories.attach');
+                Route::delete('categories', 'detachCategories')->name('applicable-categories.detach');
             });
-
         });
 
     });
