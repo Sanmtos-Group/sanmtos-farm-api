@@ -18,7 +18,7 @@ class CategoryController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
+    {  
         $categories = QueryBuilder::for(Category::class)
             ->defaultSort('name')
             ->allowedSorts(['name', 'created_at'])

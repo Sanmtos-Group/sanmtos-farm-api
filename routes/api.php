@@ -97,8 +97,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     Route::apiResource('attributes', AttributeController::class)->only(['store', 'update', 'destroy']);
-    Route::prefix('attributes/{attribute}/')->group(function () {
-        Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
+    Route::prefix('attributes/{attribute}/')->group(function () {     
+
+        Route::middleware(['merge.route.param.attribute.filter'])->group(function () {
+            Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
+        }); 
+
         Route::name('attributes.')->group(function () {
             Route::controller(AttributeController::class)->group(function(){
                 Route::delete('force-delete', 'forceDestroy')->name('forceDestroy');
