@@ -233,6 +233,14 @@ class User extends Authenticatable
         return $this->belongsToMany(Store::class, StoreUser::class);
     }
 
+     /**
+     * Get the task for the store.
+     */
+    public function assginedTaks(): HasMany
+    {
+        return $this->hasMany(Task::class, 'assignee_user_id');
+    }
+
     /**
      * The cart items for the user.
      */

@@ -35,12 +35,12 @@ class ValueController extends Controller
         ->paginate()
         ->appends(request()->query());
 
-        $attribute_resource =  ValueResource::collection($values);
+        $value_resource =  ValueResource::collection($values);
 
-        $attribute_resource->with['status'] = "OK";
-        $attribute_resource->with['message'] = 'Values retrived successfully';
+        $value_resource->with['status'] = "OK";
+        $value_resource->with['message'] = 'Values retrived successfully';
 
-        return $attribute_resource;
+        return $value_resource;
     }
 
     /**

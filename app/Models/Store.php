@@ -116,7 +116,6 @@ class Store extends Model
         return $this->belongsToMany(User::class, StoreUser::class);
     }
 
-
     /**
      * Get the products for the store.
      */
@@ -175,5 +174,13 @@ class Store extends Model
     public function roles(): HasMany
     {
         return $this->hasMany(Role::class, 'store_id', 'id');
+    }
+
+    /**
+     * Get the task for the store.
+     */
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(Task::class, 'store_id');
     }
 }
