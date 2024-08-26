@@ -73,7 +73,18 @@ class Attribute extends Model
      */
     public function categories(): MorphToMany
     {
-        return $this->morphedByMany(Category::class, 'attributable');
+        return $this->morphedByMany(Category::class, 'attributable')
+        ->using(Attributable::class); 
+
+    }
+
+    /**
+     * Get all of the values for the attribute.
+     */
+    public function values(): MorphToMany
+    {
+        return $this->morphToMany(Value::class, 'valuetable')
+        ->using(Valuetable::class); 
     }
     
     /**

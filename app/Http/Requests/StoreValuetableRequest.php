@@ -11,7 +11,7 @@ class StoreValuetableRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,13 @@ class StoreValuetableRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'value_ids' =>'sometimes|array',
+            'value_ids.*' => 'sometimes|uuid|exists:values,id', 
+            'value_id' => 'sometimes|uuid|exists:values,id',
+
+            'values' =>'sometimes|array',
+            'values.*' => 'sometimes|required|string', 
+            'value' => 'sometimes|required|string',
         ];
     }
 }

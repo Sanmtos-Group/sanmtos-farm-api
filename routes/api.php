@@ -32,6 +32,7 @@ use App\Http\Controllers\StoreController;
 use App\Http\Controllers\StoreInvitationController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ValueController;
 use App\Http\Controllers\VerificationCodeController;
 use App\Http\Middleware\CheckoutSummarySessionCleaner;
 
@@ -101,14 +102,20 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::middleware(['merge.route.param.attribute.filter'])->group(function () {
             Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
+            Route::get('values', [ValueController::class, 'index'])->name('values.index');
         }); 
 
         Route::name('attributes.')->group(function () {
             Route::controller(AttributeController::class)->group(function(){
-                Route::delete('force-delete', 'forceDestroy')->name('forceDestroy');
-                Route::patch('restore', 'restore')->name('restore');
                 Route::post('categories', 'attachCategories')->name('categories.attach');
-                Route::delete('categories', 'detachCategories')->name('applicable-categories.detach');
+                Route::delete('categories', 'detachCategories')->name('categories.detach');
+            });
+        });
+
+        Route::name('values.')->group(function () {
+            Route::controller(AttributeController::class)->group(function(){
+                Route::post('values', 'attachValues')->name('values.attach');
+                Route::delete('values', 'detachValues')->name('values.detach');
             });
         });
 
@@ -377,6 +384,7 @@ Route::controller(SearchController::class)->group(function (){
 });
 
 Route::apiResource('attributes', AttributeController::class)->only(['index', 'show']);
+Route::apiResource('values', ValueController::class)->only(['index', 'show']);
 Route::apiResource('addresses', AddressController::class)->only(['index', 'show']);
 
 Route::middleware([CheckoutSummarySessionCleaner::class])->group(function () {

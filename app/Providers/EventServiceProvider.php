@@ -6,6 +6,8 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Support\Str;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -30,6 +32,7 @@ class EventServiceProvider extends ServiceProvider
         \App\Events\Address\AddressUpdated::class => [
             \App\Listeners\Address\AddressUpdatedListener::class,
         ],
+
     ];
 
     /**
@@ -37,7 +40,14 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Event::listen('eloquent.attaching: *', function ($model, $relationName, $pivotIds, $pivotAttributes) {
+            // Add logic before attaching the pivot record
+            dd("james");
+            foreach ($pivotAttributes as &$attributes) {
+                $attributes['id'] = Str::uuid(); // Set a UUID as the pivot ID
+            }
+        });                 
+
     }
 
     /**

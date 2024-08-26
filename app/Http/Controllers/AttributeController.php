@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\AttributeResource;
-use App\Models\Attribute;
 use App\Http\Requests\StoreAttributeRequest;
 use App\Http\Requests\UpdateAttributeRequest;
 use App\Http\Requests\StoreAttributableRequest;
+use App\Http\Requests\StoreValuetableRequest;
+use App\Models\Attribute;
 use Cviebrock\EloquentSluggable\Services\SlugService;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedSort;
@@ -182,7 +183,7 @@ class AttributeController extends Controller
         return $attribute_resource;
     }
 
-        /**
+    /**
      * Add to attribute  categories
      *
      * @param App\Models\Attribute $attribute
@@ -193,22 +194,23 @@ class AttributeController extends Controller
     {
         $validated = $request->validated();
 
-        // attach by multiple category ids
-       if(array_key_exists('category_ids', $validated))
-       {
-            $_categories = [];
-            // clean  category ids for syncing 
-            foreach ($validated['category_ids'] as $key=>$category_id) 
-            {
-                $_categories [$category_id] = [
-                    // Other pivot table attributes if needed
-                    'id' => Str::uuid()->toString(), // Generate UUID for the pivot ID
-                ];
-            }
-
-            $attribute->categories()->syncWithoutDetaching($_categories);
-       }
+            // attach by multiple category ids
+        if(array_key_exists('category_ids', $validated))
+        {
+                $attribute->categories()->syncWithoutDetaching($validated['category_ids']);
+        }
        
+        // attach by multiple new categories
+        if(array_key_exists('categories', $validated))
+        {
+            foreach ($validated['categories'] as $key=>$value) 
+            {
+                $attribute->categories()->updateOrCreate(
+                    $attributes=['name' => $value], 
+                    $values=['name'=>$value]
+                );
+            }
+        }
 
         $attribute->categories = $attribute->categories()->paginate()
         ->appends(request()->query());    
@@ -238,6 +240,66 @@ class AttributeController extends Controller
 
         $attribute_resource = new AttributeResource($attribute);
         $attribute_resource->with['message'] = 'Category(ies) detached from attribute succesfully';
+        return $attribute_resource;
+    }
+
+    /**
+     * Add to attribute  values
+     *
+     * @param App\Models\Attribute $attribute
+     * @param App\Http\Requests\StoreValuetableRequest $request
+     * @return AttributeResource $attribute_resource
+     */
+    public function attachValues(Attribute $attribute, StoreValuetableRequest $request )
+    {
+        $validated = $request->validated();
+
+        // attach by multiple value ids
+       if(array_key_exists('value_ids', $validated))
+       {
+            $attribute->values()->syncWithoutDetaching($validated['value_ids']);
+       }
+
+       // attach by multiple new values
+       if(array_key_exists('values', $validated))
+       {
+            foreach ($validated['values'] as $key=>$value) 
+            {
+                $attribute->values()->updateOrCreate(
+                    $attributes=['name' => $value], 
+                    $values=['name'=>$value]
+                );
+            }
+       }
+       
+        $attribute->values = $attribute->values()->paginate()
+        ->appends(request()->query());    
+
+        $attribute_resource = new AttributeResource($attribute);
+        $attribute_resource->with['message'] = 'Value(s) attached to attribute succesfully';
+        return $attribute_resource;
+    }
+
+    /**
+     * Detached values to attribute
+     *
+     * @param App\Models\Attribute $attribute
+     * @param Illuminatie\Http\Request $request
+     * @return App\Http\Resources\ProductResource $product_resource
+     */
+    public function detachValues(Attribute $attribute, Request $request )
+    {
+        // detach by multiple value ids
+        if($request->has('value_ids'))
+        {
+            $attribute->values()->detach($request->value_ids);
+        }
+       
+        $attribute->values = $attribute->values()->paginate()
+        ->appends(request()->query());
+
+        $attribute_resource = new AttributeResource($attribute);
+        $attribute_resource->with['message'] = 'Value(s) detached from attribute succesfully';
         return $attribute_resource;
     }
 }

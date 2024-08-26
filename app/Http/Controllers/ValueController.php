@@ -2,9 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ValueResource;
 use App\Http\Requests\StoreValueRequest;
 use App\Http\Requests\UpdateValueRequest;
 use App\Models\Value;
+use Cviebrock\EloquentSluggable\Services\SlugService;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
+use Spatie\QueryBuilder\QueryBuilder;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ValueController extends Controller
 {
@@ -13,7 +20,27 @@ class ValueController extends Controller
      */
     public function index()
     {
-        //
+        $values = QueryBuilder::for(Value::class)
+        ->defaultSort('created_at')
+        ->allowedSorts(
+            'name',
+        )
+        ->allowedFilters([
+            'name', 
+            AllowedFilter::scope('attribute')
+        ])
+        ->allowedIncludes([
+            'categories',
+        ])
+        ->paginate()
+        ->appends(request()->query());
+
+        $attribute_resource =  ValueResource::collection($values);
+
+        $attribute_resource->with['status'] = "OK";
+        $attribute_resource->with['message'] = 'Values retrived successfully';
+
+        return $attribute_resource;
     }
 
     /**

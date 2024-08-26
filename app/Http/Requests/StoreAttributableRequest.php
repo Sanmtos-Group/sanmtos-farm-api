@@ -24,7 +24,7 @@ class StoreAttributableRequest extends FormRequest
         return [
             'category_ids' =>'sometimes|array',
             'category_ids.*' => 'sometimes|uuid|exists:categories,id', 
-            'category_id' => 'somtimes|uuid|exists:categories,id',
+            'category_id' => 'sometimes|uuid|exists:categories,id',
         ];
     }
 }

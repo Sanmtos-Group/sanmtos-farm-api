@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('valuetables', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('value_id')->contrained('values')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->uuidMorphs('valuetables');
+            $table->uuidMorphs('valuetable');
             $table->timestamps();
         });
     }

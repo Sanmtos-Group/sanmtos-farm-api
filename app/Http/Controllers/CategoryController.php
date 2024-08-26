@@ -28,7 +28,9 @@ class CategoryController extends Controller
             ->allowedIncludes([
                 'attributes',
             ])
-            ->paginate(10);
+            ->paginate(10)
+            ->appends(request()->query());
+
         return CategoryResource::collection($categories);
 
 
