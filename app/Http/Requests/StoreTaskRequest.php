@@ -22,7 +22,16 @@ class StoreTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'operation' => 'sometimes|required|in:insert,edit',
+            'comment' => 'required|string|max|191',
+            'category_id' => 'required|uuid|exists:categories,id',
+            'sub_category_id' => 'required|uuid|exists:categories,id',
+            'quantity' => 'nullable|numeric',
+            'period' => 'nullable|string|in:day,week,month',
+            'upload_file' => 'nullable|file|max:2048',
+            'assignee_user_id' => 'required|uuid|exists:users,id',
+            'status'=> 'nullable|string|in:pending',
+            'store_id' => 'sometimes|uuid|exists:stores,id'
         ];
     }
 }

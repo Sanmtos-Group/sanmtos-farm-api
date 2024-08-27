@@ -19,13 +19,12 @@ class Task extends Model
      */
     protected $fillable = [
         'operation',
-        'description',
+        'comment',
         'category_id',
         'sub_category_id',
         'quantity',
         'period',
         'upload_file',
-        'comments',
         'assignee_user_id',
         'assigner_user_id',
         'status',

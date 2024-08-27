@@ -14,16 +14,15 @@ return new class extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->enum('operation', ['insert', 'edit'])->default('insert');
-            $table->string('description')->nullable();
+            $table->string('comment');
             $table->foreignUuid('category_id')->nullable()->contrained('categories')->cascadeOnUpdate()->nullOnDelete();
             $table->foreignUuid('sub_category_id')->nullable()->contrained('categories')->cascadeOnUpdate()->nullOnDelete();
-            $table->integer('quantity');
+            $table->integer('quantity')->nullable();
             $table->enum('period', ['day', 'week', 'month'])->default('day');
             $table->string('upload_file');
-            $table->string('comments');
             $table->foreignUuid('assignee_user_id')->nullable()->contrained('users')->cascadeOnUpdate()->nullOnDelete();
             $table->foreignUuid('assigner_user_id')->nullable()->contrained('users')->cascadeOnUpdate()->nullOnDelete();
-            $table->string('status');
+            $table->enum('status', ['pending'])->default('pending');
             $table->foreignUuid('store_id')->nullable()->contrained('stores')->cascadeOnUpdate()->nullOnDelete();
             $table->timestamps();
         });
