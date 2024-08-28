@@ -31,6 +31,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\StoreInvitationController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ValueController;
 use App\Http\Controllers\VerificationCodeController;
@@ -285,6 +286,7 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::apiResource('products', ProductController::class);
                 Route::apiResource('promos', PromoController::class);
                 Route::apiResource('coupons', CouponController::class);
+                Route::apiResource('tasks', TaskController::class);
             });
 
         });
@@ -346,7 +348,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::apiResource('settings', SettingController::class);
-
+    Route::apiResource('tasks', TaskController::class);
 
 });
 

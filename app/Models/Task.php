@@ -24,6 +24,7 @@ class Task extends Model
         'sub_category_id',
         'quantity',
         'period',
+        'duration',
         'upload_file',
         'assignee_user_id',
         'assigner_user_id',

@@ -23,14 +23,17 @@ class TaskController extends Controller
         $taks = QueryBuilder::for(Task::class)
         ->defaultSort('created_at')
         ->allowedSorts(
-            'name',
+            'commment',
         )
         ->allowedFilters([
-            'name', 
+            'comment', 
+            AllowedFilter::exact('store_id'),
+            AllowedFilter::exact('status'),
             AllowedFilter::scope('attribute')
         ])
         ->allowedIncludes([
-            'categories',
+            'assignee',
+            'assigner'
         ]);
 
         $paginate = request()->has('paginate') ? request()->paginate : true; 
@@ -50,8 +53,8 @@ class TaskController extends Controller
                 $per_page = $per_page >=1? $per_page : 15 ;
             } 
 
-            $taks = $taks->paginate($per_page)
-            ->appends(request()->query());
+            $taks = $taks->paginate($per_page);
+            // ->appends(request()->query());
 
         }
         
@@ -67,19 +70,19 @@ class TaskController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(StoreTaskRequest $request)
     {
-        //
+        $validated = $request->validated();
+        $validated['assigner_user_id'] = auth()->user()->id;
+        $task = Task::create($validated);
+
+
+        $task_resource = new TaskResource($task);
+        $task_resource->with['message'] = 'Task created successfully';
+
+        return $task_resource;
     }
 
     /**
