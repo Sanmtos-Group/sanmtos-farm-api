@@ -28,6 +28,8 @@ class TaskController extends Controller
         ->allowedFilters([
             'comment', 
             AllowedFilter::exact('store_id'),
+            AllowedFilter::exact('assignee_user_id'),
+            AllowedFilter::exact('assigner_user_id'),
             AllowedFilter::exact('status'),
             AllowedFilter::scope('attribute')
         ])
@@ -90,23 +92,47 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        //
+        if(request()->has('include'))
+        {
+            foreach (explode(',', request()->include) as $key => $include) 
+            {
+               try {
+                $task->load($include);
+               } catch (\Throwable $th) {
+                //throw $th;
+               }
+            }
+        }
+
+        if(request()->has('append'))
+        {
+            foreach (explode(',', request()->append) as $key => $attrs) 
+            {
+                if(method_exists($task, $attrs) || array_key_exists($attrs, $task->getAttributes()))
+                {
+                    $task->append($attrs);
+                }
+            }
+        }
+
+        $task_resource = new TaskResource($task);
+        $task_resource->with['message'] = 'Task retrieved successfully';
+
+        return  $task_resource;
+
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Task $task)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
-        //
+        $task->update($request->validated());
+        $task_resource = new TaskResource($task);
+        $task_resource->with['message'] = 'Task updated successfully';
+
+        return $task_resource;
     }
 
     /**
@@ -114,6 +140,10 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        //
+        $task->delete();
+        $task_resource = new TaskResource(null);
+        $task_resource->with['message'] = 'Task deleted successfully';
+
+        return $task_resource;
     }
 }

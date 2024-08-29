@@ -66,6 +66,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'merge.user.id.filter' => \App\Http\Middleware\MergeUserIdFilter::class,
+        'merge.user.assignee_user_id.filter' => \App\Http\Middleware\MergeAssigneeUserIdFilter::class,
         'merge.route.param.attribute.filter' => \App\Http\Middleware\MergeRouteParamAttributeFilter::class,
         'merge.user.addressable.filter' => \App\Http\Middleware\MergeUserAddressableFilter::class,
         'merge.salesperson.id.filter' => \App\Http\Middleware\MergeSalespersonIdFilter::class,

@@ -85,6 +85,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
                 Route::middleware(['merge.user.id.filter'])->group(function () {
                     Route::apiResource('orders', OrderController::class)->except(['destroy']);
+                    Route::apiResource('task', TaskController::class)->except(['create','destroy']);
+                });
+                Route::middleware(['merge.user.assignee_user_id.filter'])->group(function () {
+                    Route::apiResource('tasks', TaskController::class)->except(['create','destroy']);
                 });
 
                 Route::middleware(['merge.user.addressable.filter'])->group(function () {
