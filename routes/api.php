@@ -427,14 +427,14 @@ Route::apiResource('payment-gateways', PaymentGatewayController::class)->only(['
 Route::apiResource('logistic-companies', LogisticCompanyController::class)->only(['index', 'show']);
 Route::apiResource('permissions', PermissionController::class)->only(['index', 'show']);
 
-
-
 Route::apiResource('products', ProductController::class)->only(['index', 'show']);
 Route::prefix('products/{product}/')->group(function () {
     Route::name('products.')->group(function () {
         Route::controller(ProductController::class)->group(function (){
             Route::get('promos', 'promosIndex')->name('promos.index');
             Route::get('coupons', 'couponsIndex')->name('coupons.index');
+            Route::post('attributes-values', 'addAttributeValue')->name('attributes-values.store');
+            Route::delete('attributes-values/{product_attribute_value?}', 'removeAttributeValue')->name('attributes-values.delete');
         });
     });
 });

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Model;
 
 class ProductAttributeValue extends Pivot
 {
@@ -16,6 +17,17 @@ class ProductAttributeValue extends Pivot
      * @var string
      */
     protected $table = 'product_attribute_value';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'product_id',
+        'value_id',
+        'attribute_id',
+    ];
 
     /**
      * The relationships that should always be loaded.

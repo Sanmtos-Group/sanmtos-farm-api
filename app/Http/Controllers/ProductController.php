@@ -15,17 +15,18 @@ use App\Http\Resources\LikeResource;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\PromoResource;
 use App\Http\Resources\RatingResource;
+use App\Models\Attribute;
 use App\Models\Coupon;
 use App\Models\Image;
 use App\Models\Product;
-use App\Models\Promo;
+use App\Models\Value;
 use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\QueryBuilder;
-use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -99,14 +100,6 @@ class ProductController extends Controller
         $product_resource->with['message'] = 'Products retrived successfully';
 
         return $product_resource;
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -199,14 +192,6 @@ class ProductController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Product $product)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param App\Models\Product $product
@@ -249,7 +234,13 @@ class ProductController extends Controller
         $product->verifier_id = auth()->user()->id;
         $product->save();
 
-        $product_resource = new ProductResource($product->only(['id', 'name','store_id','verified_at', 'verifier_id']));
+        $product_resource = new ProductResource($product->only([
+                                'id', 
+                                'name',
+                                'store_id',
+                                'verified_at', 
+                                'verifier_id'
+                            ]));
         $product_resource->with['message'] = 'Product verified successfully';
 
         return $product_resource;
@@ -553,4 +544,94 @@ class ProductController extends Controller
         return $rating_resource;
     }
 
+
+    /**
+     * Add product attribute value
+     * 
+     *  @method POST /products/{product}/attributes-values
+     *  
+     */
+    public function addAttributeValue(Product $product, Request $request)
+    {
+        $validated = $request->validate([
+            'attribute' => 'sometimes|required|string|max:191',
+            'value' => 'sometimes|required|string|max:191',
+            'value_id' => 'sometimes|required_without:value|uuid|exist:values,id',
+            'attribute_id' => 'somtimes|required_without:attribute|uuid|exist:attributes,id',
+        ]);
+
+        // create or get the instance of the value
+
+        if(array_key_exists('value', $validated))
+        {
+            $value = Value::firstOrCreate([
+                'name' => $validated['value']
+            ]);
+        } else 
+        {
+            $value = Value::find($validated['value_id']);
+        }
+
+        // create or get the instance of the attribute
+        if(array_key_exists('attribute', $validated))
+        {
+            $attribute = Attribute::firstOrCreate([
+                'name' => $validated['attribute']
+            ]);
+        } else 
+        {
+            $attribute = Value::find($validated['attribute_id']);
+        }
+
+        $attribute->categories()->syncWithoutDetaching($product->category_d);
+        $attribute->values()->syncWithoutDetaching($value->id);
+
+        $product->attributesValues()->updateOrCreate(
+            $attributes = [
+                'attribute_id' => $attribute->id,
+                'value_id' => $value->id,
+            ],
+            $values = [
+                'id' => Str::uuid(),
+                'attribute_id' => $attribute->id,
+                'value_id' => $value->id,
+            ],
+
+        );
+
+        $product->attributes_values = $product->attributesValues;
+
+        $product_resource = new ProductResource($product->only([
+                                    'id', 
+                                    'name',
+                                    'attributes_values'
+                                ])
+                            );
+        $product_resource->with['message'] = 'Product attribute value added successfully';
+
+        return $product_resource;
+    }
+
+     /**
+     * Add product attribute value
+     * 
+     *  @method POST /products/{product}/attributes-values
+     *  
+     */
+    public function removeAttributeValue(Product $product, $product_attribute_value)
+    {
+        $product->attributesValues()->where('id', $product_attribute_value)->delete();
+
+        $product->attributes_values = $product->attributesValues;
+
+        $product_resource = new ProductResource($product->only([
+                                    'id', 
+                                    'name',
+                                    'attributes_values'
+                                ])
+                            );
+        $product_resource->with['message'] = 'Product attribute value added successfully';
+
+        return $product_resource;
+    }
 }

@@ -42,7 +42,7 @@ class Product extends Model
         'trashed' => \App\Events\Product\ProductTrashed::class,
     ];
 
-     /**
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
