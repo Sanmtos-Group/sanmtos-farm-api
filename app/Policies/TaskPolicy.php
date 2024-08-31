@@ -5,15 +5,18 @@ namespace App\Policies;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
+use App\Traits\Policy\AuthorizeAllActionToSuperAdmin;
 
 class TaskPolicy
 {
+    use AuthorizeAllActionToSuperAdmin;
+    
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
-    {
-        //
+    {      
+        return true;
     }
 
     /**
@@ -21,7 +24,10 @@ class TaskPolicy
      */
     public function view(User $user, Task $task): bool
     {
-        //
+        return $user->hasAnyRole(['store-admin', 'admin']) 
+                || $user->hasPermission('read task')
+                || $user->id == $task->assignee_user_id
+                || $user->id == $task->assigner_user_id;
     }
 
     /**
@@ -29,7 +35,7 @@ class TaskPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return $user->hasAnyRole(['store-admin', 'admin']) || $user->owns_a_store || $user->hasPermission('create task');
     }
 
     /**
@@ -37,7 +43,8 @@ class TaskPolicy
      */
     public function update(User $user, Task $task): bool
     {
-        //
+        return $user->id == $task->assignee_user_id
+                || $user->id == $task->assigner_user_id;
     }
 
     /**
@@ -45,7 +52,7 @@ class TaskPolicy
      */
     public function delete(User $user, Task $task): bool
     {
-        //
+        return $user->id == $task->assigner_user_id;
     }
 
     /**
@@ -53,7 +60,8 @@ class TaskPolicy
      */
     public function restore(User $user, Task $task): bool
     {
-        //
+        return $user->hasAnyRole(['store-admin', 'admin']) 
+                || $user->id == $task->assigner_user_id;
     }
 
     /**
@@ -61,6 +69,6 @@ class TaskPolicy
      */
     public function forceDelete(User $user, Task $task): bool
     {
-        //
+        return false;
     }
 }

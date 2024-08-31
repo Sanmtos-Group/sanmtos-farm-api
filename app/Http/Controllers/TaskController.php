@@ -16,6 +16,14 @@ use Illuminate\Support\Str;
 class TaskController extends Controller
 {
     /**
+     * Create the controller instance.
+     */
+    public function __construct()
+    {
+        $this->authorizeResource(Task::class, 'task');
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index()
@@ -128,7 +136,17 @@ class TaskController extends Controller
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
-        $task->update($request->validated());
+        $validated = $request->validated();
+
+        // streamline assigee to only update task status
+        if($task->assignee_user_id == auth()->user()->id ?? null )
+        {
+          $validated = array_key_exists('status', $validated) ? [
+                'status'=> $validated['status']
+            ] : [];
+        }
+
+        $task->update($validated);
         $task_resource = new TaskResource($task);
         $task_resource->with['message'] = 'Task updated successfully';
 

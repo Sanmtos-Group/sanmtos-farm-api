@@ -12,7 +12,7 @@ class StoreTaskRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->user()->can('create', Task::class);
     }
 
     /**
@@ -50,7 +50,7 @@ class StoreTaskRequest extends FormRequest
 
             $store = Store::find($this->store_id);
             if (is_null($store) || is_null($store->staffs()->where('store_user.user_id', $this->assignee_user_id)->first())){
-                $validator->errors()->add('assignee_user_id', "The assignee is not a staff {$store->name} and cannot be assigned a task");
+                $validator->errors()->add('assignee_user_id', "The assignee is not a staff of {$store->name} and cannot be assigned a task");
             }
         });
     }
