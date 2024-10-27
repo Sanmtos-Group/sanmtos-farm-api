@@ -53,10 +53,16 @@ class TestUser {
                 continue;
             }
 
-            $user->addresses()->firstOrCreate(Address::factory()->make([
+            $address = Address::factory()->make([
                 'first_name' => $user->first_name,
                 'last_name'  => $user->last_name
-            ])->toArray());
+            ]);
+
+            $address_data = $address->toArray();
+
+            if(array_key_exists('country', $address_data)){ unset($address_data['country']);}
+
+            $user->addresses()->firstOrCreate($address_data);
         }
 
         // Get or create admin user
