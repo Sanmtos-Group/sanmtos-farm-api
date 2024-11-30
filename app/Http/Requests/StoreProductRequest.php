@@ -35,8 +35,8 @@ class StoreProductRequest extends FormRequest
             'quantity' => 'integer|min:1',
             // 'regular_price' => 'required|numeric|min:0.01',
             // 'discount' => 'integer|min:0|max:100',
-            'category_id' => 'required|uuid|exists:categories,id',
-            'store_id' => 'required|uuid|exists:stores,id',
+            'category_id' => 'required|exists:categories,id',
+            'store_id' => 'required|exists:stores,id',
             'images' =>'required|array',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', #2mb
             // 'verifier_at' => 'nullable|date',
@@ -51,6 +51,12 @@ class StoreProductRequest extends FormRequest
      */
     protected function prepareForValidation()
     {
+        if(auth()->check()){
+            $user =  auth()->user();
+            $this->merge([
+                'store_id' => $user->ownsAStore ? $user->store->id : $this->store_id
+            ]);
+        }
 
         $this->merge([
             'currency' => 'NGN',

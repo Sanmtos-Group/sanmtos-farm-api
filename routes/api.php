@@ -399,6 +399,7 @@ Route::middleware([CheckoutSummarySessionCleaner::class])->group(function () {
             Route::controller(CartController::class)->group(function() {
                 Route::get('',  'items')->name('index')->withoutMiddleware([CheckoutSummarySessionCleaner::class]);
                 Route::post('',  'add')->name('add');
+                Route::post('bulk',  'bulk')->name('bulk');
                 Route::match(['put', 'patch'], '{item}',  'increment')->name('increment');
                 Route::delete('{item}',  'decrement')->name('decrement');
                 Route::delete('{item}/remove',  'remove')->name('remove');
